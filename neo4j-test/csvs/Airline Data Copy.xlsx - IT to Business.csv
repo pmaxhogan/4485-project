@@ -1,0 +1,42 @@
+Business Function,IT Application
+Flight Operations,Flight Planning Routing
+Flight Operations,Flight Planning Weight & Balance
+Flight Operations,Flight Planning Manufacturing Details 
+Flight Operations,Flight Planning Slot Manager
+Flight Operations,Flight Dispatch Weather
+Flight Operations,Flight Dispatch Routing
+Flight Operations,Flight Dispatch Crew
+Flight Operations,Flight History Data
+Airports,Airport Manpower Planning
+Airports,Gate Assignment and Planning
+Airports,Baggage
+Airports,Information Display
+Pricing & Yield Management,Yield Management Demand Forecast
+Pricing & Yield Management,Yield Management Yield/Fare Estimates
+Pricing & Yield Management,Yield Management No-show forecasting
+Pricing & Yield Management,Yield Management Inventory/Booking/Capacity Information
+Pricing & Yield Management,Yield Management Optimization Flight or Network
+Pricing & Yield Management,Pricing/Fares Management ATPCO send/receive
+Pricing & Yield Management,Pricing/Fares Management Fares database
+Pricing & Yield Management,Pricing/Fares Management Composite fare matching
+Pricing & Yield Management,Pricing/Fares Management Rules-based fare actions
+Planning / Scheduling,Fleet Planning
+Planning / Scheduling,Route Planning Profitability Forecasting
+Planning / Scheduling,Fleet assignment Through assignments
+Planning / Scheduling,Fleet assignment Scheduled Dep/Arr/Ground times
+Planning / Scheduling,Fleet assignment Gross day schedule
+Planning / Scheduling,Flight Scheduling Dated schedule
+Planning / Scheduling,Flight Scheduling Rotation optimizer
+Planning / Scheduling,Flight Scheduling Weekend cancellation model
+Planning / Scheduling,Flight Scheduling Schedule reliability mode
+Cargo,Cargo Reservation Space Planning and booking
+Cargo,Cargo Reservation Freight pricing
+Cargo,Cargo Ground Handling Import/Export
+Cargo,Cargo Ground Handling ULD Management 
+Cargo,Cargo Ground Handling Terminal Management
+Cargo,Cargo Ground Handling  Shippers document/track & trace
+Cargo,Cargo Yield Management Demand Forecast
+Cargo,Cargo Yield Management Capacity Forecast
+Cargo,Cargo Yield Management Allocation Module
+Cargo,Cargo Yield Management Utilization Module
+Cargo,Cargo Yield Management Optimization Flight or Network

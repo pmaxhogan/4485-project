@@ -1,0 +1,1030 @@
+Location,Server,Status,IT Application,Location Type,Red Application,Bold Application,Bold Server,Bold Application
+Dallas Forest DC,Server83393,Production,Flight Planning Routing,Datacenter,TRUE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server83393,Production,Flight Planning Weight & Balance,Datacenter,TRUE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server83393,Production,Flight Planning Manufacturing Details ,Datacenter,TRUE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server83393,Production,Flight Planning Slot Manager,Datacenter,TRUE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server833941,Production,Flight Dispatch Weather,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server833942,Production,Flight Dispatch Routing,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server833943,Production,Flight Dispatch Crew,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server833944,Production,Flight History Data,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server833939,Production,Yield Management Demand Forecast,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339310,Production,Yield Management Yield/Fare Estimates,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339311,Production,Yield Management No-show forecasting,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339311,Production,Yield Management Inventory/Booking/Capacity Information,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339312,Production,Yield Management Optimization Flight or Network,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339313,Production,Pricing/Fares Management ATPCO send/receive,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339314,Production,Pricing/Fares Management Fares database,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339315,Production,Pricing/Fares Management Composite fare matching,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339416,Production,Pricing/Fares Management Rules-based fare actions,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server8339417,Production,Fleet Planning,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server8339418,Production,Route Planning Profitability Forecasting,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server8339419,Production,Fleet assignment Through assignments,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server8339420,Production,Fleet assignment Scheduled Dep/Arr/Ground times,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server8339421,Production,Fleet assignment Gross day schedule,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server8339422,Production,Flight Scheduling Dated schedule,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server8339423,Production,Flight Scheduling Rotation optimizer,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server8339424,Production,Flight Scheduling Weekend cancellation model,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server8339425,Production,Flight Scheduling Schedule reliability mode,Datacenter,FALSE,FALSE,TRUE,TRUE
+Dallas Forest DC,Server83395,Production,Cargo Reservation Space Planning and booking,Datacenter,TRUE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server83395,Production,Cargo Reservation Freight pricing,Datacenter,TRUE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339526,Production,Cargo Ground Handling Import/Export,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339527,Production,Cargo Ground Handling ULD Management ,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339528,Production,Cargo Ground Handling Terminal Management,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339529,Production,Cargo Ground Handling  Shippers document/track & trace,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339530,Production,Cargo Yield Management Demand Forecast,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339531,Production,Cargo Yield Management Capacity Forecast,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339532,Production,Cargo Yield Management Allocation Module,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339533,Production,Cargo Yield Management Utilization Module,Datacenter,FALSE,FALSE,FALSE,FALSE
+Dallas Forest DC,Server8339534,Production,Cargo Yield Management Optimization Flight or Network,Datacenter,FALSE,FALSE,FALSE,FALSE
+Airport Osbourn,Server900001,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Osbourn,Server900002,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Osbourn,Server900003,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Osbourn,Server900004,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Buenos Aires,Server900005,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Buenos Aires,Server900006,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Buenos Aires,Server900007,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Buenos Aires,Server900008,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Oranjestad,Server900009,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Oranjestad,Server9000010,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Oranjestad,Server9000011,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Oranjestad,Server9000012,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Brisbane,Server9000013,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Brisbane,Server9000014,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Brisbane,Server9000015,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Brisbane,Server9000016,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Sydney,Server9000017,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Sydney,Server9000018,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Sydney,Server9000019,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Sydney,Server9000020,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport George Town,Server9000021,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport George Town,Server9000022,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport George Town,Server9000023,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport George Town,Server9000024,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Nassau,Server9000025,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Nassau,Server9000026,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Nassau,Server9000027,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Nassau,Server9000028,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bridgetown,Server9000029,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Bridgetown,Server9000030,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bridgetown,Server9000031,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bridgetown,Server9000032,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Brussels,Server9000033,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Brussels,Server9000034,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Brussels,Server9000035,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Brussels,Server9000036,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Belize City,Server9000037,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Belize City,Server9000038,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Belize City,Server9000039,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Belize City,Server9000040,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Hamilton,Server9000041,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Hamilton,Server9000042,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Hamilton,Server9000043,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Hamilton,Server9000044,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kralendijk,Server9000045,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Kralendijk,Server9000046,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kralendijk,Server9000047,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kralendijk,Server9000048,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Rio de Janeiro,Server9000049,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Rio de Janeiro,Server9000050,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Rio de Janeiro,Server9000051,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Rio de Janeiro,Server9000052,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport São Paulo,Server9000053,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport São Paulo,Server9000054,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport São Paulo,Server9000055,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport São Paulo,Server9000056,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Calgary,Server9000057,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Calgary,Server9000058,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Calgary,Server9000059,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Calgary,Server9000060,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Montréal,Server9000061,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Montréal,Server9000062,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Montréal,Server9000063,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Montréal,Server9000064,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Toronto,Server9000065,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Toronto,Server9000066,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Toronto,Server9000067,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Toronto,Server9000068,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Vancouver,Server9000069,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Vancouver,Server9000070,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Vancouver,Server9000071,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Vancouver,Server9000072,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Winnipeg,Server9000073,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Winnipeg,Server9000074,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Winnipeg,Server9000075,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Winnipeg,Server9000076,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Grand Cayman,Server9000077,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Grand Cayman,Server9000078,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Grand Cayman,Server9000079,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Grand Cayman,Server9000080,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santiago,Server9000081,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Santiago,Server9000082,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santiago,Server9000083,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santiago,Server9000084,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Shanghai,Server9000085,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Shanghai,Server9000086,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Shanghai,Server9000087,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Shanghai,Server9000088,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bogotá,Server9000089,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Bogotá,Server9000090,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bogotá,Server9000091,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bogotá,Server9000092,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cartagena,Server9000093,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Cartagena,Server9000094,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cartagena,Server9000095,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cartagena,Server9000096,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Liberia,Server9000097,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Liberia,Server9000098,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Liberia,Server9000099,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Liberia,Server90000100,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San José,Server90000101,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport San José,Server90000102,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San José,Server90000103,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San José,Server90000104,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Havana,Server90000105,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Havana,Server90000106,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Havana,Server90000107,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Havana,Server90000108,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Willemstad,Server90000109,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Willemstad,Server90000110,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Willemstad,Server90000111,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Willemstad,Server90000112,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Prague,Server90000113,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Prague,Server90000114,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Prague,Server90000115,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Prague,Server90000116,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Copenhagen,Server90000117,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Copenhagen,Server90000118,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Copenhagen,Server90000119,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Copenhagen,Server90000120,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Puerto Plata,Server90000121,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Puerto Plata,Server90000122,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Puerto Plata,Server90000123,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Puerto Plata,Server90000124,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Punta Cana,Server90000125,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Punta Cana,Server90000126,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Punta Cana,Server90000127,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Punta Cana,Server90000128,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santiago de los Caballeros,Server90000129,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Santiago de los Caballeros,Server90000130,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santiago de los Caballeros,Server90000131,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santiago de los Caballeros,Server90000132,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santo Domingo,Server90000133,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Santo Domingo,Server90000134,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santo Domingo,Server90000135,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santo Domingo,Server90000136,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Quito,Server90000137,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Quito,Server90000138,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Quito,Server90000139,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Quito,Server90000140,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Salvador,Server90000141,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport San Salvador,Server90000142,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Salvador,Server90000143,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Salvador,Server90000144,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Nice,Server90000145,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Nice,Server90000146,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Nice,Server90000147,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Nice,Server90000148,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Paris,Server90000149,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Paris,Server90000150,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Paris,Server90000151,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Paris,Server90000152,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Papeete,Server90000153,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Papeete,Server90000154,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Papeete,Server90000155,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Papeete,Server90000156,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Berlin,Server90000157,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Berlin,Server90000158,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Berlin,Server90000159,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Berlin,Server90000160,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Frankfurt,Server90000161,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Frankfurt,Server90000162,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Frankfurt,Server90000163,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Frankfurt,Server90000164,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Stuttgart,Server90000165,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Stuttgart,Server90000166,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Stuttgart,Server90000167,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Stuttgart,Server90000168,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Accra,Server90000169,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Accra,Server90000170,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Accra,Server90000171,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Accra,Server90000172,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Athens,Server90000173,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Athens,Server90000174,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Athens,Server90000175,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Athens,Server90000176,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Guatemala City,Server90000177,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Guatemala City,Server90000178,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Guatemala City,Server90000179,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Guatemala City,Server90000180,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Roatán,Server90000181,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Roatán,Server90000182,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Roatán,Server90000183,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Roatán,Server90000184,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Pedro Sula,Server90000185,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport San Pedro Sula,Server90000186,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Pedro Sula,Server90000187,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Pedro Sula,Server90000188,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Reykjavík,Server90000189,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Reykjavík,Server90000190,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Reykjavík,Server90000191,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Reykjavík,Server90000192,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Dublin,Server90000193,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Dublin,Server90000194,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Dublin,Server90000195,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Dublin,Server90000196,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Shannon,Server90000197,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Shannon,Server90000198,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Shannon,Server90000199,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Shannon,Server90000200,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tel Aviv,Server90000201,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Tel Aviv,Server90000202,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tel Aviv,Server90000203,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tel Aviv,Server90000204,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Milan,Server90000205,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Milan,Server90000206,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Milan,Server90000207,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Milan,Server90000208,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Naples,Server90000209,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Naples,Server90000210,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Naples,Server90000211,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Naples,Server90000212,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Rome,Server90000213,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Rome,Server90000214,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Rome,Server90000215,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Rome,Server90000216,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Venice,Server90000217,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Venice,Server90000218,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Venice,Server90000219,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Venice,Server90000220,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kingston,Server90000221,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Kingston,Server90000222,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kingston,Server90000223,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kingston,Server90000224,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Montego Bay,Server90000225,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Montego Bay,Server90000226,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Montego Bay,Server90000227,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Montego Bay,Server90000228,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tokyo,Server90000229,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Tokyo,Server90000230,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tokyo,Server90000231,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tokyo,Server90000232,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Amman,Server90000233,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Amman,Server90000234,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Amman,Server90000235,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Amman,Server90000236,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cancún,Server90000237,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Cancún,Server90000238,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cancún,Server90000239,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cancún,Server90000240,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cozumel,Server90000241,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Cozumel,Server90000242,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cozumel,Server90000243,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cozumel,Server90000244,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Guadalajara,Server90000245,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Guadalajara,Server90000246,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Guadalajara,Server90000247,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Guadalajara,Server90000248,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Mazatlán,Server90000249,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Mazatlán,Server90000250,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Mazatlán,Server90000251,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Mazatlán,Server90000252,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Mexico City,Server90000253,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Mexico City,Server90000254,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Mexico City,Server90000255,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Mexico City,Server90000256,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Monterrey,Server90000257,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Monterrey,Server90000258,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Monterrey,Server90000259,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Monterrey,Server90000260,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Puerto Vallarta,Server90000261,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Puerto Vallarta,Server90000262,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Puerto Vallarta,Server90000263,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Puerto Vallarta,Server90000264,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San José del Cabo,Server90000265,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport San José del Cabo,Server90000266,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San José del Cabo,Server90000267,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San José del Cabo,Server90000268,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tulum,Server90000269,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Tulum,Server90000270,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tulum,Server90000271,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tulum,Server90000272,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Amsterdam,Server90000273,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Amsterdam,Server90000274,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Amsterdam,Server90000275,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Amsterdam,Server90000276,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Auckland,Server90000277,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Auckland,Server90000278,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Auckland,Server90000279,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Auckland,Server90000280,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lagos,Server90000281,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Lagos,Server90000282,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lagos,Server90000283,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lagos,Server90000284,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Panama City,Server90000285,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Panama City,Server90000286,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Panama City,Server90000287,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Panama City,Server90000288,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lima,Server90000289,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Lima,Server90000290,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lima,Server90000291,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lima,Server90000292,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lisbon,Server90000293,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Lisbon,Server90000294,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lisbon,Server90000295,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lisbon,Server90000296,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Saint Kitts,Server90000297,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Saint Kitts,Server90000298,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Saint Kitts,Server90000299,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Saint Kitts,Server90000300,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Vieux-Fort,Server90000301,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Vieux-Fort,Server90000302,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Vieux-Fort,Server90000303,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Vieux-Fort,Server90000304,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Philipsburg,Server90000305,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Philipsburg,Server90000306,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Philipsburg,Server90000307,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Philipsburg,Server90000308,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cape Town,Server90000309,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Cape Town,Server90000310,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cape Town,Server90000311,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cape Town,Server90000312,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Johannesburg,Server90000313,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Johannesburg,Server90000314,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Johannesburg,Server90000315,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Johannesburg,Server90000316,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Seoul,Server90000317,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Seoul,Server90000318,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Seoul,Server90000319,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Seoul,Server90000320,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Barcelona,Server90000321,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Barcelona,Server90000322,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Barcelona,Server90000323,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Barcelona,Server90000324,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Madrid,Server90000325,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Madrid,Server90000326,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Madrid,Server90000327,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Madrid,Server90000328,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Stockholm,Server90000329,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Stockholm,Server90000330,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Stockholm,Server90000331,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Stockholm,Server90000332,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Geneva,Server90000333,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Geneva,Server90000334,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Geneva,Server90000335,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Geneva,Server90000336,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Zurich,Server90000337,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Zurich,Server90000338,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Zurich,Server90000339,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Zurich,Server90000340,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Taipei,Server90000341,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Taipei,Server90000342,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Taipei,Server90000343,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Taipei,Server90000344,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Providenciales,Server90000345,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Providenciales,Server90000346,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Providenciales,Server90000347,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Providenciales,Server90000348,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Edinburgh,Server90000349,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Edinburgh,Server90000350,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Edinburgh,Server90000351,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Edinburgh,Server90000352,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport London,Server90000353,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport London,Server90000354,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport London,Server90000355,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport London,Server90000356,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Birmingham,Server90000357,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Birmingham,Server90000358,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Birmingham,Server90000359,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Birmingham,Server90000360,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Huntsville,Server90000361,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Huntsville,Server90000362,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Huntsville,Server90000363,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Huntsville,Server90000364,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Mobile,Server90000365,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Mobile,Server90000366,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Mobile,Server90000367,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Mobile,Server90000368,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Anchorage,Server90000369,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Anchorage,Server90000370,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Anchorage,Server90000371,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Anchorage,Server90000372,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fairbanks,Server90000373,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Fairbanks,Server90000374,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fairbanks,Server90000375,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fairbanks,Server90000376,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Juneau,Server90000377,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Juneau,Server90000378,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Juneau,Server90000379,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Juneau,Server90000380,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Phoenix,Server90000381,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Phoenix,Server90000382,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Phoenix,Server90000383,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Phoenix,Server90000384,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tucson,Server90000385,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Tucson,Server90000386,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tucson,Server90000387,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tucson,Server90000388,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fayetteville,Server90000389,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Fayetteville,Server90000390,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fayetteville,Server90000391,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fayetteville,Server90000392,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Little Rock,Server90000393,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Little Rock,Server90000394,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Little Rock,Server90000395,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Little Rock,Server90000396,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Burbank,Server90000397,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Burbank,Server90000398,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Burbank,Server90000399,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Burbank,Server90000400,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fresno,Server90000401,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Fresno,Server90000402,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fresno,Server90000403,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fresno,Server90000404,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Long Beach,Server90000405,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Long Beach,Server90000406,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Long Beach,Server90000407,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Long Beach,Server90000408,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Los Angeles,Server90000409,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Los Angeles,Server90000410,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Los Angeles,Server90000411,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Los Angeles,Server90000412,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Oakland,Server90000413,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Oakland,Server90000414,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Oakland,Server90000415,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Oakland,Server90000416,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Ontario,Server90000417,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Ontario,Server90000418,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Ontario,Server90000419,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Ontario,Server90000420,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Palm Springs,Server90000421,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Palm Springs,Server90000422,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Palm Springs,Server90000423,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Palm Springs,Server90000424,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Sacramento,Server90000425,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Sacramento,Server90000426,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Sacramento,Server90000427,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Sacramento,Server90000428,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Diego,Server90000429,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport San Diego,Server90000430,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Diego,Server90000431,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Diego,Server90000432,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Francisco,Server90000433,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport San Francisco,Server90000434,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Francisco,Server90000435,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Francisco,Server90000436,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San JoseUSA,Server90000437,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport San JoseUSA,Server90000438,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San JoseUSA,Server90000439,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San JoseUSA,Server90000440,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santa Ana,Server90000441,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Santa Ana,Server90000442,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santa Ana,Server90000443,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santa Ana,Server90000444,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santa Barbara,Server90000445,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Santa Barbara,Server90000446,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santa Barbara,Server90000447,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Santa Barbara,Server90000448,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Colorado Springs,Server90000449,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Colorado Springs,Server90000450,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Colorado Springs,Server90000451,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Colorado Springs,Server90000452,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Denver,Server90000453,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Denver,Server90000454,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Denver,Server90000455,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Denver,Server90000456,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Hayden,Server90000457,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Hayden,Server90000458,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Hayden,Server90000459,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Hayden,Server90000460,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Montrose,Server90000461,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Montrose,Server90000462,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Montrose,Server90000463,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Montrose,Server90000464,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Vail,Server90000465,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Vail,Server90000466,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Vail,Server90000467,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Vail,Server90000468,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Hartford,Server90000469,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Hartford,Server90000470,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Hartford,Server90000471,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Hartford,Server90000472,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Daytona Beach,Server90000473,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Daytona Beach,Server90000474,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Daytona Beach,Server90000475,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Daytona Beach,Server90000476,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fort Lauderdale,Server90000477,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Fort Lauderdale,Server90000478,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fort Lauderdale,Server90000479,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fort Lauderdale,Server90000480,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fort Myers,Server90000481,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Fort Myers,Server90000482,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fort Myers,Server90000483,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fort Myers,Server90000484,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fort Walton Beach,Server90000485,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Fort Walton Beach,Server90000486,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fort Walton Beach,Server90000487,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fort Walton Beach,Server90000488,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Gainesville,Server90000489,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Gainesville,Server90000490,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Gainesville,Server90000491,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Gainesville,Server90000492,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Jacksonville,Server90000493,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Jacksonville,Server90000494,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Jacksonville,Server90000495,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Jacksonville,Server90000496,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Key West,Server90000497,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Key West,Server90000498,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Key West,Server90000499,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Key West,Server90000500,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Melbourne,Server90000501,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Melbourne,Server90000502,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Melbourne,Server90000503,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Melbourne,Server90000504,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Miami,Server90000505,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Miami,Server90000506,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Miami,Server90000507,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Miami,Server90000508,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Orlando,Server90000509,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Orlando,Server90000510,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Orlando,Server90000511,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Orlando,Server90000512,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Panama City,Server90000513,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Panama City,Server90000514,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Panama City,Server90000515,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Panama City,Server90000516,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Pensacola,Server90000517,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Pensacola,Server90000518,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Pensacola,Server90000519,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Pensacola,Server90000520,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Sarasota,Server90000521,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Sarasota,Server90000522,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Sarasota,Server90000523,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Sarasota,Server90000524,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tallahassee,Server90000525,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Tallahassee,Server90000526,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tallahassee,Server90000527,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tallahassee,Server90000528,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tampa,Server90000529,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Tampa,Server90000530,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tampa,Server90000531,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tampa,Server90000532,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport West Palm Beach,Server90000533,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport West Palm Beach,Server90000534,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport West Palm Beach,Server90000535,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport West Palm Beach,Server90000536,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Atlanta,Server90000537,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Atlanta,Server90000538,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Atlanta,Server90000539,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Atlanta,Server90000540,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Augusta,Server90000541,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Augusta,Server90000542,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Augusta,Server90000543,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Augusta,Server90000544,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Columbus,Server90000545,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Columbus,Server90000546,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Columbus,Server90000547,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Columbus,Server90000548,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Savannah,Server90000549,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Savannah,Server90000550,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Savannah,Server90000551,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Savannah,Server90000552,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Honolulu,Server90000553,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Honolulu,Server90000554,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Honolulu,Server90000555,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Honolulu,Server90000556,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kahului,Server90000557,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Kahului,Server90000558,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kahului,Server90000559,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kahului,Server90000560,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kona,Server90000561,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Kona,Server90000562,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kona,Server90000563,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kona,Server90000564,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lihue,Server90000565,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Lihue,Server90000566,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lihue,Server90000567,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lihue,Server90000568,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Boise,Server90000569,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Boise,Server90000570,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Boise,Server90000571,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Boise,Server90000572,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Idaho Falls,Server90000573,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Idaho Falls,Server90000574,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Idaho Falls,Server90000575,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Idaho Falls,Server90000576,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bloomington/Normal,Server90000577,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Bloomington/Normal,Server90000578,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bloomington/Normal,Server90000579,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bloomington/Normal,Server90000580,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Chicago,Server90000581,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Chicago,Server90000582,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Chicago,Server90000583,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Chicago,Server90000584,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Moline,Server90000585,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Moline,Server90000586,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Moline,Server90000587,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Moline,Server90000588,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Evansville,Server90000589,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Evansville,Server90000590,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Evansville,Server90000591,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Evansville,Server90000592,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fort Wayne,Server90000593,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Fort Wayne,Server90000594,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fort Wayne,Server90000595,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fort Wayne,Server90000596,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Indianapolis,Server90000597,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Indianapolis,Server90000598,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Indianapolis,Server90000599,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Indianapolis,Server90000600,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport South Bend,Server90000601,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport South Bend,Server90000602,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport South Bend,Server90000603,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport South Bend,Server90000604,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cedar Rapids,Server90000605,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Cedar Rapids,Server90000606,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cedar Rapids,Server90000607,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cedar Rapids,Server90000608,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Des Moines,Server90000609,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Des Moines,Server90000610,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Des Moines,Server90000611,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Des Moines,Server90000612,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Wichita,Server90000613,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Wichita,Server90000614,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Wichita,Server90000615,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Wichita,Server90000616,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lexington,Server90000617,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Lexington,Server90000618,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lexington,Server90000619,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Lexington,Server90000620,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Louisville,Server90000621,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Louisville,Server90000622,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Louisville,Server90000623,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Louisville,Server90000624,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Baton Rouge,Server90000625,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Baton Rouge,Server90000626,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Baton Rouge,Server90000627,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Baton Rouge,Server90000628,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport New Orleans,Server90000629,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport New Orleans,Server90000630,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport New Orleans,Server90000631,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport New Orleans,Server90000632,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Shreveport,Server90000633,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Shreveport,Server90000634,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Shreveport,Server90000635,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Shreveport,Server90000636,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Monroe,Server90000637,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Monroe,Server90000638,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Monroe,Server90000639,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Monroe,Server90000640,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bangor,Server90000641,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Bangor,Server90000642,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bangor,Server90000643,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bangor,Server90000644,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Portland,Server90000645,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Portland,Server90000646,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Portland,Server90000647,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Portland,Server90000648,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Baltimore,Server90000649,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Baltimore,Server90000650,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Baltimore,Server90000651,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Baltimore,Server90000652,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Boston,Server90000653,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Boston,Server90000654,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Boston,Server90000655,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Boston,Server90000656,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Worcester,Server90000657,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Worcester,Server90000658,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Worcester,Server90000659,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Worcester,Server90000660,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Detroit,Server90000661,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Detroit,Server90000662,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Detroit,Server90000663,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Detroit,Server90000664,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Grand Rapids,Server90000665,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Grand Rapids,Server90000666,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Grand Rapids,Server90000667,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Grand Rapids,Server90000668,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Traverse City,Server90000669,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Traverse City,Server90000670,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Traverse City,Server90000671,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Traverse City,Server90000672,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Duluth,Server90000673,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Duluth,Server90000674,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Duluth,Server90000675,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Duluth,Server90000676,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Minneapolis,Server90000677,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Minneapolis,Server90000678,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Minneapolis,Server90000679,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Minneapolis,Server90000680,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Columbus,Server90000681,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Columbus,Server90000682,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Columbus,Server90000683,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Columbus,Server90000684,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Gulfport,Server90000685,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Gulfport,Server90000686,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Gulfport,Server90000687,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Gulfport,Server90000688,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Jackson,Server90000689,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Jackson,Server90000690,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Jackson,Server90000691,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Jackson,Server90000692,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kansas City,Server90000693,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Kansas City,Server90000694,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kansas City,Server90000695,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kansas City,Server90000696,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Springfield,Server90000697,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Springfield,Server90000698,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Springfield,Server90000699,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Springfield,Server90000700,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport St. Louis,Server90000701,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport St. Louis,Server90000702,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport St. Louis,Server90000703,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport St. Louis,Server90000704,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Billings,Server90000705,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Billings,Server90000706,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Billings,Server90000707,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Billings,Server90000708,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bozeman,Server90000709,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Bozeman,Server90000710,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bozeman,Server90000711,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bozeman,Server90000712,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kalispell,Server90000713,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Kalispell,Server90000714,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kalispell,Server90000715,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Kalispell,Server90000716,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Missoula,Server90000717,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Missoula,Server90000718,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Missoula,Server90000719,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Missoula,Server90000720,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Omaha,Server90000721,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Omaha,Server90000722,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Omaha,Server90000723,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Omaha,Server90000724,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Las Vegas,Server90000725,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Las Vegas,Server90000726,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Las Vegas,Server90000727,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Las Vegas,Server90000728,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Reno,Server90000729,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Reno,Server90000730,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Reno,Server90000731,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Reno,Server90000732,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Newark,Server90000733,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Newark,Server90000734,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Newark,Server90000735,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Newark,Server90000736,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Albuquerque,Server90000737,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Albuquerque,Server90000738,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Albuquerque,Server90000739,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Albuquerque,Server90000740,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Albany,Server90000741,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Albany,Server90000742,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Albany,Server90000743,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Albany,Server90000744,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Buffalo,Server90000745,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Buffalo,Server90000746,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Buffalo,Server90000747,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Buffalo,Server90000748,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport New York City,Server90000749,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport New York City,Server90000750,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport New York City,Server90000751,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport New York City,Server90000752,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Rochester,Server90000753,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Rochester,Server90000754,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Rochester,Server90000755,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Rochester,Server90000756,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Syracuse,Server90000757,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Syracuse,Server90000758,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Syracuse,Server90000759,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Syracuse,Server90000760,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport White Plains,Server90000761,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport White Plains,Server90000762,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport White Plains,Server90000763,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport White Plains,Server90000764,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Asheville,Server90000765,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Asheville,Server90000766,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Asheville,Server90000767,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Asheville,Server90000768,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Charlotte,Server90000769,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Charlotte,Server90000770,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Charlotte,Server90000771,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Charlotte,Server90000772,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fayetteville,Server90000773,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Fayetteville,Server90000774,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fayetteville,Server90000775,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fayetteville,Server90000776,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Greensboro,Server90000777,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Greensboro,Server90000778,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Greensboro,Server90000779,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Greensboro,Server90000780,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Jacksonville,Server90000781,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Jacksonville,Server90000782,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Jacksonville,Server90000783,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Jacksonville,Server90000784,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Raleigh,Server90000785,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Raleigh,Server90000786,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Raleigh,Server90000787,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Raleigh,Server90000788,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Wilmington,Server90000789,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Wilmington,Server90000790,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Wilmington,Server90000791,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Wilmington,Server90000792,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bismarck,Server90000793,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Bismarck,Server90000794,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bismarck,Server90000795,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bismarck,Server90000796,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fargo,Server90000797,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Fargo,Server90000798,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fargo,Server90000799,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Fargo,Server90000800,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Grand Forks,Server90000801,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Grand Forks,Server90000802,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Grand Forks,Server90000803,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Grand Forks,Server90000804,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Minot,Server90000805,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Minot,Server90000806,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Minot,Server90000807,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Minot,Server90000808,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cincinnati/Covington,Server90000809,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Cincinnati/Covington,Server90000810,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cincinnati/Covington,Server90000811,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cincinnati/Covington,Server90000812,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cleveland,Server90000813,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Cleveland,Server90000814,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cleveland,Server90000815,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Cleveland,Server90000816,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Columbus,Server90000817,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Columbus,Server90000818,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Columbus,Server90000819,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Columbus,Server90000820,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Dayton,Server90000821,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Dayton,Server90000822,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Dayton,Server90000823,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Dayton,Server90000824,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Oklahoma City,Server90000825,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Oklahoma City,Server90000826,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Oklahoma City,Server90000827,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Oklahoma City,Server90000828,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tulsa,Server90000829,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Tulsa,Server90000830,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tulsa,Server90000831,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Tulsa,Server90000832,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Portland,Server90000833,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Portland,Server90000834,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Portland,Server90000835,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Portland,Server90000836,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Harrisburg,Server90000837,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Harrisburg,Server90000838,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Harrisburg,Server90000839,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Harrisburg,Server90000840,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Philadelphia,Server90000841,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Philadelphia,Server90000842,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Philadelphia,Server90000843,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Philadelphia,Server90000844,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Pittsburgh,Server90000845,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Pittsburgh,Server90000846,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Pittsburgh,Server90000847,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Pittsburgh,Server90000848,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Juan,Server90000849,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport San Juan,Server90000850,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Juan,Server90000851,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Juan,Server90000852,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Providence,Server90000853,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Providence,Server90000854,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Providence,Server90000855,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Providence,Server90000856,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Charleston,Server90000857,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Charleston,Server90000858,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Charleston,Server90000859,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Charleston,Server90000860,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Columbia,Server90000861,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Columbia,Server90000862,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Columbia,Server90000863,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Columbia,Server90000864,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Greenville,Server90000865,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Greenville,Server90000866,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Greenville,Server90000867,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Greenville,Server90000868,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Myrtle Beach,Server90000869,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Myrtle Beach,Server90000870,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Myrtle Beach,Server90000871,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Myrtle Beach,Server90000872,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Sioux Falls,Server90000873,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Sioux Falls,Server90000874,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Sioux Falls,Server90000875,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Sioux Falls,Server90000876,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bristol,Server90000877,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Bristol,Server90000878,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bristol,Server90000879,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Bristol,Server90000880,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Chattanooga,Server90000881,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Chattanooga,Server90000882,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Chattanooga,Server90000883,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Chattanooga,Server90000884,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Knoxville,Server90000885,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Knoxville,Server90000886,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Knoxville,Server90000887,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Knoxville,Server90000888,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Memphis,Server90000889,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Memphis,Server90000890,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Memphis,Server90000891,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Memphis,Server90000892,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Nashville,Server90000893,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Nashville,Server90000894,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Nashville,Server90000895,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Nashville,Server90000896,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Austin,Server90000897,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Austin,Server90000898,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Austin,Server90000899,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Austin,Server90000900,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Dallas,Server90000901,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Dallas,Server90000902,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Dallas,Server90000903,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Dallas,Server90000904,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport El Paso,Server90000905,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport El Paso,Server90000906,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport El Paso,Server90000907,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport El Paso,Server90000908,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Harlingen,Server90000909,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Harlingen,Server90000910,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Harlingen,Server90000911,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Harlingen,Server90000912,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Houston,Server90000913,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Houston,Server90000914,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Houston,Server90000915,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Houston,Server90000916,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Antonio,Server90000917,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport San Antonio,Server90000918,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Antonio,Server90000919,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport San Antonio,Server90000920,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Saint Croix,Server90000921,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Saint Croix,Server90000922,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Saint Croix,Server90000923,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Saint Croix,Server90000924,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Saint Thomas,Server90000925,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Saint Thomas,Server90000926,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Saint Thomas,Server90000927,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Saint Thomas,Server90000928,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Salt Lake City,Server90000929,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Salt Lake City,Server90000930,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Salt Lake City,Server90000931,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Salt Lake City,Server90000932,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Burlington,Server90000933,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Burlington,Server90000934,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Burlington,Server90000935,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Burlington,Server90000936,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Charlottesville,Server90000937,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Charlottesville,Server90000938,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Charlottesville,Server90000939,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Charlottesville,Server90000940,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Norfolk,Server90000941,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Norfolk,Server90000942,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Norfolk,Server90000943,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Norfolk,Server90000944,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Richmond,Server90000945,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Richmond,Server90000946,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Richmond,Server90000947,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Richmond,Server90000948,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Roanoke,Server90000949,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Roanoke,Server90000950,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Roanoke,Server90000951,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Roanoke,Server90000952,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Seattle,Server90000953,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Seattle,Server90000954,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Seattle,Server90000955,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Seattle,Server90000956,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Spokane,Server90000957,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Seattle,Server90000958,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Seattle,Server90000959,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Seattle,Server90000960,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+"Airport Washington, D.C.",Server90000961,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+"Airport Washington, D.C.",Server90000962,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+"Airport Washington, D.C.",Server90000963,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+"Airport Washington, D.C.",Server90000964,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Charleston,Server90000965,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Charleston,Server90000966,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Charleston,Server90000967,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Charleston,Server90000968,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Appleton,Server90000969,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Appleton,Server90000970,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Appleton,Server90000971,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Appleton,Server90000972,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Green Bay,Server90000973,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Green Bay,Server90000974,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Green Bay,Server90000975,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Green Bay,Server90000976,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Madison,Server90000977,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Madison,Server90000978,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Madison,Server90000979,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Madison,Server90000980,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Milwaukee,Server90000981,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Milwaukee,Server90000982,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Milwaukee,Server90000983,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Milwaukee,Server90000984,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Casper,Server90000985,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Casper,Server90000986,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Casper,Server90000987,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Casper,Server90000988,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Jackson Hole,Server90000989,Production,Airport Manpower Planning,Airport,FALSE,TRUE,FALSE,TRUE
+Airport Jackson Hole,Server90000990,Production,Gate Assignment and Planning,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Jackson Hole,Server90000991,Production,Baggage,Airport,FALSE,FALSE,FALSE,FALSE
+Airport Jackson Hole,Server90000992,Production,Information Display,Airport,FALSE,FALSE,FALSE,FALSE

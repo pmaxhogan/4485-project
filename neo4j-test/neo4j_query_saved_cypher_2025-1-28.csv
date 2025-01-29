@@ -1,0 +1,67 @@
+name,description,query,id,parentId,isFolder
+CSV Cols,,"LOAD CSV WITH HEADERS FROM
+'file:///csvs/Airline%20Data%20Copy.xlsx%20-%20Assets.csv'
+AS line
+RETURN line[""Bold Application""], line.Status, line[""Red Application""], line[""Bold Server""], line[""IT Application""], line[""Location""], line[""Location Type""], line[""Server""]",0,,false
+CSV Import,,"MATCH (n) DETACH DELETE n;
+
+LOAD CSV WITH HEADERS FROM
+'file:///csvs/Airline%20Data%20Copy.xlsx%20-%20Assets.csv'
+AS line
+
+CALL (line) {
+  MERGE (s:Server {name: line[""Server""]})
+  SET s.status = line.Status
+  SET s.Bold = (line[""Bold Server""] = ""TRUE"")
+  
+  MERGE (a:ITApp {name: line[""IT Application""]})
+  SET a.Red = (line[""Red Application""] = ""TRUE"")
+  SET a.Bold = (line[""Red Application""] = ""TRUE"")
+  
+  MERGE (l {name: line.Location})
+  SET l:$(line[""Location Type""])
+  
+  MERGE (s)-[:LOCATED_AT]->(l)
+  MERGE (a)-[:RUNS_ON]->(s)
+
+} IN TRANSACTIONS OF 200 ROWS;
+
+LOAD CSV WITH HEADERS FROM
+'file:///csvs/Airline%20Data%20Copy.xlsx%20-%20IT%20to%20Business.csv'
+AS line
+
+CALL (line) {
+  MERGE (b:BusinessFunction {name: line[""Business Function""]})
+  MERGE (i:ITApp {name: line[""IT Application""]})
+  
+  MERGE (i)-[:ACCOMPLISHES]->(b)
+} IN TRANSACTIONS OF 200 ROWS",1,,false
+Drop All,,MATCH (p) DETACH DELETE p,2,,false
+Schema,,call db.schema.visualization(),3,,false
+Analysis,,,4,,true
+Apps deployed on the most servers,,"MATCH (i:ITApp)--(s:Server)
+RETURN i.name, COUNT(DISTINCT s) as numServers ORDER by numServers DESC",5,4,false
+Business functions requring the most servers,,"// Business functions requiring the most servers
+MATCH (b:BusinessFunction)--()--(s:Server)
+RETURN b.name, COUNT(DISTINCT s) as numServers ORDER by numServers DESC",6,4,false
+Airports with above-average number of servers,,"MATCH(a:Airport)-[]-(s:Server)
+WITH a, COUNT(s) as numServers
+WITH AVG(numServers) as avgNumServers
+
+
+MATCH (a:Airport)-[]-(s:Server)
+WITH a, COUNT(s) as numServers, avgNumServers
+WHERE numServers > avgNumServers
+
+MATCH p=(a:Airport)-[]-(:Server)
+RETURN p, a.name, numServers, avgNumServers ORDER BY numServers DESC
+",7,4,false
+Number of IT Apps used by each airport,,"// Number of IT Apps used by each airport
+MATCH (a:Airport)
+RETURN COUNT {
+  MATCH(a)--(:Server)--(i:ITApp)
+  RETURN DISTINCT i.name ORDER BY i.name
+} as numITApps, collect(a.name)",8,4,false
+IT apps used by the most airports,,"// IT apps used by the most airports
+MATCH (i:ITApp)--()--(a:Airport)
+RETURN i.name, COUNT(DISTINCT a) as numAirports ORDER by numAirports DESC",9,4,false

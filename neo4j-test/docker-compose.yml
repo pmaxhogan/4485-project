@@ -1,0 +1,17 @@
+services:
+  neo4j:
+    image: neo4j:latest
+    volumes:
+#        - ./db/logs:/logs
+        - ./db/data:/data
+        - ./db/plugins:/plugins
+        - ./csvs:/var/lib/neo4j/import/csvs
+    environment:
+#        - NEO4J_AUTH=neo4j/your_password
+        - NEO4J_AUTH=none
+    env_file:
+      - neo4j.env
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    restart: always
