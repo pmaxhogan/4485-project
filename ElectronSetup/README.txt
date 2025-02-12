@@ -15,6 +15,8 @@ Use the batch files in the project directory to set up the Electron Vite project
 
 If you want to run the project again later, use the `StartProject.bat` file.
 
+
+THATS IT!
 ---
 
 ## Explanation of the Batch Files (stupidly useless but what can you do)
