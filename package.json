@@ -1,5 +1,7 @@
 {
   "name": "electron-vite-project",
+  "author": "Group 10",
+  "description": "A disaster recovery mapping application.",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@neo4j-nvl/base": "^0.3.6",
     "exceljs": "^4.4.0",
     "vue": "^3.4.21"
   },
