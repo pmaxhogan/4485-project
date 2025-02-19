@@ -1,6 +1,6 @@
 // need to install the exceljs package, or we can use sheetjs but it has less features
 import ExcelJS from "exceljs";
-//import * as fs from "fs";
+import * as fs from "fs";
 
 async function createExcelFile() {
     const workbook = new ExcelJS.Workbook();
