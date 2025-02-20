@@ -1,7 +1,5 @@
 <script setup lang="ts">
-  defineProps();
-
-  import { NVL } from "@neo4j-nvl/base";
+  import { type Node, NVL } from "@neo4j-nvl/base";
   import { onMounted, onUnmounted, useTemplateRef, shallowRef } from "vue";
   import {
     ZoomInteraction,
@@ -33,10 +31,8 @@
     });
 
     const cInteraction = new ClickInteraction(nvlRef.value);
-    cInteraction.updateCallback("onNodeClick", (node: any) => {
-      console.log(node);
-
-      let isSelected = node.selected ? false : true;
+    cInteraction.updateCallback("onNodeClick", (node: Node) => {
+      let isSelected = !node.selected;
 
       if (nvlRef.value)
         nvlRef.value.updateElementsInGraph(
@@ -44,8 +40,12 @@
           [],
         );
     });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const zoom = new ZoomInteraction(nvlRef.value);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const pan = new PanInteraction(nvlRef.value);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const dragNodeInteraction = new DragNodeInteraction(nvlRef.value);
   };
 
