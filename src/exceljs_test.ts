@@ -1,6 +1,5 @@
 // need to install the exceljs package, or we can use sheetjs but it has less features
 import ExcelJS from "exceljs";
-import * as fs from "fs";
 
 async function createExcelFile() {
   const workbook = new ExcelJS.Workbook();
@@ -39,7 +38,7 @@ async function readExcelFile() {
     console.log("b2: ", cellValue);
   }
 
-  //const newSheet = workbook.addWorksheet("NewSheet"); // add new sheet
+  workbook.addWorksheet("NewSheet"); // add new sheet
   await workbook.xlsx.writeFile("src/assets/test.xlsx");
 }
 
