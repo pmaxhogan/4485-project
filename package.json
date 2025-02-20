@@ -1,5 +1,7 @@
 {
   "name": "electron-vite-project",
+  "author": "Group 10",
+  "description": "A disaster recovery mapping application.",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -13,6 +15,8 @@
     "lint:ci": "eslint"
   },
   "dependencies": {
+    "@neo4j-nvl/base": "^0.3.6",
+    "@neo4j-nvl/interaction-handlers": "^0.3.6",
     "exceljs": "^4.4.0",
     "vue": "^3.4.21"
   },
@@ -29,7 +33,7 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.2.2",
     "typescript-eslint": "^8.24.1",
-    "vite": "^5.1.6",
+    "vite": "^6.1.1",
     "vite-plugin-electron": "^0.28.6",
     "vite-plugin-electron-renderer": "^0.14.5",
     "vue-tsc": "^2.0.26"
