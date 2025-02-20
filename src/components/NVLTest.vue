@@ -41,12 +41,9 @@
         );
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const zoom = new ZoomInteraction(nvlRef.value);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const pan = new PanInteraction(nvlRef.value);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const dragNodeInteraction = new DragNodeInteraction(nvlRef.value);
+    new ZoomInteraction(nvlRef.value);
+    new PanInteraction(nvlRef.value);
+    new DragNodeInteraction(nvlRef.value);
   };
 
   onMounted(() => nvlSetup()); // once vue has finished mounting and page elements are already generated, nvlSetup will run
