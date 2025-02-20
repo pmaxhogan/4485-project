@@ -2,49 +2,44 @@
 defineProps();
 
 import { NVL } from '@neo4j-nvl/base'
-import { onMounted, onUnmounted, ref, useTemplateRef, toRaw } from "vue";
+import { onMounted, onUnmounted, useTemplateRef, shallowRef } from "vue";
 import { ZoomInteraction, PanInteraction, ClickInteraction, DragNodeInteraction } from '@neo4j-nvl/interaction-handlers'
 
 const container = useTemplateRef("nvl-stuff");
-// const nvl = ref<NVL>();  // for passing nvl as a prop with vue
-                            // if you do this, call toRaw when you pass it through
-                            // nvl interaction handlers to stop it from breaking.
-                            // basically find and replace nvl -> toRaw(nvl.value)
-                            // from after line 25-26 onwards
-let nvl: NVL;
+
+// needs to be a shallow ref because vue's ref() returns a Proxy to track reactive changes
+// NVL's methods (like new ZoomInteraction()) require that the original NVL instance be passed, not a Proxy
+// see also: https://vuejs.org/api/reactivity-advanced.html#shallowref
+// note that this will not track deep reactivity changes, only shallow ones
+const nvlRef = shallowRef<NVL>();
 
 const nvlSetup = () => { // vue method for a basic nvl test
-    console.log("test");
-    //console.log(container);
     const nodes = [{ id: '0', caption: 'graphs' }, { id: '1', caption: 'everywhere' }]
     const relationships = [{ from: '0', to: '1', id: '0-1', caption: 'are' }]
 
 
     if(!container.value) return;
-    // uncomment nvl.value if you use make nvl a ref
-    nvl = new NVL(container.value, nodes, relationships, { initialZoom: 2.6, layout: "forceDirected" })
-    // nvl.value = new NVL(container.value, nodes, relationships, { initialZoom: 2.6, layout: "forceDirected" });
+    nvlRef.value = new NVL(container.value, nodes, relationships, { initialZoom: 2.6, layout: "forceDirected" })
 
-    // console.log(nvl.value);
-    // console.log(nvl);
-    const cInteraction = new ClickInteraction(nvl);
+    const cInteraction = new ClickInteraction(nvlRef.value);
     cInteraction.updateCallback('onNodeClick', (node: any) => 
     {
         console.log(node);
 
         let isSelected = node.selected? false: true;
-        nvl.updateElementsInGraph([{ id: node.id, selected: isSelected }], []);
+
+        if(nvlRef.value)
+        nvlRef.value.updateElementsInGraph([{ id: node.id, selected: isSelected }], []);
     })
-    const zoom = new ZoomInteraction(nvl);
-    const pan = new PanInteraction(nvl);
-    const dragNodeInteraction = new DragNodeInteraction(nvl);
+    const zoom = new ZoomInteraction(nvlRef.value);
+    const pan = new PanInteraction(nvlRef.value);
+    const dragNodeInteraction = new DragNodeInteraction(nvlRef.value);
 }
 
 onMounted(() => nvlSetup()); // once vue has finished mounting and page elements are already generated, nvlSetup will run
 
 onUnmounted(() => {
-  //nvl?.value?.destroy();
-  nvl.destroy();
+  nvlRef?.value?.destroy();
 });
 
 </script>
