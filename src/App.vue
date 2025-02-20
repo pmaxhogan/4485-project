@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import NVLTest from "./components/NVLTest.vue";
+  import NVLTest from "./components/NVLTest.vue";
 </script>
 
 <template>

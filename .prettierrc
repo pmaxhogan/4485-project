@@ -1,0 +1,5 @@
+{
+  "vueIndentScriptAndStyle": true,
+  "trailingComma": "all",
+  "experimentalTernaries": true
+}
