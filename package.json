@@ -15,7 +15,6 @@
     "lint:ci": "eslint"
   },
   "dependencies": {
-    "neo4j-driver": "^5.28.1",
     "@neo4j-nvl/base": "^0.3.6",
     "@neo4j-nvl/interaction-handlers": "^0.3.6",
     "exceljs": "^4.4.0",

@@ -13,7 +13,6 @@ dist-electron
 dist-ssr
 release
 /neo4j/
-/src/service/
 *.local
 
 # Editor directories and files
