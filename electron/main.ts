@@ -1,10 +1,10 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
-import { fileURLToPath } from 'node:url'
-import { spawn } from 'child_process' //needed for neo4j stuff -ZT
-import { once } from 'events'; //needed for avoiding direct promises - ZT
-import fs from 'fs'; //needed for neo4j stuff - ZT
-import path from 'node:path'
-import { runTestQuery, connectToNeo4j } from '../src/services/neo4j.ts';//you guessed it pt 2. electric boogaloo - ZT
+import { app, BrowserWindow, ipcMain } from "electron";
+import { fileURLToPath } from "node:url";
+import { spawn, ChildProcess } from "child_process"; //needed for neo4j stuff -ZT
+import { once } from "events"; //needed for avoiding direct promises - ZT
+import fs from "fs"; //needed for neo4j stuff - ZT
+import path from "node:path";
+import { runTestQuery, connectToNeo4j } from "../src/services/neo4j.ts"; //you guessed it pt 2. electric boogaloo - ZT
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -25,23 +25,28 @@ export const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
 
 //neo4j constants
-const neo4jFolderPath = path.join(__dirname, '..', 'neo4j')
-const script1 = path.join(__dirname, '..', 'download-neo4j.ps1');
-const script2 = path.join(__dirname, '..', 'config-neo4j.ps1');
+const neo4jFolderPath = path.join(__dirname, "..", "neo4j");
+const script1 = path.join(__dirname, "..", "download-neo4j.ps1");
+const script2 = path.join(__dirname, "..", "config-neo4j.ps1");
 
 process.env.VITE_PUBLIC =
   VITE_DEV_SERVER_URL ?
     path.join(process.env.APP_ROOT, "public")
-    : RENDERER_DIST;
+  : RENDERER_DIST;
 
-let win: BrowserWindow | null
-let neo4jProcess: any; //tracks the process of our LITTLE CHILD - ZT
+let win: BrowserWindow | null;
+let neo4jProcess: ChildProcess | null; //tracks the process of our LITTLE CHILD - ZT
 
 //runs the scripts if needed - ZT
 async function runPowerShellScript(scriptPath: string) {
   console.log(`Running PowerShell script: ${scriptPath}`);
 
-  const process = spawn("powershell", ["-ExecutionPolicy", "Bypass", "-File", scriptPath]);
+  const process = spawn("powershell", [
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    scriptPath,
+  ]);
 
   process.stdout.on("data", (data) => {
     console.log(`PowerShell output: ${data.toString()}`);
@@ -59,7 +64,6 @@ async function runPowerShellScript(scriptPath: string) {
     throw new Error(`Process exited with code ${code}`);
   }
 }
-
 
 //sees if the scripts need to be ran -ZT
 async function checkAndSetupNeo4j() {
@@ -95,9 +99,9 @@ async function launchNeo4j() {
   });
 
   //output feed
-  neo4jProcess.stdout.on('data', (data) => {
+  neo4jProcess.stdout.on("data", (data) => {
     console.log(`Neo4j Output: ${data.toString()}`);
-    win?.webContents.send('neo4j-log', data.toString());
+    win?.webContents.send("neo4j-log", data.toString());
   });
 
   //handling error data
@@ -113,34 +117,34 @@ async function launchNeo4j() {
   });
 
   //when the process exits
-  neo4jProcess.on('close', (code) => {
+  neo4jProcess.on("close", (code) => {
     console.log(`Neo4j process exited with code: ${code}`);
     neo4jProcess = null;
-    win?.webContents.send('neo4j-exit', code);
+    win?.webContents.send("neo4j-exit", code);
   });
 }
 
 //connection handler - ZT
-ipcMain.handle('check-neo4j-connection', async () => {
+ipcMain.handle("check-neo4j-connection", async () => {
   try {
-    let finalStatus = 'Checking connection...';
+    let finalStatus = "Checking connection...";
 
     const updateStatus = (status: string) => {
       finalStatus = status;
-      win?.webContents.send('connection-status-update', finalStatus);
+      win?.webContents.send("connection-status-update", finalStatus);
     };
 
     await connectToNeo4j(updateStatus);
     return finalStatus;
   } catch (error) {
-    console.error('Error checking Neo4j connection:', error);
-    return 'Failed to connect to Neo4j.';
+    console.error("Error checking Neo4j connection:", error);
+    return "Failed to connect to Neo4j.";
   }
 });
 
 //test query - ZT
-ipcMain.handle('run-test-query', async () => {
-  console.log('Received IPC call: run-test-query');
+ipcMain.handle("run-test-query", async () => {
+  console.log("Received IPC call: run-test-query");
   return runTestQuery();
 });
 
@@ -150,7 +154,7 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
     },
-  })
+  });
   //start database - ZT
   launchNeo4j();
 
@@ -172,7 +176,7 @@ function createWindow() {
 
 app.whenReady().then(async () => {
   await checkAndSetupNeo4j();
-  console.log('Proceeding with application startup...');
+  console.log("Proceeding with application startup...");
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
