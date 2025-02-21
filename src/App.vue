@@ -1,5 +1,6 @@
 <script setup lang = "ts" >
 import { ref, onMounted, onUnmounted } from 'vue';
+import NVLTest from "./components/NVLTest.vue";
 
 const connectionStatus = ref('Checking connection...');
 
@@ -45,12 +46,19 @@ onUnmounted(() => {
 
 });
 
+
 </script>
 
 <template>
+ <!-- If you want to test database
   <div>
     <h1>Neo4j Connection Status</h1>
     <p>{{ connectionStatus }}</p>
     <input v-model="connectionStatus" type="text" placeholder="Connection Status" />
   </div>
+  -->
+
+<!-- If you want NVLTest
+<NVLTest></NVLTest>
+-->
 </template>
