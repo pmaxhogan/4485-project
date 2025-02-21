@@ -58,9 +58,17 @@ export const connectToNeo4j = async (
       return; // Exit the function on success
     } catch (error) {
       console.error(`Error connecting to Neo4j (Attempt ${attempt}):`, error);
-      updateStatus(
-        `Error connecting to Neo4j (Attempt ${attempt}): ${error.message}`,
-      );
+
+      if (error instanceof Error) {
+        updateStatus(
+          `Error connecting to Neo4j (Attempt ${attempt}): ${error.message}`,
+        );
+      } else {
+        updateStatus(
+          `Error connecting to Neo4j (Attempt ${attempt}): Unknown error occurred.`,
+        );
+      }
+
       session.close();
 
       if (attempt === maxRetries) {

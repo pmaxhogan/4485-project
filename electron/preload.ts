@@ -1,4 +1,4 @@
-import { ipcRenderer, contextBridge } from "electron";
+import { ipcRenderer, contextBridge, IpcRendererEvent } from "electron";
 import { Record } from "neo4j-driver";
 
 // --------- Expose some API to the Renderer process ---------
