@@ -8,12 +8,7 @@
   const checkConnection = async () => {
     try {
       const status = await window.electronAPI.invoke("check-neo4j-connection");
-      if (typeof status === "string") {
-        connectionStatus.value = status;
-      } else {
-        connectionStatus.value = "Unknown status"; // Fallback value
-      }
-
+      connectionStatus.value = status as string;
       console.log("Connection status:", status);
     } catch (error: unknown) {
       connectionStatus.value = "Failed to connect to Neo4j.";
