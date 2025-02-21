@@ -2,11 +2,9 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 
 const connectionStatus = ref('Checking connection...');
-//let connectionInterval: ReturnType<typeof setInterval> | null = null; debug purposes - zt
 
-//function to check Neo4j connection - ZT
+//checks Neo4j connection - ZT
 const checkConnection = async () => {
-
   try {
     const status = await window.electronAPI.invoke('check-neo4j-connection');
     connectionStatus.value = status;
@@ -17,14 +15,15 @@ const checkConnection = async () => {
   }
 };
 
+
 //handling - ZT
-function handleNeo4jLog(log) {
+function handleNeo4jLog(log: string) {
   console.log(`Neo4j Log: ${log}`);
 }
-function handleNeo4jError(error) {
+function handleNeo4jError(error: string) {
   console.error(`Neo4j Error: ${error}`);
 }
-function handleNeo4jExit(code) {
+function handleNeo4jExit(code: number) {
   console.log(`Neo4j exited with code: ${code}`);
 }
 
@@ -34,18 +33,8 @@ onMounted(() => {
   window.electronAPI.onNeo4jLog(handleNeo4jLog);
   window.electronAPI.onNeo4jError(handleNeo4jError);
   window.electronAPI.onNeo4jExit(handleNeo4jExit);
-
-  //clear the polling interval, fixes sync issues since we aren't checking 24/7
-  setTimeout(() => {
-
-    checkConnection();
-
-    window.electronAPI.runTestQuery();
-
-  }, 10000);
-
-  //sets up a timer to check the connection every 5 seconds
-  //connectionInterval = setInterval(checkConnection, 5000); debug purposes
+  checkConnection();
+  window.electronAPI.runTestQuery();
 });
 
 //cleanup listeners when the component unmounts - ZT

@@ -1,13 +1,11 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
-import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
-import { exec, spawn } from 'child_process' //needed for neo4j stuff -ZT
+import { spawn } from 'child_process' //needed for neo4j stuff -ZT
+import { once } from 'events'; //needed for avoiding direct promises - ZT
 import fs from 'fs'; //needed for neo4j stuff - ZT
 import path from 'node:path'
-import neo4j from 'neo4j-driver'; //you guessed it - ZT
-import { runTestQuery } from '../src/services/neo4j.ts';//you guessed it pt 2. electric boogaloo - ZT
+import { runTestQuery, connectToNeo4j } from '../src/services/neo4j.ts';//you guessed it pt 2. electric boogaloo - ZT
 
-const require = createRequire(import.meta.url)//whatthefuckisthisfor
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // The built directory structure
@@ -37,138 +35,111 @@ let win: BrowserWindow | null
 let neo4jProcess: any; //tracks the process of our LITTLE CHILD - ZT
 
 //runs the scripts if needed - ZT
-function runPowerShellScript(scriptPath: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    console.log(`Running PowerShell script: ${scriptPath}`);
+async function runPowerShellScript(scriptPath: string) {
+  console.log(`Running PowerShell script: ${scriptPath}`);
 
-    const process = exec(`powershell -ExecutionPolicy Bypass -File "${scriptPath}"`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing ${scriptPath}:`, error);
-        reject(error);
-        return;
-      }
-      if (stderr) {
-        console.warn(`PowerShell script warning: ${stderr}`);
-      }
-      console.log(`PowerShell script output: ${stdout}`);
-      resolve();
-    });
+  const process = spawn("powershell", ["-ExecutionPolicy", "Bypass", "-File", scriptPath]);
 
-    process.on('exit', (code) => {
-      console.log(`PowerShell script ${scriptPath} exited with code ${code}`);
-    });
+  process.stdout.on("data", (data) => {
+    console.log(`PowerShell output: ${data.toString()}`);
   });
+
+  process.stderr.on("data", (data) => {
+    console.error(`PowerShell error: ${data.toString()}`);
+  });
+
+  const [code] = await once(process, "close");
+
+  console.log(`PowerShell script exited with code ${code}`);
+
+  if (code !== 0) {
+    throw new Error(`Process exited with code ${code}`);
+  }
 }
 
+
 //sees if the scripts need to be ran -ZT
-async function checkAndSetupNeo4j(): Promise<void> {
+async function checkAndSetupNeo4j() {
   if (!fs.existsSync(neo4jFolderPath)) {
-    console.log('Neo4j folder not found. Running setup scripts...');
+    console.log("Neo4j folder not found. Running setup scripts...");
 
     try {
       await runPowerShellScript(script1);
       await runPowerShellScript(script2);
-      console.log('Neo4j setup completed successfully.');
+      console.log("Neo4j setup completed successfully.");
     } catch (error) {
-      console.error('Error setting up Neo4j:', error);
+      console.error("Error setting up Neo4j:", error);
     }
   } else {
-    console.log('Neo4j folder detected. Skipping setup.');
+    console.log("Neo4j folder detected. Skipping setup.");
   }
 }
 
 //launches database and handles errors - ZT
-function launchNeo4j(): Promise<string> {
-  return new Promise((resolve, reject) => {
-    console.log('Starting Neo4j in hidden mode...');
+async function launchNeo4j() {
+  console.log("Starting Neo4j in hidden mode...");
 
-    //process check
-    if (neo4jProcess) {
-      console.log('Neo4j is already running.');
-      return resolve('Neo4j is already running.');
-    }
+  if (neo4jProcess) {
+    console.log("Neo4j is already running.");
+    return "Neo4j is already running.";
+  }
 
-    const psCommand = `Start-Process -FilePath "./neo4j/bin/neo4j.bat" -ArgumentList "console" -WindowStyle Hidden`;
+  const psCommand = `Start-Process -FilePath "./neo4j/bin/neo4j.bat" -ArgumentList "console" -WindowStyle Hidden`;
 
-    //starting seperate terminal
-    neo4jProcess = spawn('powershell', ['-Command', psCommand], {
-      stdio: ['ignore', 'pipe', 'pipe'], //capturing data
-      shell: true,
-    });
+  neo4jProcess = spawn("powershell", ["-Command", psCommand], {
+    stdio: ["ignore", "pipe", "pipe"], 
+    shell: true,
+  });
 
-    //capturing std output
-    neo4jProcess.stdout.on('data', (data) => {
-      console.log(`Neo4j Output: ${data}`);
-      win?.webContents.send('neo4j-log', data.toString()); //logs to renderer
-    });
+  //output feed
+  neo4jProcess.stdout.on('data', (data) => {
+    console.log(`Neo4j Output: ${data.toString()}`);
+    win?.webContents.send('neo4j-log', data.toString());
+  });
 
-    //capturing errors
-    neo4jProcess.stderr.on('data', (data) => {
-      console.error(`Neo4j Error: ${data}`);
-      win?.webContents.send('neo4j-error', data.toString()); //error to renderer
-    });
+  //handling error data
+  neo4jProcess.stderr.on("data", (data) => {
+    console.error(`Neo4j Error: ${data}`);
+    win?.webContents.send("neo4j-error", data.toString()); // Sends error to renderer
+  });
 
-    //handles proc errors
-    neo4jProcess.on('error', (error) => {
-      console.error(`Failed to start Neo4j: ${error.message}`);
-      reject(error.message);
-    });
+  //handling process errors
+  neo4jProcess.on("error", (error) => {
+    console.error(`Failed to start Neo4j: ${error.message}`);
+    throw new Error(error.message); // Throwing an error to be caught
+  });
 
-    //handles exit event
-    neo4jProcess.on('close', (code) => {
-      console.log(`Neo4j process exited with code: ${code}`);
-      neo4jProcess = null;
-      win?.webContents.send('neo4j-exit', code);
-    });
-
-    resolve('Neo4j started successfully.');
+  //when the process exits
+  neo4jProcess.on('close', (code) => {
+    console.log(`Neo4j process exited with code: ${code}`);
+    neo4jProcess = null;
+    win?.webContents.send('neo4j-exit', code);
   });
 }
 
-//this is just magic as far as I'm concerned - ZT
-function connectToNeo4j(): Promise<string> {
-  return new Promise((resolve, reject) => {
-    try {
-      // Replace with your Neo4j connection details
-      const uri = 'bolt://localhost:7687';
-      const username = 'neo4j';
-      const password = 'changethis'; // Consider making this more secure
+//connection handler - ZT
+ipcMain.handle('check-neo4j-connection', async () => {
+  try {
+    let finalStatus = 'Checking connection...';
 
-      //declare driver and session with const or let
-      const driver = neo4j.driver(uri, neo4j.auth.basic(username, password));
-      const session = driver.session();
+    const updateStatus = (status: string) => {
+      finalStatus = status;
+      win?.webContents.send('connection-status-update', finalStatus);
+    };
 
-      //test the connection
-      session.run('RETURN 1')
-        .then(result => {
-          console.log('Neo4j connection successful.');
-          resolve('Neo4j connected successfully.');
-        })
-        .catch(error => {
-          console.error('Error connecting to Neo4j:', error);
-          reject('Error connecting to Neo4j.');
-        })
-        .finally(() => {
-          session.close();
-        });
-    } catch (error: any) {
-      reject(`Error connecting to Neo4j: ${error.message}`);
-    }
-  });
-}
-
-//handles IPC call from renderer to launch Neo4j - ZT
-ipcMain.handle('check-neo4j-connection', async (): Promise<string> => {
-  console.log('Checking Neo4j connection...');
-  return connectToNeo4j();
+    await connectToNeo4j(updateStatus);
+    return finalStatus;
+  } catch (error) {
+    console.error('Error checking Neo4j connection:', error);
+    return 'Failed to connect to Neo4j.';
+  }
 });
 
 //test query - ZT
 ipcMain.handle('run-test-query', async () => {
   console.log('Received IPC call: run-test-query');
-  return runTestQuery();
+  return  runTestQuery();
 });
-
 
 function createWindow() {
   win = new BrowserWindow({

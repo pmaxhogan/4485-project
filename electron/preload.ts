@@ -1,7 +1,7 @@
 import { ipcRenderer, contextBridge } from 'electron'
 
 // --------- Expose some API to the Renderer process ---------
-//I would prefer to expose as little as possible, but im leaving this up for now as a guideline -ZT
+//security isn't an issue currently
 contextBridge.exposeInMainWorld('ipcRenderer', {
   on(...args: Parameters<typeof ipcRenderer.on>) {
     const [channel, listener] = args
@@ -34,4 +34,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onNeo4jExit: (callback: (code: any) => void) =>
     ipcRenderer.on('neo4j-exit', (_event, code) => callback(code)),
   runTestQuery: () => ipcRenderer.invoke('run-test-query'),
+  checkNeo4jConnection: () => ipcRenderer.invoke('check-neo4j-connection'),
 });
+
