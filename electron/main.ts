@@ -32,7 +32,7 @@ const script2 = path.join(__dirname, '..', 'config-neo4j.ps1');
 process.env.VITE_PUBLIC =
   VITE_DEV_SERVER_URL ?
     path.join(process.env.APP_ROOT, "public")
-  : RENDERER_DIST;
+    : RENDERER_DIST;
 
 let win: BrowserWindow | null
 let neo4jProcess: any; //tracks the process of our LITTLE CHILD - ZT
@@ -90,7 +90,7 @@ async function launchNeo4j() {
   const psCommand = `Start-Process -FilePath "./neo4j/bin/neo4j.bat" -ArgumentList "console" -WindowStyle Hidden`;
 
   neo4jProcess = spawn("powershell", ["-Command", psCommand], {
-    stdio: ["ignore", "pipe", "pipe"], 
+    stdio: ["ignore", "pipe", "pipe"],
     shell: true,
   });
 
@@ -141,7 +141,7 @@ ipcMain.handle('check-neo4j-connection', async () => {
 //test query - ZT
 ipcMain.handle('run-test-query', async () => {
   console.log('Received IPC call: run-test-query');
-  return  runTestQuery();
+  return runTestQuery();
 });
 
 function createWindow() {
