@@ -99,16 +99,19 @@ async function launchNeo4j() {
   });
 
   //output feed
-  neo4jProcess.stdout.on("data", (data) => {
-    console.log(`Neo4j Output: ${data.toString()}`);
-    win?.webContents.send("neo4j-log", data.toString());
-  });
+  if (neo4jProcess.stdout) {
+    neo4jProcess.stdout.on("data", (data) => {
+      console.log(`Neo4j Output: ${data.toString()}`);
+      win?.webContents.send("neo4j-log", data.toString());
+    });
+  }
 
-  //handling error data
-  neo4jProcess.stderr.on("data", (data) => {
-    console.error(`Neo4j Error: ${data}`);
-    win?.webContents.send("neo4j-error", data.toString()); // Sends error to renderer
-  });
+  if (neo4jProcess.stderr) {
+    neo4jProcess.stderr.on("data", (data) => {
+      console.error(`Neo4j Error: ${data}`);
+      win?.webContents.send("neo4j-error", data.toString());
+    });
+  }
 
   //handling process errors
   neo4jProcess.on("error", (error) => {
