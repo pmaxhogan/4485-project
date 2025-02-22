@@ -44,7 +44,7 @@ export const connectToNeo4j = async (
 ) => {
   const maxRetries = 5;
   const retryDelay = 10000; // 10 seconds
-  wait(5000); //flat wait (helps with flow)
+  await wait(2000); //flat wait (helps with flow)
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     const session = driver.session();
