@@ -199,10 +199,22 @@ app.whenReady().then(async () => {
   openWindow();
 });
 
-app.on("quit", () => {
+app.on("will-quit", async () => {
   if (neo4jProcess && !neo4jProcess.killed) {
-    console.log("killing neo4j...");
-    neo4jProcess.kill("SIGKILL");
-    neo4jProcess.unref();
+    console.log("Closing neo4j");
+    neo4jProcess.stdin?.write("\x03"); // ^C
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    console.log("Closing neo4j");
+    neo4jProcess.stdin?.end();
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    console.log("Signint");
+    neo4jProcess.kill("SIGINT");
+
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+    if (neo4jProcess) {
+      console.log("Killing neo4j...");
+      neo4jProcess.kill("SIGKILL");
+      neo4jProcess.unref();
+    }
   }
 });
