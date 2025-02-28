@@ -49,7 +49,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ),
 
   runTestQuery: (): Promise<Record[]> => ipcRenderer.invoke("run-test-query"),
-
+  
   openFileDialog: () => ipcRenderer.invoke("open-file-dialog"),
 
   importExcel: (filePath: string) =>
