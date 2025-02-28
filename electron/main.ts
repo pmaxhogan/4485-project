@@ -153,7 +153,7 @@ ipcMain.handle("run-test-query", async () => {
 });
 
 //connect excel - ZT
-ipcMain.handle("import-excel", async (event, filePath: string) => {
+ipcMain.handle("import-excel", async (_event, filePath: string) => {
   try {
     if (!filePath) throw new Error("No file path provided.");
 
@@ -167,7 +167,16 @@ ipcMain.handle("import-excel", async (event, filePath: string) => {
     console.error("Import error:", error);
     return {
       success: false,
-      message: error.message || "Failed to import Excel file",
+      catch(error: Error) {
+        console.error("Import error:", error);
+        return {
+          success: false,
+          message:
+            error instanceof Error ?
+              error.message
+            : "Failed to import Excel file",
+        };
+      },
     };
   }
 });

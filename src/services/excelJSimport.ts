@@ -6,22 +6,29 @@ import { session } from "./neo4j.ts";
 //import data from Excel file - built to currently test "AirlineServerAppV7AllProd.xlsx"
 
 //imports the excel file - ZT
-const importExcel = async (filePath) => {
+const importExcel = async (filePath: string) => {
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile(filePath);
   const worksheet = workbook.getWorksheet(1); //first sheet
+  const data: {
+    location: ExcelJS.CellValue;
+    server: ExcelJS.CellValue;
+    application: ExcelJS.CellValue;
+  }[] = [];
 
-  const data = [];
   let totalServers = 0;
   let totalLocations = 0;
 
+  if (!worksheet) {
+    throw new Error("Worksheet is undefined.");
+  }
   worksheet.eachRow((row, rowNumber) => {
     if (rowNumber === 1) return; //skips header
 
     //check if it's the last row since tom puts stuff there
     if (rowNumber === worksheet.rowCount) {
-      totalServers = row.getCell(2).value; //assuming total servers in 2nd column
-      totalLocations = row.getCell(1).value; //assuming total locations in 1st column
+      totalServers = Number(row.getCell(2).value) || 0; //assuming total servers in second column
+      totalLocations = Number(row.getCell(1).value) || 0; //assuming total locations in first
     } else {
       //otherwise in a regular data row
       data.push({
@@ -45,7 +52,13 @@ const importExcel = async (filePath) => {
 };
 
 //Function to insert parsed data into Neo4j
-const insertIntoNeo4j = async (data) => {
+const insertIntoNeo4j = async (
+  data: {
+    location: ExcelJS.CellValue;
+    server: ExcelJS.CellValue;
+    application: ExcelJS.CellValue;
+  }[],
+) => {
   for (const row of data) {
     const query = `
         MERGE (l:Location {name: $location})
