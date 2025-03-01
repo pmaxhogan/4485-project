@@ -7,15 +7,10 @@ const driver = neo4j.driver(
   neo4j.auth.basic("neo4j", password),
 );
 
-//the golden promise - zt
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const session = driver.session();
 
-const closeConnection = () => {
-  session.close(); // Add parentheses to call the function
-  driver.close();
-};
+//the golden promise - ZT
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 //a litte test - ZT
 export const runTestQuery = async (): Promise<Record[]> => {
@@ -35,21 +30,21 @@ export const runTestQuery = async (): Promise<Record[]> => {
       });
     }
 
-    return result.records; // return the records
+    return result.records; //return the records
   } catch (error) {
     console.error("Error running test query:", error);
-    throw error; // propagate the error
+    throw error; //propagate the error
   } finally {
     await session.close();
   }
 };
 
-//connect to Neo4j with retries
+//connect to Neo4j with retries - ZT
 export const connectToNeo4j = async (
   updateStatus: (status: string) => void,
 ) => {
   const maxRetries = 5;
-  const retryDelay = 10000; // 10 seconds
+  const retryDelay = 10000; //10 seconds
   await wait(2000); //flat wait (helps with flow)
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -90,4 +85,55 @@ export const connectToNeo4j = async (
   }
 };
 
-export { session, closeConnection };
+//fetch schema data function - ZT
+export const fetchSchemaData = async () => {
+  const session = driver.session();
+  try {
+    console.log("in neo4j.ts -> Fetching schema data...");
+
+    const nodeQuery = `
+      MATCH (n)
+      RETURN labels(n) AS nodeType, count(n) AS nodeCount
+    `;
+
+    const relationshipQuery = `
+      MATCH (a)-[r]->(b)
+      RETURN labels(a) AS sourceType, type(r) AS relationshipType, labels(b) AS targetType
+    `;
+
+    //info queries
+    const nodeResult = await session.run(nodeQuery);
+    const relationshipResult = await session.run(relationshipQuery);
+
+    //process node results
+    const nodes: SchemaNode[] = nodeResult.records.map((record) => {
+      const nodeType = record.get("nodeType");
+      return {
+        id: Array.isArray(nodeType) ? nodeType.join(", ") : nodeType,
+        label: Array.isArray(nodeType) ? nodeType.join(", ") : nodeType,
+        count: record.get("nodeCount").low, //convert Neo4j integer to JS number
+      };
+    });
+
+    //process relationship results
+    const edges: SchemaEdge[] = relationshipResult.records.map((record) => {
+      const sourceType = record.get("sourceType");
+      const targetType = record.get("targetType");
+      return {
+        from: Array.isArray(sourceType) ? sourceType.join(", ") : sourceType,
+        to: Array.isArray(targetType) ? targetType.join(", ") : targetType,
+        id: record.get("relationshipType"),
+      };
+    });
+
+    console.log("in neo4j.ts -> Schema Data Retrieved");
+    return { nodes, edges }; //typeScript infers this as SchemaTreeData
+  } catch (error) {
+    console.error("Error fetching schema data:", error);
+    throw error;
+  } finally {
+    await session.close();
+  }
+};
+
+export { driver, session };

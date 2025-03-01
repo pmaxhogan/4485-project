@@ -9,6 +9,26 @@ interface ImportExcelResponse {
   message: string;
 }
 
+//global interfaces to pass around graph data - ZT
+declare global {
+  interface SchemaNode {
+    id: string;
+    label: string;
+    count: number;
+  }
+
+  interface SchemaEdge {
+    from: string;
+    to: string;
+    id: string;
+  }
+
+  interface SchemaTreeData {
+    nodes: SchemaNode[];
+    edges: SchemaEdge[];
+  }
+}
+
 interface ElectronAPI {
   invoke: (channel: string, ...args: unknown[]) => Promise<unknown>;
   launchNeo4j: () => Promise<string>;
@@ -19,6 +39,7 @@ interface ElectronAPI {
   checkNeo4jConnection: () => Promise<string>;
   openFileDialog: () => Promise<OpenFileDialogResult>;
   importExcel: (filePath: string) => Promise<ImportExcelResponse>;
+  fetchSchemaData: () => Promise<SchemaTreeData>;
 }
 
 declare global {

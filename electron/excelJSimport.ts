@@ -51,7 +51,7 @@ const importExcel = async (filePath: string) => {
   return { totalServers, totalLocations };
 };
 
-//Function to insert parsed data into Neo4j
+//Function to insert parsed data into Neo4j - ZT
 const insertIntoNeo4j = async (
   data: {
     location: ExcelJS.CellValue;

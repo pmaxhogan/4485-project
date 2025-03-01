@@ -57,4 +57,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
   checkNeo4jConnection: (): Promise<string> =>
     ipcRenderer.invoke("check-neo4j-connection"),
+
+  fetchSchemaData: () => ipcRenderer.invoke("fetchSchemaData"),
 });
