@@ -1,3 +1,32 @@
+# 4485 Project: Disaster Recovery Mapping
+
+## Activity Diagram
+
+```mermaid
+flowchart TD
+    O(("Start")) ==> S["Select a CMDB"]
+    Q(("End"))
+    S =="Click: 'Exit'"==> Q
+    S =="Upload: .xlsx CMDB file"==> R["CMDB Overview / Stats"]
+    R =="Click: 'Diagrams'"==>B["Load or create diagram"]
+    B -."Click: 'Back'".-> R
+    R -."Click: 'Back'".-> S
+    L -."Click: 'Back'".-> B
+    B =="Click: 'Load Diagram'"==> L["Diagram list"]
+    L =="Click: 'Edit' on a diagram"==> E
+    E -."Click: 'Back'".-> B
+    L =="Click: 'View' on a diagram"==> V
+    B =="Click: 'Create New Diagram'"===> C["Select diagram type"]
+    C -."Click: 'Back'".-> B
+    C =="Click: 'Schema Graph'"==> E["Edit diagram"]
+    C =="Click: 'Data Graph'"==> E["Edit diagram"]
+    E =="Click: 'Save'"==> V["View diagram"]
+    V -."Click: 'Back'".-> B
+
+```
+
+---
+
 # Vue 3 + TypeScript + Vite
 
 This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
