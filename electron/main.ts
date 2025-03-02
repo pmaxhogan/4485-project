@@ -1,10 +1,11 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import { fileURLToPath } from "node:url";
 import { spawn, ChildProcess } from "child_process"; //needed for neo4j stuff -ZT
 import { once } from "events"; //needed for avoiding direct promises - ZT
 import fs from "fs"; //needed for neo4j stuff - ZT
 import path from "node:path";
-import { runTestQuery, connectToNeo4j } from "../src/services/neo4j.ts"; //you guessed it pt 2. electric boogaloo - ZT
+import { runTestQuery, connectToNeo4j, fetchSchemaData } from "./neo4j.ts"; //you guessed it pt 2. electric boogaloo - ZT
+import { importExcel } from "./excelJSimport.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -101,15 +102,15 @@ async function launchNeo4j() {
   //output feed
   if (neo4jProcess?.stdout) {
     neo4jProcess.stdout.on("data", (data) => {
-      console.log(`Neo4j Output: ${data.toString()}`);
-      win?.webContents.send("neo4j-log", data.toString());
+      console.log(`Neo4j Output: ${data.toString().trim()}`);
+      win?.webContents.send("neo4j-log", data.toString().trim());
     });
   }
 
   if (neo4jProcess?.stderr) {
     neo4jProcess.stderr.on("data", (data) => {
-      console.error(`Neo4j Error: ${data}`);
-      win?.webContents.send("neo4j-error", data.toString());
+      console.error(`Neo4j Error: ${data.toString().trim()}`);
+      win?.webContents.send("neo4j-error", data.toString().trim());
     });
   }
 
@@ -151,7 +152,63 @@ ipcMain.handle("run-test-query", async () => {
   return runTestQuery();
 });
 
-function createWindow() {
+//connect excel - ZT
+ipcMain.handle("import-excel", async (_, filePath: string) => {
+  try {
+    if (!filePath) throw new Error("No file path provided.");
+
+    console.log(`Importing file: ${filePath}`);
+    await importExcel(filePath);
+    return {
+      success: true,
+      message: `Excel file '${filePath}' imported successfully`,
+    };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Import error:", error.message); // Now you can safely access `message`
+      return {
+        success: false,
+        message: error.message || "Failed to import Excel file",
+      };
+    } else {
+      console.error("Import error: Unknown error", error);
+      return {
+        success: false,
+        message: "Failed to import Excel file",
+      };
+    }
+  }
+});
+
+//file select - ZT
+ipcMain.handle("open-file-dialog", async () => {
+  try {
+    console.log("Opening file dialog...");
+    const result = await dialog.showOpenDialog({
+      properties: ["openFile"],
+      filters: [{ name: "Excel Files", extensions: ["xlsx", "xls"] }],
+    });
+
+    console.log("File dialog result:", result);
+
+    if (result.canceled) {
+      console.log("File selection was canceled.");
+      return { filePaths: [] };
+    }
+
+    console.log("Selected file:", result.filePaths[0]);
+    return { filePaths: result.filePaths };
+  } catch (error) {
+    console.error("Error opening file dialog:", error);
+    throw error;
+  }
+});
+
+ipcMain.handle("fetchSchemaData", async () => {
+  return await fetchSchemaData();
+});
+
+function openWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
     webPreferences: {
@@ -179,7 +236,15 @@ function createWindow() {
 
 app.whenReady().then(async () => {
   await checkAndSetupNeo4j();
-  console.log("Proceeding with application startup...");
+  await launchNeo4j();
+});
+
+app.on("quit", () => {
+  if (neo4jProcess && !neo4jProcess.killed) {
+    console.log("killing neo4j...");
+    neo4jProcess.kill("SIGKILL");
+    neo4jProcess.unref();
+  }
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -196,8 +261,8 @@ app.on("activate", () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    openWindow();
   }
 });
 
-app.whenReady().then(createWindow);
+app.whenReady().then(openWindow);
