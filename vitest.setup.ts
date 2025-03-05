@@ -6,7 +6,7 @@
  * if the environment is correct it loads matchers from @testing-library/jest-dom/matchers
  * which give extra testing functions
  *
- * the setup makes sure that front end tests can access the macthers without errors in backend
+ * the setup makes sure that front end tests can access the matchers without errors in backend
  *
  */
 

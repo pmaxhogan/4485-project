@@ -26,11 +26,7 @@ describe("VisualGraph Component", () => {
   it("renders the correct header", () => {
     render(VisualGraph);
 
-    // Look for the first <h2> in the component.
-    // VisualGraph.vue has <h2>Graph</h2> in the template.
     const h2 = screen.getAllByRole("heading", { level: 2 })[0];
-
-    //checks if the <h2> text is "Graph"
     getByText(h2, "Graph");
   });
 
@@ -52,7 +48,6 @@ describe("VisualGraph Component", () => {
     const mockImageDataUrl = "data:image/png;base64,mock-image-data";
     let capturedHref: string | null = null;
 
-    // mock NVL saveFullGraphToLargeFile
     vi.spyOn(NVL.prototype, "saveFullGraphToLargeFile").mockImplementation(
       function () {
         const a = document.createElement("a");
@@ -60,10 +55,9 @@ describe("VisualGraph Component", () => {
         document.body.appendChild(a);
         a.dispatchEvent(new Event("click", { bubbles: true }));
         document.body.removeChild(a);
-      },
+      }
     );
 
-    // mock click handler
     const clickHandler = vi.fn((event: MouseEvent) => {
       const target = event.target as HTMLAnchorElement;
       if (target?.tagName === "A") {
@@ -82,13 +76,10 @@ describe("VisualGraph Component", () => {
     });
 
     await wrapper.vm.captureGraphImage();
-
     await new Promise((resolve) => setTimeout(resolve, 10));
 
     expect(capturedHref).toBe(mockImageDataUrl);
-    expect(window.electronAPI.saveImageToExcel).toHaveBeenCalledWith(
-      mockImageDataUrl,
-    );
+    expect(window.electronAPI.saveImageToExcel).toHaveBeenCalledWith(mockImageDataUrl);
 
     document.removeEventListener("click", clickHandler, true);
   });
