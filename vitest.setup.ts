@@ -6,7 +6,7 @@
  * if the environment is correct it loads matchers from @testing-library/jest-dom/matchers
  * which give extra testing functions
  *
- * the set up makes sure that front end tests can access the macthes without errors in backend
+ * the setup makes sure that front end tests can access the macthers without errors in backend
  *
  */
 
@@ -18,12 +18,8 @@ afterEach(cleanup);
 if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     import("@testing-library/jest-dom/matchers")
         .then((module) => {
-            const matchers = module.default || module;
-            if (matchers) {
-                expect.extend(matchers);
-            } else {
-                console.warn("jest-dom matchers are undefined.");
-            }
+            const matchers = module.default ?? module;
+            expect.extend(matchers as unknown as Record<string, any>);
         })
         .catch((error) => {
             console.warn("Could not load jest-dom matchers:", error);
