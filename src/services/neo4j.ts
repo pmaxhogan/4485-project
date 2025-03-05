@@ -1,8 +1,9 @@
 import neo4j, { Record } from "neo4j-driver";
+import { indentInline } from "../../electron/util.ts";
 
 const password = "changethis"; //replace w/ enviro vars or connect to config later, this is so insecure its funny - ZT
 
-const driver = neo4j.driver(
+export const driver = neo4j.driver(
   "bolt://localhost:7687", //neo4j Bolt URL
   neo4j.auth.basic("neo4j", password),
 );
@@ -30,7 +31,10 @@ export const runTestQuery = async (): Promise<Record[]> => {
 
     return result.records; // return the records
   } catch (error) {
-    console.error("Error running test query:", error);
+    console.error(
+      "Error running test query:",
+      error && indentInline(error.toString()),
+    );
     throw error; // propagate the error
   } finally {
     await session.close();
