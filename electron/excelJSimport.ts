@@ -26,15 +26,25 @@ const importExcel = async (filePath: string) => {
     if (rowNumber === 1) return; //skips header
 
     //check if it's the last row since tom puts stuff there
+    const location = row.getCell(1).value;
+    const server = row.getCell(2).value;
+
     if (rowNumber === worksheet.rowCount) {
-      totalServers = Number(row.getCell(2).value) || 0; //assuming total servers in second column
-      totalLocations = Number(row.getCell(1).value) || 0; //assuming total locations in first
+      totalServers = Number(server) || 0; //assuming total servers in second column
+      totalLocations = Number(location) || 0; //assuming total locations in first
     } else {
+      const application = row.getCell(4).value;
+
+      if (!location || !server || !application) {
+        console.log("Skipping row with missing values:", row.values);
+        return; //skip if any of the values are missing
+      }
+
       //otherwise in a regular data row
       data.push({
-        location: row.getCell(1).value, //Location
-        server: row.getCell(2).value, //Server
-        application: row.getCell(4).value, //IT Application
+        location: location, //Location
+        server: server, //Server
+        application: application, //IT Application
       });
     }
   });
