@@ -50,6 +50,13 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
   runTestQuery: (): Promise<Record[]> => ipcRenderer.invoke("run-test-query"),
 
+  openFileDialog: () => ipcRenderer.invoke("open-file-dialog"),
+
+  importExcel: (filePath: string) =>
+    ipcRenderer.invoke("import-excel", filePath),
+
   checkNeo4jConnection: (): Promise<string> =>
     ipcRenderer.invoke("check-neo4j-connection"),
+
+  fetchSchemaData: () => ipcRenderer.invoke("fetchSchemaData"),
 });

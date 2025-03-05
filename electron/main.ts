@@ -1,12 +1,13 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import { ChildProcess, spawn, execFile } from "node:child_process"; //needed for neo4j stuff -ZT
 import { once } from "events"; //needed for avoiding direct promises - ZT
 import fs from "fs"; //needed for neo4j stuff - ZT
 import path from "node:path";
-import { connectToNeo4j, runTestQuery } from "../src/services/neo4j.ts";
+import { runTestQuery, connectToNeo4j, fetchSchemaData } from "./neo4j.ts"; //you guessed it pt 2. electric boogaloo - ZT
 import { indentInline } from "./util.ts";
+import { importExcel } from "./excelJSimport.ts";
 
 const asyncExecFile = promisify(execFile);
 
@@ -195,6 +196,62 @@ ipcMain.handle("check-neo4j-connection", async () => {
 ipcMain.handle("run-test-query", async () => {
   console.log("Received IPC call: run-test-query");
   return runTestQuery();
+});
+
+//connect excel - ZT
+ipcMain.handle("import-excel", async (_, filePath: string) => {
+  try {
+    if (!filePath) throw new Error("No file path provided.");
+
+    console.log(`Importing file: ${filePath}`);
+    await importExcel(filePath);
+    return {
+      success: true,
+      message: `Excel file '${filePath}' imported successfully`,
+    };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Import error:", error.message); // Now you can safely access `message`
+      return {
+        success: false,
+        message: error.message || "Failed to import Excel file",
+      };
+    } else {
+      console.error("Import error: Unknown error", error);
+      return {
+        success: false,
+        message: "Failed to import Excel file",
+      };
+    }
+  }
+});
+
+//file select - ZT
+ipcMain.handle("open-file-dialog", async () => {
+  try {
+    console.log("Opening file dialog...");
+    const result = await dialog.showOpenDialog({
+      properties: ["openFile"],
+      filters: [{ name: "Excel Files", extensions: ["xlsx", "xls"] }],
+    });
+
+    console.log("File dialog result:", result);
+
+    if (result.canceled) {
+      console.log("File selection was canceled.");
+      return { filePaths: [] };
+    }
+
+    console.log("Selected file:", result.filePaths[0]);
+    return { filePaths: result.filePaths };
+  } catch (error) {
+    console.error("Error opening file dialog:", error);
+    throw error;
+  }
+});
+
+ipcMain.handle("fetchSchemaData", async () => {
+  return await fetchSchemaData();
 });
 
 function openWindow() {
