@@ -1,13 +1,14 @@
 import neo4j, { Record } from "neo4j-driver";
+import { indentInline } from "./util.ts";
 
 const password = "changethis"; //replace w/ enviro vars or connect to config later, this is so insecure its funny - ZT
 
-const driver = neo4j.driver(
+export const driver = neo4j.driver(
   "bolt://localhost:7687", //neo4j Bolt URL
   neo4j.auth.basic("neo4j", password),
 );
 
-const session = driver.session();
+export const session = driver.session();
 
 //the golden promise - ZT
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -30,21 +31,24 @@ export const runTestQuery = async (): Promise<Record[]> => {
       });
     }
 
-    return result.records; //return the records
+    return result.records; // return the records
   } catch (error) {
-    console.error("Error running test query:", error);
-    throw error; //propagate the error
+    console.error(
+      "Error running test query:",
+      error && indentInline(error.toString()),
+    );
+    throw error; // propagate the error
   } finally {
     await session.close();
   }
 };
 
-//connect to Neo4j with retries - ZT
+// connect to Neo4j with retries - ZT
 export const connectToNeo4j = async (
   updateStatus: (status: string) => void,
 ) => {
   const maxRetries = 5;
-  const retryDelay = 10000; //10 seconds
+  const retryDelay = 10000; // 10 seconds
   await wait(2000); //flat wait (helps with flow)
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -79,7 +83,7 @@ export const connectToNeo4j = async (
 
       console.log(`Retrying in ${retryDelay / 1000} seconds...`);
 
-      //wait for the specified delay before retrying
+      // Wait for the specified delay before retrying
       await wait(retryDelay);
     }
   }
@@ -135,5 +139,3 @@ export const fetchSchemaData = async () => {
     await session.close();
   }
 };
-
-export { driver, session };

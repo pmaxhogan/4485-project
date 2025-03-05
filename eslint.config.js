@@ -17,6 +17,6 @@ export default [
   },
   eslintConfigPrettier,
   {
-    ignores: ["dist-electron"],
+    ignores: ["dist-electron", "dist"],
   },
 ];
