@@ -25,7 +25,11 @@ type MatcherResult = {
 
 //define the type for a raw matcher function.
 //vitest expects matcher functions to return an object with a pass boolean and a message function
-type RawMatcherFn = (this: MatcherState, received: unknown, ...actual: unknown[]) => MatcherResult;
+type RawMatcherFn = (
+  this: MatcherState,
+  received: unknown,
+  ...actual: unknown[]
+) => MatcherResult;
 
 //define the expected matchers object type.
 type MatchersObject = Record<string, RawMatcherFn>;
