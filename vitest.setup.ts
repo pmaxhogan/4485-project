@@ -10,16 +10,15 @@
  *
  */
 
-
 import { expect } from "vitest";
 
 if (typeof window !== "undefined" && typeof window.document !== "undefined") {
-    import("@testing-library/jest-dom/matchers")
-        .then((module) => {
-            const matchers = module.default ?? module;
-            expect.extend(matchers as unknown as Record<string, any>);
-        })
-        .catch((error) => {
-            console.warn("Could not load jest-dom matchers:", error);
-        });
+  import("@testing-library/jest-dom/matchers")
+    .then((module) => {
+      const matchers = module.default ?? module;
+      expect.extend(matchers as unknown as Record<string, any>);
+    })
+    .catch((error) => {
+      console.warn("Could not load jest-dom matchers:", error);
+    });
 }
