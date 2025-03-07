@@ -1,24 +1,30 @@
 import { describe, it, expect } from "vitest";
-import { mount } from "@vue/test-utils";
 import VisualGraph from "../components/graphs/VisualGraph.vue";
+import { screen, render, getByText } from "@testing-library/vue";
 
 describe("VisualGraph Component", () => {
   it("renders the correct header", () => {
-    const wrapper = mount(VisualGraph);
+    render(VisualGraph);
 
     // Look for the first <h2> in the component.
     // VisualGraph.vue has <h2>Graph</h2> in the template.
-    const headerWrapper = wrapper.find("h2");
+    const h2 = screen.getAllByRole("heading", { level: 2 })[0];
 
-    if (!headerWrapper.exists()) {
-      throw new Error("No <h2> element found in VisualGraph component.");
-    }
-
-    //checks if the <h2> text is "Graph" (update if needed).
-    expect(headerWrapper.text()).toBe("Graph");
+    //checks if the <h2> text is "Graph"
+    getByText(h2, "Graph");
   });
 
-  /*
-  not completed: image output check
-  */
+  it("renders a graph", async () => {
+    render(VisualGraph, {
+      props: {
+        nodes: [
+          { id: "1", caption: "Node 1" },
+          { id: "2", caption: "Node 2" },
+        ],
+        rels: [{ from: "1", to: "2", id: "3" }],
+      },
+    });
+
+    expect(screen.queryByText("No nodes to display...")).toBeNull();
+  });
 });
