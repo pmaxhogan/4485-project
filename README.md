@@ -25,6 +25,26 @@ flowchart TD
 
 ```
 
+# Architectural Model
+
+```mermaid
+flowchart TD
+   F["Frontend"]
+   B["Backend"]
+   E["Excel Database"]
+   N["Neo4j Database"]
+   B --CMDB Assets--> N
+   N --CMDB Structure---> B
+   B --CMDB Structure---> F
+   N --CMDB Contents---> B
+   B --CMDB Contents---> F
+   E --CMDB Assets--> B
+   F --Rendered diagram--> B
+   F --Diagram config--> B
+   B --Diagram config--> N
+   B --Rendered diagram--> E
+```
+
 ---
 
 # Vue 3 + TypeScript + Vite
