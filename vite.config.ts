@@ -1,9 +1,9 @@
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import path from "node:path";
 import electron from "vite-plugin-electron/simple";
 import vue from "@vitejs/plugin-vue";
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
@@ -41,5 +41,9 @@ export default defineConfig({
       "@neo4j-nvl/layout-workers > bin-pack",
       "@neo4j-nvl/layout-workers > graphlib",
     ],
+  },
+  test: {
+    environment: "jsdom",
+    setupFiles: "./vitest.setup.ts",
   },
 });
