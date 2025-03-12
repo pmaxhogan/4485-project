@@ -329,3 +329,13 @@ process.on("uncaughtExceptionMonitor", () => {
     stopNeo4j(neo4jProcess.pid);
   }
 });
+
+process.on("message", (msg) => {
+  if (msg === "electron-vite&type=hot-reload") {
+    for (const win of BrowserWindow.getAllWindows()) {
+      console.log("reloading window", win);
+      // Hot reload preload scripts
+      win.webContents.reload();
+    }
+  }
+});
