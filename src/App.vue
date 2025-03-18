@@ -1,39 +1,8 @@
 <script setup lang="ts">
-  import { ref, onMounted, onUnmounted } from "vue";
-  //import { ipcRenderer } from "electron";
-  import { NVL } from "@neo4j-nvl/base";
-  import {
-    ZoomInteraction,
-    PanInteraction,
-    ClickInteraction,
-  } from "@neo4j-nvl/interaction-handlers";
-  //import NVLTest from "./components/NVLTest.vue";
-
-  const connectionStatus = ref("Checking connection...");
-
-  //used as a fix for callbacks to make them happy - ZT
-  interface SchemaNodeCallback {
-    id: string;
-    count?: number;
-    size?: number;
-  }
-
-  //checks Neo4j connection - ZT
-  const checkConnection = async () => {
-    try {
-      const status = await window.electronAPI.invoke("check-neo4j-connection");
-      connectionStatus.value = status as string;
-      console.log("Connection status:", status);
-    } catch (error: unknown) {
-      connectionStatus.value = "Failed to connect to Neo4j.";
-
-      if (error instanceof Error) {
-        console.error(error.message);
-      } else {
-        console.error("An unknown error occurred", error);
-      }
-    }
-  };
+  import { onMounted, onUnmounted } from "vue";
+  import { importExcel } from "./db/import.ts";
+  import CheckDBConnection from "./components/CheckDBConnection.vue";
+  import SchemaTree from "./components/graphs/SchemaTree.vue";
 
   //generates a schemaTree and displays it in whatever container you specify - ZT
   //just as a note, all console.log's happen in the application itself, not the console.
@@ -139,14 +108,12 @@
   function handleNeo4jExit(code: number) {
     console.log(`Neo4j exited with code: ${code}`);
   }
-
   //mounting - ZT
   onMounted(() => {
     //listen for events from the main process
     window.electronAPI.onNeo4jLog(handleNeo4jLog);
     window.electronAPI.onNeo4jError(handleNeo4jError);
     window.electronAPI.onNeo4jExit(handleNeo4jExit);
-    checkConnection();
     window.electronAPI.runTestQuery();
   });
 
@@ -159,25 +126,12 @@
 </script>
 
 <template>
-  <!-- If you want to test database
-  <div>
-    <h1>Neo4j Connection Status</h1>
-    <p>{{ connectionStatus }}</p>
-    <input v-model="connectionStatus" type="text" placeholder="Connection Status" />
-  </div>
-  -->
-
-  <!-- <NVLTest></NVLTest> -->
-
-  <!--
-  <div>
-    <button @click="importExcel">Import Excel</button>
-  </div>
-  -->
+  <!-- If you want to test database -->
+  <CheckDBConnection />
 
   <div>
     <button @click="importExcel">Import Excel</button>
-    <button @click="generateSchemaTree">Generate Schema Tree</button>
-    <div id="schema-tree-container" style="width: 100%; height: 600px"></div>
   </div>
+
+  <SchemaTree />
 </template>

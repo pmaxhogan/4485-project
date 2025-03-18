@@ -1,11 +1,15 @@
 import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import { fileURLToPath } from "node:url";
-import { spawn, ChildProcess } from "child_process"; //needed for neo4j stuff -ZT
+import { promisify } from "node:util";
+import { ChildProcess, spawn, execFile } from "node:child_process"; //needed for neo4j stuff -ZT
 import { once } from "events"; //needed for avoiding direct promises - ZT
 import fs from "fs"; //needed for neo4j stuff - ZT
 import path from "node:path";
 import { runTestQuery, connectToNeo4j, fetchSchemaData } from "./neo4j.ts"; //you guessed it pt 2. electric boogaloo - ZT
+import { indentInline } from "./util.ts";
 import { importExcel } from "./excelJSimport.ts";
+
+const asyncExecFile = promisify(execFile);
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -29,6 +33,7 @@ export const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
 const neo4jFolderPath = path.join(__dirname, "..", "neo4j");
 const script1 = path.join(__dirname, "..", "download-neo4j.ps1");
 const script2 = path.join(__dirname, "..", "config-neo4j.ps1");
+const startNeo = path.join(neo4jFolderPath, "bin/neo4j.ps1");
 
 process.env.VITE_PUBLIC =
   VITE_DEV_SERVER_URL ?
@@ -50,11 +55,11 @@ async function runPowerShellScript(scriptPath: string) {
   ]);
 
   process.stdout.on("data", (data) => {
-    console.log(`PowerShell output: ${data.toString()}`);
+    console.log(`PowerShell output: ${indentInline(data.toString())}`);
   });
 
   process.stderr.on("data", (data) => {
-    console.error(`PowerShell error: ${data.toString()}`);
+    console.error(`PowerShell error: ${indentInline(data.toString())}`);
   });
 
   const [code] = await once(process, "close");
@@ -76,10 +81,13 @@ async function checkAndSetupNeo4j() {
       await runPowerShellScript(script2);
       console.log("Neo4j setup completed successfully.");
     } catch (error) {
-      console.error("Error setting up Neo4j:", error);
+      console.error(
+        "Error setting up Neo4j:",
+        error && indentInline(error.toString()),
+      );
     }
   } else {
-    console.log("Neo4j folder detected. Skipping setup.");
+    console.log(`Detected neo4j at ${neo4jFolderPath}`);
   }
 }
 
@@ -92,43 +100,78 @@ async function launchNeo4j() {
     return "Neo4j is already running.";
   }
 
-  const psCommand = `Start-Process -FilePath "./neo4j/bin/neo4j.bat" -ArgumentList "console" -WindowStyle Hidden`;
+  const cmd = "powershell";
+  const args = [
+    "-NoProfile",
+    "-NonInteractive",
+    "-NoLogo",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    startNeo,
+    "console",
+  ];
 
-  neo4jProcess = spawn("powershell", ["-Command", psCommand], {
+  console.log("Spawning", cmd, ...args);
+
+  neo4jProcess = spawn(cmd, args, {
     stdio: ["ignore", "pipe", "pipe"],
-    shell: true,
+    shell: false,
   });
 
-  //output feed
-  if (neo4jProcess?.stdout) {
-    neo4jProcess.stdout.on("data", (data) => {
-      console.log(`Neo4j Output: ${data.toString().trim()}`);
-      win?.webContents.send("neo4j-log", data.toString().trim());
-    });
-  }
+  // output feed
+  neo4jProcess?.stdout?.on("data", (data) => {
+    console.log(`Neo4j Output: ${indentInline(data.toString())}`);
+    win?.webContents.send("neo4j-log", data.toString().trim());
 
-  if (neo4jProcess?.stderr) {
-    neo4jProcess.stderr.on("data", (data) => {
-      console.error(`Neo4j Error: ${data.toString().trim()}`);
+    if (
+      data
+        .toString()
+        .includes(
+          "org.neo4j.io.locker.FileLockException: Lock file has been locked by another process",
+        )
+    ) {
+      console.error(
+        '\n\nNeo4j is already running!\n\nMaybe try:\ntaskkill /fi "IMAGENAME eq java.exe" /f\n\n',
+      );
       win?.webContents.send("neo4j-error", data.toString().trim());
-    });
-  }
-
-  //handling process errors
-  neo4jProcess.on("error", (error) => {
-    console.error(`Failed to start Neo4j: ${error.message}`);
-    throw new Error(error.message); // Throwing an error to be caught
+    }
   });
 
-  //when the process exits
-  neo4jProcess.on("close", (code) => {
-    console.log(`Neo4j process exited with code: ${code}`);
+  neo4jProcess?.stderr?.on("data", (data) => {
+    console.error(`Neo4j Error: ${indentInline(data.toString().trim())}`);
+    win?.webContents.send("neo4j-error", data.toString().trim());
+  });
+
+  neo4jProcess.on("error", (error) => {
+    console.error(`Failed to start Neo4j: ${indentInline(error.message)}`);
+    throw new Error(error.message);
+  });
+
+  neo4jProcess.on("spawn", () => {
+    console.log(`Waiting on Neo4j db ${neo4jProcess?.pid} to start`);
+  });
+
+  neo4jProcess.on("exit", (code, signal) => {
+    console.log(`Neo4j process exited with code: ${code} ${signal}`);
     neo4jProcess = null;
     win?.webContents.send("neo4j-exit", code);
   });
+
+  return await new Promise((resolve) => {
+    // resolves when db starts
+    const checkStarted = (data: unknown) => {
+      if (data?.toString().trimEnd().endsWith(" INFO  Started.")) {
+        neo4jProcess?.stdout?.off("data", checkStarted);
+
+        resolve(data.toString().trim());
+      }
+    };
+
+    neo4jProcess?.stdout?.on("data", checkStarted);
+  });
 }
 
-//connection handler - ZT
 ipcMain.handle("check-neo4j-connection", async () => {
   try {
     let finalStatus = "Checking connection...";
@@ -141,7 +184,10 @@ ipcMain.handle("check-neo4j-connection", async () => {
     await connectToNeo4j(updateStatus);
     return finalStatus;
   } catch (error) {
-    console.error("Error checking Neo4j connection:", error);
+    console.error(
+      "Error checking Neo4j connection:",
+      error && indentInline(error.toString()),
+    );
     return "Failed to connect to Neo4j.";
   }
 });
@@ -215,11 +261,6 @@ function openWindow() {
       preload: path.join(__dirname, "preload.mjs"),
     },
   });
-  //start database - ZT
-  launchNeo4j();
-
-  // uncomment to open devtools on startup
-  // win?.webContents.openDevTools();
 
   // Test active push message to Renderer-process.
   win.webContents.on("did-finish-load", () => {
@@ -232,37 +273,69 @@ function openWindow() {
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(RENDERER_DIST, "index.html"));
   }
+
+  // uncomment to open devtools on startup
+  // win?.webContents.openDevTools();
 }
+
+// quit when all windows are closed
+app.on("window-all-closed", async () => {
+  if (neo4jProcess && !neo4jProcess.killed && neo4jProcess.pid) {
+    await stopNeo4j(neo4jProcess.pid);
+  }
+  app.quit();
+  win = null;
+});
 
 app.whenReady().then(async () => {
   await checkAndSetupNeo4j();
   await launchNeo4j();
+
+  openWindow();
 });
 
-app.on("quit", () => {
-  if (neo4jProcess && !neo4jProcess.killed) {
-    console.log("killing neo4j...");
-    neo4jProcess.kill("SIGKILL");
-    neo4jProcess.unref();
+export async function stopNeo4j(pid: number) {
+  // yup, this sucks
+  // windows only supports SIGKILL-like behavior
+  // and .kill() on a ChildProcess does not properly kill the process either!
+  // even the windows api cannot save us
+  // https://learn.microsoft.com/en-us/windows/console/generateconsolectrlevent?redirectedfrom=MSDN
+  // https://github.com/nodejs/node/issues/35172
+  // https://stackoverflow.com/questions/42303377/gracefully-terminate-a-command-line-application-on-windows
+  const cmd = "taskkill";
+  const args = ["/PID", pid.toString(), "/T", "/F"];
+
+  console.log("Killing neo4j via ", cmd, ...args);
+  const { stdout, stderr } = await asyncExecFile(cmd, args);
+  if (stderr.toString().trim().length) {
+    throw new Error(
+      `Error stopping neo4j @${pid} ${indentInline(stderr.toString().trim())}`,
+    );
+  }
+
+  if (!stdout.includes(`SUCCESS: The process with PID ${pid}`)) {
+    throw new Error(
+      `Error stopping neo4j @${pid} ${indentInline(stdout.toString().trim())}`,
+    );
+  }
+
+  console.log(`Stopped neo4j @${pid}`);
+  neo4jProcess?.unref();
+  neo4jProcess = null;
+}
+
+process.on("uncaughtExceptionMonitor", () => {
+  if (neo4jProcess && !neo4jProcess.killed && neo4jProcess.pid) {
+    stopNeo4j(neo4jProcess.pid);
   }
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-    win = null;
+process.on("message", (msg) => {
+  if (msg === "electron-vite&type=hot-reload") {
+    for (const win of BrowserWindow.getAllWindows()) {
+      console.log("reloading window", win);
+      // Hot reload preload scripts
+      win.webContents.reload();
+    }
   }
 });
-
-app.on("activate", () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    openWindow();
-  }
-});
-
-app.whenReady().then(openWindow);
