@@ -97,8 +97,6 @@
       // capture the image as data url
       const imageDataUrl = await toJpeg(container.value, { quality: 0.9 });
 
-      const dimensions = container.value.getBoundingClientRect();
-
       window.electronAPI.saveImageToExcel(imageDataUrl);
     } catch (error) {
       console.error("Error capturing graph image:", error);

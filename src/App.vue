@@ -4,12 +4,13 @@
   import CheckDBConnection from "./components/CheckDBConnection.vue";
   import SchemaTree from "./components/graphs/SchemaTree.vue";
 
+  /*
   //generates a schemaTree and displays it in whatever container you specify - ZT
   //just as a note, all console.log's happen in the application itself, not the console.
   //we can hella take all these out on build, but for now I think they're useful when debugging/testing
   const generateSchemaTree = async () => {
     try {
-      //specify container
+      //specify container 
       const container = document.getElementById("schema-tree-container");
 
       console.log("TRYING TO FIND DATA");
@@ -74,29 +75,7 @@
       console.error("Error generating schema tree:", error);
     }
   };
-
-  //imports -ZT
-  const importExcel = async () => {
-    console.log("Attempting to open file dialog...");
-    const result = await window.electronAPI.openFileDialog();
-    console.log("File dialog response:", result);
-
-    if (result.filePaths.length > 0) {
-      console.log(`Selected file: ${result.filePaths[0]}`);
-      const response = await window.electronAPI.importExcel(
-        result.filePaths[0],
-      );
-      console.log("Import response:", response);
-
-      if (response.success) {
-        console.log("Excel file imported successfully");
-      } else {
-        console.error("Error:", response.message);
-      }
-    } else {
-      console.warn("No file selected.");
-    }
-  };
+  */
 
   const schemaTreeRef = ref<InstanceType<typeof SchemaTree> | null>(null);
   const saveImageToExcel = async () => {
