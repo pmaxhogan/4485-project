@@ -19,7 +19,7 @@
       if (visualGraphRef.value) {
         await visualGraphRef.value.captureGraphImage(); // call the method in VisualGraph
       }
-    }
+    },
   });
 </script>
 

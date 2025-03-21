@@ -1,13 +1,16 @@
 import ExcelJS from "exceljs";
 import fs from "fs";
-import sizeOf from "image-size"; // to get dimensions of image 
+import sizeOf from "image-size"; // to get dimensions of image
 
-export async function saveImageToExcel(imageDataUrl: string, filePath: string): Promise<void> {
+export async function saveImageToExcel(
+  imageDataUrl: string,
+  filePath: string,
+): Promise<void> {
   try {
     const fileExists = fs.existsSync(filePath);
-    
+
     let workbook: ExcelJS.Workbook;
-    
+
     if (fileExists) {
       workbook = new ExcelJS.Workbook();
       await workbook.xlsx.readFile(filePath); // read existing workbook
@@ -21,11 +24,11 @@ export async function saveImageToExcel(imageDataUrl: string, filePath: string): 
       worksheet = workbook.addWorksheet("Sheet 1");
     }
 
-    const imageBase64 = imageDataUrl.split(",")[1]; // this gets the base64 string excluding the 'data:image/png;base64,' 
-    const imageBuffer = Buffer.from(imageBase64, 'base64'); // get buffer of image to extract dimensions
+    const imageBase64 = imageDataUrl.split(",")[1]; // this gets the base64 string excluding the 'data:image/png;base64,'
+    const imageBuffer = Buffer.from(imageBase64, "base64"); // get buffer of image to extract dimensions
     const dimensions = sizeOf(imageBuffer);
     const imgWidth = 500;
-    const imgHeight = imgWidth * dimensions.height / dimensions.width; 
+    const imgHeight = (imgWidth * dimensions.height) / dimensions.width;
 
     // add the image to the workbook
     const imageId = workbook.addImage({
@@ -34,15 +37,15 @@ export async function saveImageToExcel(imageDataUrl: string, filePath: string): 
     });
 
     // find first empty column to place image in
-    let emptyColumnIndex = 0; 
+    let emptyColumnIndex = 0;
     while (worksheet.getCell(1, emptyColumnIndex + 1).value) {
       emptyColumnIndex++;
     }
 
-    // add the image to the worksheet at a specific position and size 
+    // add the image to the worksheet at a specific position and size
     worksheet.addImage(imageId, {
-      tl: { col: emptyColumnIndex, row: 0 }, 
-      ext: { width: imgWidth, height: imgHeight }, 
+      tl: { col: emptyColumnIndex, row: 0 },
+      ext: { width: imgWidth, height: imgHeight },
     });
 
     // write the workbook to the file system

@@ -40,7 +40,9 @@ interface ElectronAPI {
   openFileDialog: () => Promise<OpenFileDialogResult>;
   importExcel: (filePath: string) => Promise<ImportExcelResponse>;
   fetchSchemaData: () => Promise<SchemaTreeData>;
-  saveImageToExcel(imageDataUrl: string): Promise<{ success: boolean; message: string }>; 
+  saveImageToExcel(
+    imageDataUrl: string,
+  ): Promise<{ success: boolean; message: string }>;
 }
 
 declare global {

@@ -103,7 +103,7 @@
     if (schemaTreeRef.value) {
       await schemaTreeRef.value.captureGraphImage(); // Call captureGraphImage from SchemaTree
     }
-};
+  };
 
   //handling - ZT
   function handleNeo4jLog(log: string) {
@@ -142,5 +142,5 @@
     <button @click="saveImageToExcel">Save Graph Image to CMDB</button>
   </div>
 
-  <SchemaTree  ref="schemaTreeRef" />
+  <SchemaTree ref="schemaTreeRef" />
 </template>

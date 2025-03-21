@@ -99,9 +99,9 @@
 
       const dimensions = container.value.getBoundingClientRect();
 
-      window.electronAPI.saveImageToExcel(imageDataUrl);  
+      window.electronAPI.saveImageToExcel(imageDataUrl);
     } catch (error) {
-      console.error('Error capturing graph image:', error);
+      console.error("Error capturing graph image:", error);
     }
   };
   defineExpose({ captureGraphImage });

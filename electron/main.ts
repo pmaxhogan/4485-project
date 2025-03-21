@@ -264,16 +264,14 @@ ipcMain.handle("save-image-to-excel", async (_, imageDataUrl: string) => {
     const result = await dialog.showSaveDialog({
       title: "Save Excel File",
       defaultPath: "output.xlsx",
-      filters: [
-        { name: "Excel Files", extensions: ["xlsx", "xls"] },
-      ],
+      filters: [{ name: "Excel Files", extensions: ["xlsx", "xls"] }],
     });
-    
+
     if (result.canceled) {
       console.log("File selection cancelled");
-      return { 
-        success: false, 
-        message: "File selection cancelled"
+      return {
+        success: false,
+        message: "File selection cancelled",
       };
     }
 
@@ -287,7 +285,7 @@ ipcMain.handle("save-image-to-excel", async (_, imageDataUrl: string) => {
     };
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Export error:", error.message); 
+      console.error("Export error:", error.message);
       return {
         success: false,
         message: error.message || "Failed to export to Excel file",
