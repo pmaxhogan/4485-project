@@ -59,4 +59,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.invoke("check-neo4j-connection"),
 
   fetchSchemaData: () => ipcRenderer.invoke("fetchSchemaData"),
+  
+  saveImageToExcel: (imageDataUrl: string) =>
+    ipcRenderer.invoke("save-image-to-excel", imageDataUrl),
+
 });

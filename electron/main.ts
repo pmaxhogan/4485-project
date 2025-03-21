@@ -8,6 +8,7 @@ import path from "node:path";
 import { runTestQuery, connectToNeo4j, fetchSchemaData } from "./neo4j.ts"; //you guessed it pt 2. electric boogaloo - ZT
 import { indentInline } from "./util.ts";
 import { importExcel } from "./excelJSimport.ts";
+import { saveImageToExcel } from "./excelJSexport.ts";
 
 const asyncExecFile = promisify(execFile);
 
@@ -252,6 +253,53 @@ ipcMain.handle("open-file-dialog", async () => {
 
 ipcMain.handle("fetchSchemaData", async () => {
   return await fetchSchemaData();
+});
+
+// used for Feature: save rendered image of graph in CMDB - WK
+ipcMain.handle("save-image-to-excel", async (_, imageDataUrl: string) => {
+  try {
+    if (!imageDataUrl) throw new Error("No image data provided.");
+
+    // get the file path of the Excel file (CMDB) to save the image on
+    const result = await dialog.showSaveDialog({
+      title: "Save Excel File",
+      defaultPath: "output.xlsx",
+      filters: [
+        { name: "Excel Files", extensions: ["xlsx", "xls"] },
+      ],
+    });
+    
+    if (result.canceled) {
+      console.log("File selection cancelled");
+      return { 
+        success: false, 
+        message: "File selection cancelled"
+      };
+    }
+
+    const filePath = result.filePath;
+
+    await saveImageToExcel(imageDataUrl, filePath);
+
+    return {
+      success: true,
+      message: `Saved to '${filePath}' successfully`,
+    };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Export error:", error.message); 
+      return {
+        success: false,
+        message: error.message || "Failed to export to Excel file",
+      };
+    } else {
+      console.error("EXport error: Unknown error", error);
+      return {
+        success: false,
+        message: "Failed to export to Excel file",
+      };
+    }
+  }
 });
 
 function openWindow() {

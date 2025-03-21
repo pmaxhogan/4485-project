@@ -15,6 +15,7 @@
     ClickInteraction,
     DragNodeInteraction,
   } from "@neo4j-nvl/interaction-handlers";
+  import { toJpeg } from "html-to-image";
 
   const props = withDefaults(
     defineProps<{
@@ -84,6 +85,26 @@
     await nextTick();
     console.log("Render complete");
   };
+
+  // function to capture the graph as an image
+  const captureGraphImage = async () => {
+    if (!container.value) {
+      console.log("Graph container not found");
+      return;
+    }
+
+    try {
+      // capture the image as data url
+      const imageDataUrl = await toJpeg(container.value, { quality: 0.9 });
+
+      const dimensions = container.value.getBoundingClientRect();
+
+      window.electronAPI.saveImageToExcel(imageDataUrl);  
+    } catch (error) {
+      console.error('Error capturing graph image:', error);
+    }
+  };
+  defineExpose({ captureGraphImage });
 
   onMounted(() => nvlSetup()); // once vue has finished mounting and page elements are already generated, nvlSetup will run
 
