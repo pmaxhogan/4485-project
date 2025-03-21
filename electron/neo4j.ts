@@ -31,7 +31,7 @@ export const runTestQuery = async (): Promise<Record[]> => {
       });
     }
 
-    return result.records; //return the records
+    return result.records; // return the records
   } catch (error) {
     console.error(
       "Error running test query:",
@@ -48,7 +48,7 @@ export const connectToNeo4j = async (
   updateStatus: (status: string) => void,
 ) => {
   const maxRetries = 5;
-  const retryDelay = 10000; //10 seconds
+  const retryDelay = 10000; // 10 seconds
   await wait(2000); //flat wait (helps with flow)
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -83,7 +83,7 @@ export const connectToNeo4j = async (
 
       console.log(`Retrying in ${retryDelay / 1000} seconds...`);
 
-      //wait for the specified delay before retrying
+      // Wait for the specified delay before retrying
       await wait(retryDelay);
     }
   }
