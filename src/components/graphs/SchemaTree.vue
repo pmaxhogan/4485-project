@@ -8,8 +8,14 @@
 
   const genTree = async () => {
     const tree = await generateSchemaTree();
+
+    if (!tree || !tree.nodes || !tree.edges) {
+      console.error("Failed to generate schema tree.");
+      return;
+    }
+
     nodes.value = tree.nodes;
-    rels.value = tree.rels;
+    rels.value = tree.edges;
   };
 </script>
 

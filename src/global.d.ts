@@ -14,13 +14,12 @@ declare global {
   interface SchemaNode {
     id: string;
     label: string;
-    count: number;
   }
 
   interface SchemaEdge {
-    from: string;
-    to: string;
     id: string;
+    source: string;
+    target: string;
   }
 
   interface SchemaTreeData {

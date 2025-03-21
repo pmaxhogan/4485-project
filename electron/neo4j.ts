@@ -1,4 +1,5 @@
-import neo4j, { Record } from "neo4j-driver";
+import neo4j from "neo4j-driver";
+import type { Record } from "neo4j-driver";
 import { indentInline } from "./util.ts";
 
 const password = "changethis"; //replace w/ enviro vars or connect to config later, this is so insecure its funny - ZT
@@ -8,14 +9,14 @@ export const driver = neo4j.driver(
   neo4j.auth.basic("neo4j", password),
 );
 
-export const session = driver.session();
+const getSession = () => driver.session();
 
 //the golden promise - ZT
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 //a litte test - ZT
 export const runTestQuery = async (): Promise<Record[]> => {
-  const session = driver.session();
+  const session = getSession();
   try {
     console.log("Running test query against Neo4j...");
 
@@ -49,17 +50,16 @@ export const connectToNeo4j = async (
 ) => {
   const maxRetries = 5;
   const retryDelay = 10000; // 10 seconds
-  await wait(2000); //flat wait (helps with flow)
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    const session = driver.session();
+    const session = getSession();
 
     try {
       console.log(`Attempt ${attempt} to connect to Neo4j...`);
       await session.run("RETURN 1"); // Test query
       console.log("Neo4j connection successful.");
       updateStatus("Neo4j connection successful.");
-      session.close();
+      await session.close();
       return;
     } catch (error) {
       console.error(`Error connecting to Neo4j (Attempt ${attempt}):`, error);
@@ -74,7 +74,7 @@ export const connectToNeo4j = async (
         );
       }
 
-      session.close();
+      await session.close();
 
       if (attempt === maxRetries) {
         updateStatus("Failed to connect to Neo4j after maximum retries.");
@@ -91,47 +91,49 @@ export const connectToNeo4j = async (
 
 //fetch schema data function - ZT
 export const fetchSchemaData = async () => {
-  const session = driver.session();
+  const session = getSession();
   try {
-    console.log("in neo4j.ts -> Fetching schema data...");
+    console.log("Fetching structured schema data...");
 
     const nodeQuery = `
       MATCH (n)
-      RETURN labels(n) AS nodeType, count(n) AS nodeCount
+      RETURN ID(n) AS id, labels(n) AS nodeType, n.name AS name
     `;
 
     const relationshipQuery = `
       MATCH (a)-[r]->(b)
-      RETURN labels(a) AS sourceType, type(r) AS relationshipType, labels(b) AS targetType
+      RETURN ID(a) AS sourceId, type(r) AS relationshipType, ID(b) AS targetId
     `;
 
-    //info queries
     const nodeResult = await session.run(nodeQuery);
     const relationshipResult = await session.run(relationshipQuery);
 
-    //process node results
-    const nodes: SchemaNode[] = nodeResult.records.map((record) => {
-      const nodeType = record.get("nodeType");
+    //map nodes
+    const nodes = nodeResult.records.map((record) => {
       return {
-        id: Array.isArray(nodeType) ? nodeType.join(", ") : nodeType,
-        label: Array.isArray(nodeType) ? nodeType.join(", ") : nodeType,
-        count: record.get("nodeCount").low, //convert Neo4j integer to JS number
+        id: record.get("id").toString(),
+        label: record.get("name") || "Unknown",
       };
     });
 
-    //process relationship results
-    const edges: SchemaEdge[] = relationshipResult.records.map((record) => {
-      const sourceType = record.get("sourceType");
-      const targetType = record.get("targetType");
+    //map edges
+    const edges = relationshipResult.records.map((record) => {
+      const sourceId = record.get("sourceId").toString();
+      const targetId = record.get("targetId").toString();
+      const relationshipType = record.get("relationshipType");
+
+      //creates a unique edge ID using sourceId, targetId, and relationshipType
+      const edgeId = `${sourceId}_${targetId}_${relationshipType}`;
+
       return {
-        from: Array.isArray(sourceType) ? sourceType.join(", ") : sourceType,
-        to: Array.isArray(targetType) ? targetType.join(", ") : targetType,
-        id: record.get("relationshipType"),
+        from: sourceId,
+        to: targetId,
+        id: edgeId,
       };
     });
 
-    console.log("in neo4j.ts -> Schema Data Retrieved");
-    return { nodes, edges }; //typeScript infers this as SchemaTreeData
+    console.log("Schema Data Retrieved:", { nodes, edges });
+    return { nodes, edges };
   } catch (error) {
     console.error("Error fetching schema data:", error);
     throw error;
@@ -139,3 +141,5 @@ export const fetchSchemaData = async () => {
     await session.close();
   }
 };
+
+export { getSession };

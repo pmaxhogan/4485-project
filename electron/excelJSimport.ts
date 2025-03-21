@@ -1,95 +1,146 @@
 import * as ExcelJS from "exceljs";
-import { session } from "./neo4j.ts";
+import { getSession } from "./neo4j.ts";
 
-//all in generics for a 3 row book
+interface AppToBfData {
+  businessFunction: string;
+  application: string;
+}
 
-//import data from Excel file - built to currently test "AirlineServerAppV7AllProd.xlsx"
+interface ServerToAppData {
+  server: string;
+  application: string;
+}
 
-//imports the excel file - ZT
+interface DcToServerData {
+  datacenter: string;
+  server: string;
+}
+
+//imports excel - zt
 const importExcel = async (filePath: string) => {
+  console.log("Starting Excel import from:", filePath);
+
+  //creating workbook and assigning sheets
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile(filePath);
-  const worksheet = workbook.getWorksheet(1); //first sheet
-  const data: {
-    location: ExcelJS.CellValue;
-    server: ExcelJS.CellValue;
-    application: ExcelJS.CellValue;
-  }[] = [];
 
-  let totalServers = 0;
-  let totalLocations = 0;
+  const informationSheet = workbook.getWorksheet(
+    "AirlineNodeCI-BF-AP-DC-SV-v2",
+  );
+  const appToBfSheet = workbook.getWorksheet("AirlineEdgeRelateBFAPv2");
+  const serverToAppSheet = workbook.getWorksheet(
+    "AirlineEdgeRelateAirlineSVAP",
+  );
+  const dcToServerSheet = workbook.getWorksheet("AirlineEdgeRelateAirlineDCSV");
 
-  if (!worksheet) {
-    throw new Error("Worksheet is undefined.");
+  console.log("Sheets Found:", {
+    informationSheet: !!informationSheet,
+    appToBfSheet: !!appToBfSheet,
+    serverToAppSheet: !!serverToAppSheet,
+    dcToServerSheet: !!dcToServerSheet,
+  });
+
+  if (
+    !informationSheet ||
+    !appToBfSheet ||
+    !serverToAppSheet ||
+    !dcToServerSheet
+  ) {
+    throw new Error("One or more required sheets are missing.");
   }
-  worksheet.eachRow((row, rowNumber) => {
-    if (rowNumber === 1) return; //skips header
 
-    //check if it's the last row since tom puts stuff there
-    const location = row.getCell(1).value;
-    const server = row.getCell(2).value;
+  const appToBfData: AppToBfData[] = [];
+  const serverToAppData: ServerToAppData[] = [];
+  const dcToServerData: DcToServerData[] = [];
 
-    if (rowNumber === worksheet.rowCount) {
-      totalServers = Number(server) || 0; //assuming total servers in second column
-      totalLocations = Number(location) || 0; //assuming total locations in first
-    } else {
-      const application = row.getCell(4).value;
-
-      if (!location || !server || !application) {
-        console.log("Skipping row with missing values:", row.values);
-        return; //skip if any of the values are missing
-      }
-
-      //otherwise in a regular data row
-      data.push({
-        location: location, //Location
-        server: server, //Server
-        application: application, //IT Application
-      });
+  //application to Business Function mapping
+  appToBfSheet.eachRow((row, rowNumber) => {
+    if (rowNumber === 1) return;
+    const businessFunction = row.getCell(1).value?.toString().trim() || "";
+    const application = row.getCell(2).value?.toString().trim() || "";
+    if (businessFunction && application) {
+      appToBfData.push({ application, businessFunction });
+      console.log(`Mapped App -> BF: ${application} -> ${businessFunction}`);
     }
   });
 
-  console.log("Parsed Excel Data:", data);
-  console.log(
-    `Total Servers: ${totalServers}, Total Locations: ${totalLocations}`,
-  );
+  //server to Application mapping
+  serverToAppSheet.eachRow((row, rowNumber) => {
+    if (rowNumber === 1) return;
+    const server = row.getCell(1).value?.toString().trim() || "";
+    const application = row.getCell(3).value?.toString().trim() || "";
+    if (server && application) {
+      serverToAppData.push({ server, application });
+      console.log(`Mapped Server -> App: ${server} -> ${application}`);
+    }
+  });
 
-  // Insert parsed data into Neo4j
-  await insertIntoNeo4j(data);
+  //datacenter to Server mapping
+  dcToServerSheet.eachRow((row, rowNumber) => {
+    if (rowNumber === 1) return;
+    const datacenter = row.getCell(1).value?.toString().trim() || "";
+    const server = row.getCell(2).value?.toString().trim() || "";
+    if (datacenter && server) {
+      dcToServerData.push({ datacenter, server });
+      console.log(`Mapped DC -> Server: ${datacenter} -> ${server}`);
+    }
+  });
 
-  // Return counts if needed
-  return { totalServers, totalLocations };
+  console.log("Inserting data into Neo4j...");
+  await insertIntoNeo4j(dcToServerData, serverToAppData, appToBfData);
+  console.log("Data import completed successfully.");
 };
 
-//Function to insert parsed data into Neo4j - ZT
+//inserts into neo4j - zt
 const insertIntoNeo4j = async (
-  data: {
-    location: ExcelJS.CellValue;
-    server: ExcelJS.CellValue;
-    application: ExcelJS.CellValue;
-  }[],
+  dcToServer: DcToServerData[],
+  serverToApp: ServerToAppData[],
+  appToBf: AppToBfData[],
 ) => {
-  for (const row of data) {
-    const query = `
-        MERGE (l:Location {name: $location})
-        MERGE (s:Server {name: $server})
-        MERGE (a:Application {name: $application})
-        MERGE (l)-[:HOSTS]->(s)
-        MERGE (s)-[:RUNS]->(a)
-      `;
-
-    try {
-      await session.run(query, {
-        location: row.location,
-        server: row.server,
-        application: row.application,
-      });
+  const session = getSession();
+  try {
+    //Insert Datacenter -> Server relationships
+    for (const row of dcToServer) {
       console.log(
-        `Mapped: ${row.location} -> ${row.server} -> ${row.application}`,
+        `Inserting DC -> Server into Neo4j: ${row.datacenter} -> ${row.server}`,
       );
-    } catch (error) {
-      console.error("Error inserting into Neo4j:", error);
+      await session.run(
+        `MERGE (dc:Datacenter {name: $datacenter})
+         MERGE (s:Server {name: $server})
+         MERGE (dc)-[:HOSTS]->(s)`,
+        row,
+      );
     }
+
+    //insert Server -> Application relationships
+    for (const row of serverToApp) {
+      console.log(
+        `Inserting Server -> App into Neo4j: ${row.server} -> ${row.application}`,
+      );
+      await session.run(
+        `MERGE (s:Server {name: $server})
+         MERGE (app:Application {name: $application})
+         MERGE (s)-[:RUNS]->(app)`,
+        row,
+      );
+    }
+
+    //insert Application -> Business Function relationships
+    for (const row of appToBf) {
+      console.log(
+        `Inserting App -> BF into Neo4j: ${row.application} -> ${row.businessFunction}`,
+      );
+      await session.run(
+        `MERGE (app:Application {name: $application})
+         MERGE (bf:BusinessFunction {name: $businessFunction})
+         MERGE (app)-[:USES]->(bf)`,
+        row,
+      );
+    }
+  } catch (error) {
+    console.error("Error inserting data into Neo4j:", error);
+  } finally {
+    await session.close();
   }
 };
 
