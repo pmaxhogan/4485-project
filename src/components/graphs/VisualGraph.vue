@@ -15,7 +15,6 @@
     ClickInteraction,
     DragNodeInteraction,
   } from "@neo4j-nvl/interaction-handlers";
-  import { toJpeg } from "html-to-image";
 
   const props = withDefaults(
     defineProps<{
@@ -94,10 +93,25 @@
     }
 
     try {
-      // capture the image as data url
-      const imageDataUrl = await toJpeg(container.value, { quality: 0.9 });
+      // saveFullGraphToLargeFile is a method from the NVL library that captures the full graph as an image
+      // but it forces a download of the image file, instead of letting us capture the URL
+      // so we intercept the .click() on the created <a> element to get the image data URL
+      const oldClick = HTMLElement.prototype.click;
+      HTMLElement.prototype.click = function () {
+        if ("href" in this) {
+          // restore the original click method
+          HTMLElement.prototype.click = oldClick;
 
-      window.electronAPI.saveImageToExcel(imageDataUrl);
+          const imageDataUrl = this.href as string;
+          console.log(
+            `saving image data URI ${imageDataUrl?.slice(0, 100)}...`,
+          );
+
+          window.electronAPI.saveImageToExcel(imageDataUrl);
+        }
+      };
+
+      nvlRef.value?.saveFullGraphToLargeFile({});
     } catch (error) {
       console.error("Error capturing graph image:", error);
     }
