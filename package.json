@@ -3,11 +3,11 @@
   "author": "Group 10",
   "description": "A disaster recovery mapping application.",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build && electron-builder",
+    "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "format": "prettier . --write",
     "format:ci": "prettier . --check",
