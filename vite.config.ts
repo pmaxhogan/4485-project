@@ -45,5 +45,13 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: "./vitest.setup.ts",
+    coverage: { // for code coverage - WK
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      include: [
+        "src/**/*.{ts,vue}",
+        "electron/**/*.{ts,vue}", 
+      ],
+    },
   },
 });
