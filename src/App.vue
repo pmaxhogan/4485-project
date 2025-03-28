@@ -1,8 +1,15 @@
 <script setup lang="ts">
-  import { onMounted, onUnmounted } from "vue";
+  import { onMounted, onUnmounted, ref } from "vue";
   import { importExcel } from "./db/import.ts";
   import CheckDBConnection from "./components/CheckDBConnection.vue";
   import SchemaTree from "./components/graphs/SchemaTree.vue";
+
+  const schemaTreeRef = ref<InstanceType<typeof SchemaTree> | null>(null);
+  const saveImageToExcel = async () => {
+    if (schemaTreeRef.value) {
+      await schemaTreeRef.value.captureGraphImage(); // Call captureGraphImage from SchemaTree
+    }
+  };
 
   //handling - ZT
   function handleNeo4jLog(log: string) {
@@ -37,7 +44,9 @@
 
   <div>
     <button @click="importExcel">Import Excel</button>
+    <div></div>
+    <button @click="saveImageToExcel">Save Graph Image to CMDB</button>
   </div>
 
-  <SchemaTree />
+  <SchemaTree ref="schemaTreeRef" />
 </template>

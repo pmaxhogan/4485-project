@@ -8,6 +8,7 @@ import path from "node:path";
 import { runTestQuery, connectToNeo4j, fetchSchemaData } from "./neo4j.ts"; //you guessed it pt 2. electric boogaloo - ZT
 import { indentInline } from "./util.ts";
 import { importExcel } from "./excelJSimport.ts";
+import { saveImageToExcel } from "./excelJSexport.ts";
 
 const asyncExecFile = promisify(execFile);
 
@@ -42,6 +43,8 @@ process.env.VITE_PUBLIC =
 
 let win: BrowserWindow | null;
 let neo4jProcess: ChildProcess | null; //tracks the process of our LITTLE CHILD - ZT
+
+let importedExcelFile: string = "graph.xlsx";
 
 //runs the scripts if needed - ZT
 async function runPowerShellScript(scriptPath: string) {
@@ -205,6 +208,8 @@ ipcMain.handle("import-excel", async (_, filePath: string) => {
 
     console.log(`Importing file: ${filePath}`);
     await importExcel(filePath);
+
+    importedExcelFile = filePath; // save excel file path for excelJSexport
     return {
       success: true,
       message: `Excel file '${filePath}' imported successfully`,
@@ -252,6 +257,34 @@ ipcMain.handle("open-file-dialog", async () => {
 
 ipcMain.handle("fetchSchemaData", async () => {
   return await fetchSchemaData();
+});
+
+// used for Feature: save rendered image of graph in CMDB - WK
+ipcMain.handle("save-image-to-excel", async (_, imageDataUrl: string) => {
+  try {
+    if (!imageDataUrl) throw new Error("No image data provided.");
+
+    await saveImageToExcel(imageDataUrl, importedExcelFile);
+
+    return {
+      success: true,
+      message: `Saved to '${importedExcelFile}' successfully`,
+    };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Export error:", error.message);
+      return {
+        success: false,
+        message: error.message || "Failed to export to Excel file",
+      };
+    } else {
+      console.error("EXport error: Unknown error", error);
+      return {
+        success: false,
+        message: "Failed to export to Excel file",
+      };
+    }
+  }
 });
 
 function openWindow() {

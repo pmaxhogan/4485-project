@@ -85,6 +85,39 @@
     console.log("Render complete");
   };
 
+  // function to capture the graph container as an image
+  const captureGraphImage = async () => {
+    if (!container.value) {
+      console.log("Graph container not found");
+      return;
+    }
+
+    try {
+      // saveFullGraphToLargeFile is a method from the NVL library that captures the full graph as an image
+      // but it forces a download of the image file instead of letting us capture the URL
+      // so we intercept the .click() on the created <a> element to get the image data URL
+      const oldClick = HTMLElement.prototype.click;
+      HTMLElement.prototype.click = function () {
+        if ("href" in this) {
+          // restore the original click method
+          HTMLElement.prototype.click = oldClick;
+
+          const imageDataUrl = this.href as string;
+          console.log(
+            `saving image data URI ${imageDataUrl?.slice(0, 100)}...`,
+          );
+
+          window.electronAPI.saveImageToExcel(imageDataUrl);
+        }
+      };
+
+      nvlRef.value?.saveFullGraphToLargeFile({});
+    } catch (error) {
+      console.error("Error capturing graph image:", error);
+    }
+  };
+  defineExpose({ captureGraphImage });
+
   onMounted(() => nvlSetup()); // once vue has finished mounting and page elements are already generated, nvlSetup will run
 
   watch([() => props.nodes, () => props.rels], nvlSetup, {
