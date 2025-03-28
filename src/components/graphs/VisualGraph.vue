@@ -85,7 +85,7 @@
     console.log("Render complete");
   };
 
-  // function to capture the graph as an image
+  // function to capture the graph container as an image
   const captureGraphImage = async () => {
     if (!container.value) {
       console.log("Graph container not found");
@@ -94,7 +94,7 @@
 
     try {
       // saveFullGraphToLargeFile is a method from the NVL library that captures the full graph as an image
-      // but it forces a download of the image file, instead of letting us capture the URL
+      // but it forces a download of the image file instead of letting us capture the URL
       // so we intercept the .click() on the created <a> element to get the image data URL
       const oldClick = HTMLElement.prototype.click;
       HTMLElement.prototype.click = function () {

@@ -44,6 +44,8 @@ process.env.VITE_PUBLIC =
 let win: BrowserWindow | null;
 let neo4jProcess: ChildProcess | null; //tracks the process of our LITTLE CHILD - ZT
 
+let importedExcelFile: string = "graph.xlsx";
+
 //runs the scripts if needed - ZT
 async function runPowerShellScript(scriptPath: string) {
   console.log(`Running PowerShell script: ${scriptPath}`);
@@ -206,6 +208,8 @@ ipcMain.handle("import-excel", async (_, filePath: string) => {
 
     console.log(`Importing file: ${filePath}`);
     await importExcel(filePath);
+
+    importedExcelFile = filePath; // save excel file path for excelJSexport
     return {
       success: true,
       message: `Excel file '${filePath}' imported successfully`,
@@ -260,28 +264,11 @@ ipcMain.handle("save-image-to-excel", async (_, imageDataUrl: string) => {
   try {
     if (!imageDataUrl) throw new Error("No image data provided.");
 
-    // get the file path of the Excel file (CMDB) to save the image on
-    const result = await dialog.showSaveDialog({
-      title: "Save Excel File",
-      defaultPath: "output.xlsx",
-      filters: [{ name: "Excel Files", extensions: ["xlsx", "xls"] }],
-    });
-
-    if (result.canceled) {
-      console.log("File selection cancelled");
-      return {
-        success: false,
-        message: "File selection cancelled",
-      };
-    }
-
-    const filePath = result.filePath;
-
-    await saveImageToExcel(imageDataUrl, filePath);
+    await saveImageToExcel(imageDataUrl, importedExcelFile);
 
     return {
       success: true,
-      message: `Saved to '${filePath}' successfully`,
+      message: `Saved to '${importedExcelFile}' successfully`,
     };
   } catch (error: unknown) {
     if (error instanceof Error) {
