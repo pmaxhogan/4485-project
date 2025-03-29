@@ -22,6 +22,7 @@ describe("VisualGraph Component", () => {
           { id: "2", caption: "Node 2" },
         ],
         rels: [{ from: "1", to: "2", id: "3" }],
+        layoutDirection: "down",
       },
     });
 

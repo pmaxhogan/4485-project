@@ -16,6 +16,8 @@ interface DcToServerData {
   server: string;
 }
 
+let summaryCounts: SummaryCounts | null = null;
+
 //imports excel - zt
 const importExcel = async (filePath: string) => {
   console.log("Starting Excel import from:", filePath);
@@ -53,13 +55,23 @@ const importExcel = async (filePath: string) => {
   const serverToAppData: ServerToAppData[] = [];
   const dcToServerData: DcToServerData[] = [];
 
+  //keep track of node totals
+  const uniqueApp = new Set(),
+    uniqueBf = new Set(),
+    uniqueServers = new Set(),
+    uniqueDc = new Set();
+
   //application to Business Function mapping
   appToBfSheet.eachRow((row, rowNumber) => {
     if (rowNumber === 1) return;
+
     const businessFunction = row.getCell(1).value?.toString().trim() || "";
     const application = row.getCell(2).value?.toString().trim() || "";
+
     if (businessFunction && application) {
       appToBfData.push({ application, businessFunction });
+      uniqueApp.add(application);
+      uniqueBf.add(businessFunction);
       console.log(`Mapped App -> BF: ${application} -> ${businessFunction}`);
     }
   });
@@ -71,6 +83,7 @@ const importExcel = async (filePath: string) => {
     const application = row.getCell(3).value?.toString().trim() || "";
     if (server && application) {
       serverToAppData.push({ server, application });
+      uniqueServers.add(server);
       console.log(`Mapped Server -> App: ${server} -> ${application}`);
     }
   });
@@ -82,10 +95,19 @@ const importExcel = async (filePath: string) => {
     const server = row.getCell(2).value?.toString().trim() || "";
     if (datacenter && server) {
       dcToServerData.push({ datacenter, server });
+      uniqueDc.add(datacenter);
       console.log(`Mapped DC -> Server: ${datacenter} -> ${server}`);
     }
   });
 
+  summaryCounts = {
+    totalDc: uniqueDc.size,
+    totalServer: uniqueServers.size,
+    totalApp: uniqueApp.size,
+    totalBf: uniqueBf.size,
+  };
+
+  await storeSummaryCounts(summaryCounts);
   console.log("Inserting data into Neo4j...");
   await insertIntoNeo4j(dcToServerData, serverToAppData, appToBfData);
   console.log("Data import completed successfully.");
@@ -139,6 +161,25 @@ const insertIntoNeo4j = async (
     }
   } catch (error) {
     console.error("Error inserting data into Neo4j:", error);
+  } finally {
+    await session.close();
+  }
+};
+
+const storeSummaryCounts = async (counts: SummaryCounts) => {
+  const session = getSession();
+  try {
+    await session.run(
+      `MERGE (meta:Metadata {name: "SummaryCounts"})
+       SET meta.totalDc = $totalDc,
+           meta.totalServer = $totalServer,
+           meta.totalApp = $totalApp,
+           meta.totalBf = $totalBf`,
+      counts,
+    );
+    console.log("Summary counts stored in Neo4j.");
+  } catch (error) {
+    console.error("Error storing summary counts:", error);
   } finally {
     await session.close();
   }

@@ -1,8 +1,7 @@
 //generates a schemaTree
-//just as a note, all console.log's happen in the application itself, not the console.
-export const generateSchemaTree = async () => {
+//just as a note, all console.log's happen in the application itself, not the console. - zt
+export const generateSchemaTree = async (summaryView: boolean) => {
   try {
-    //loggging checking
     console.log("Fetching data...");
     const schemaTreeData = await window.electronAPI.fetchSchemaData();
 
@@ -13,45 +12,74 @@ export const generateSchemaTree = async () => {
 
     console.log(
       `Schema Data: ${schemaTreeData.nodes.length} nodes, ${schemaTreeData.edges.length} edges`,
-      schemaTreeData.edges,
     );
 
-    //adding onto node structure
-    //if we need to expose any data, just create a field here and it will be shown in the application.
-    const nodes = schemaTreeData.nodes.map((node) => ({
-      ...node,
-      captions: [
+    let nodes;
+    let edges;
+
+    if (summaryView) {
+      console.log("Generating summary graph...");
+
+      //fetch counts from the backend via IPC
+      const { totalDc, totalServer, totalApp, totalBf } =
+        await window.electronAPI.fetchSummaryCounts();
+
+      //generate summarized nodes
+      nodes = [
         {
-          value: node.label,
+          id: "summary-0",
+          label: `Datacenter (${totalDc})`,
+          captions: [{ value: `Datacenters: ${totalDc}` }],
+          size: 120,
         },
-      ],
-      size: 100, //+ (node.label.length * 2.5), //helps create more space for labels/visual graph diversity
-      captionSize: 1,
-      maxLength: null,
-    }));
+        {
+          id: "summary-1",
+          label: `Server (${totalServer})`,
+          captions: [{ value: `Servers: ${totalServer}` }],
+          size: 120,
+        },
+        {
+          id: "summary-2",
+          label: `IT Application (${totalApp})`,
+          captions: [{ value: `Applications: ${totalApp}` }],
+          size: 120,
+        },
+        {
+          id: "summary-3",
+          label: `Business Function (${totalBf})`,
+          captions: [{ value: `Business Functions: ${totalBf}` }],
+          size: 120,
+        },
+      ];
 
-    const nodeLabelToIdMap = new Map<string, string[]>();
+      //Connect nodes with preset edges
+      edges = [
+        { from: "summary-0", to: "summary-1", id: "summary-bf-app" },
+        { from: "summary-1", to: "summary-2", id: "summary-app-dc" },
+        { from: "summary-2", to: "summary-3", id: "summary-dc-sv" },
+      ];
+    } else {
+      console.log("Generating detailed graph...");
 
-    schemaTreeData.nodes.forEach((node) => {
-      if (!nodeLabelToIdMap.has(node.label)) {
-        nodeLabelToIdMap.set(node.label, []);
-      }
-      nodeLabelToIdMap.get(node.label)?.push(node.id);
-    });
+      //regular graph generation
+      nodes = schemaTreeData.nodes.map((node) => ({
+        ...node,
+        captions: [{ value: node.label }],
+        size: 100,
+        captionSize: 1,
+        maxLength: null,
+      }));
 
-    console.log("Node Label to ID Map:", nodeLabelToIdMap);
+      edges = schemaTreeData.edges.map((edge) => ({
+        ...edge,
+        width: 15,
+        arrowSize: 5,
+        color: "#FFC0CB",
+      }));
+    }
 
-    //adding onto edge structure
-    //if we need to expose any data, just create a field here and it will be shown in the application.
-    const edges = [...schemaTreeData.edges].map((edge) => ({
-      ...edge,
-      width: 15,
-      arrowSize: 5,
-      color: "#FFC0CB",
-    }));
-
+    console.log("Final Nodes:", nodes);
     console.log("Final Edges:", edges);
-
     return { nodes, edges };
   } catch (error) {
     console.error("Error generating schema tree:", error);

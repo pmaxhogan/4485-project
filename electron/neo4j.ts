@@ -97,6 +97,7 @@ export const fetchSchemaData = async () => {
 
     const nodeQuery = `
       MATCH (n)
+      WHERE NOT n:Metadata
       RETURN ID(n) AS id, labels(n) AS nodeType, n.name AS name
     `;
 
@@ -142,4 +143,31 @@ export const fetchSchemaData = async () => {
   }
 };
 
-export { getSession };
+//fetch summary count - zt
+const fetchSummaryCountsFromNeo4j = async () => {
+  const session = getSession();
+  try {
+    //using a metadata tag to hide the data later
+    const result = await session.run(
+      `MATCH (s:Metadata {name: "SummaryCounts"})
+       RETURN s.totalDc AS totalDc,
+              s.totalServer AS totalServer,
+              s.totalApp AS totalApp,
+              s.totalBf AS totalBf`,
+    );
+
+    if (result.records.length > 0) {
+      return result.records[0].toObject();
+    } else {
+      console.log("No summary counts found in Neo4j.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching summary counts:", error);
+    return null;
+  } finally {
+    await session.close();
+  }
+};
+
+export { getSession, fetchSummaryCountsFromNeo4j };

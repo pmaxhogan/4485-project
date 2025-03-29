@@ -20,10 +20,12 @@
     defineProps<{
       nodes?: Node[];
       rels?: Relationship[];
+      layoutDirection: "down" | "up" | "left" | "right" | undefined; //for on the fly layout adjustment
     }>(),
     {
       nodes: () => [],
       rels: () => [],
+      layoutDirection: "down",
     },
   );
 
@@ -60,6 +62,9 @@
       initialZoom: 0,
       layout: "hierarchical", // or any other layout type that works for large datasets
       renderer: "canvas",
+      layoutOptions: {
+        direction: props.layoutDirection, //layout passed from the parent here
+      },
     });
 
     console.log("Adding elements to graph:", props.nodes, props.rels);

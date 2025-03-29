@@ -22,7 +22,7 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     const [channel, ...omit] = args;
     return ipcRenderer.invoke(channel, ...omit);
   },
-  // You can expose other APTs you need here.
+  // You can expose other APIs you need here.
   // ...
 });
 
@@ -59,4 +59,11 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.invoke("check-neo4j-connection"),
 
   fetchSchemaData: () => ipcRenderer.invoke("fetchSchemaData"),
+
+  fetchSummaryCounts: (): Promise<{
+    totalDc: number;
+    totalServer: number;
+    totalApp: number;
+    totalBf: number;
+  }> => ipcRenderer.invoke("fetchSummaryCounts"),
 });

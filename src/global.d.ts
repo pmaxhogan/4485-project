@@ -26,6 +26,13 @@ declare global {
     nodes: SchemaNode[];
     edges: SchemaEdge[];
   }
+
+  interface SummaryCounts {
+    totalDc: number;
+    totalServer: number;
+    totalApp: number;
+    totalBf: number;
+  }
 }
 
 interface ElectronAPI {
@@ -39,6 +46,7 @@ interface ElectronAPI {
   openFileDialog: () => Promise<OpenFileDialogResult>;
   importExcel: (filePath: string) => Promise<ImportExcelResponse>;
   fetchSchemaData: () => Promise<SchemaTreeData>;
+  fetchSummaryCounts: () => Promise<SummaryCounts>;
 }
 
 declare global {

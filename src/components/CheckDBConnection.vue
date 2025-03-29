@@ -22,6 +22,7 @@
     }
   };
 </script>
+
 <template>
   <h2>Neo4j Connection Status</h2>
   <p>{{ connectionStatus }}</p>
