@@ -66,4 +66,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     totalApp: number;
     totalBf: number;
   }> => ipcRenderer.invoke("fetchSummaryCounts"),
+
+  saveImageToExcel: (imageDataUrl: string) =>
+    ipcRenderer.invoke("save-image-to-excel", imageDataUrl),
 });

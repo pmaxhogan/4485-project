@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import VisualGraph from "./VisualGraph.vue";
   import { generateSchemaTree } from "../../graphs/genSchemaTree.ts";
-  import { ref } from "vue";
+  import { ref, defineExpose } from "vue";
 
   const nodes = ref();
   const rels = ref();
@@ -26,7 +26,15 @@
   };
 
   //expose refs for testing
+
+  const visualGraphRef = ref<InstanceType<typeof VisualGraph> | null>(null);
+  // expose captureGraphImage from VisualGraph to be called in App.vue
   defineExpose({
+    captureGraphImage: async () => {
+      if (visualGraphRef.value) {
+        await visualGraphRef.value.captureGraphImage(); // call the method in VisualGraph
+      }
+    },
     nodes,
     rels,
     layoutDirection,
@@ -42,7 +50,7 @@
   <button @click="toggleLayoutDirection">
     Toggle Direction ({{ layoutDirection }})
   </button>
-  <VisualGraph :nodes="nodes" :rels="rels" :layoutDirection="layoutDirection" />
+  <VisualGraph ref="visualGraphRef" :nodes="nodes" :rels="rels" :layoutDirection="layoutDirection"/>
 </template>
 
 <style scoped></style>
