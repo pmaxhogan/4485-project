@@ -17,6 +17,7 @@ describe("App Component", () => {
       importExcel: vi.fn(),
       fetchSchemaData: vi.fn(),
       saveImageToExcel: vi.fn(),
+      fetchSummaryCounts: vi.fn(),
     };
   });
 

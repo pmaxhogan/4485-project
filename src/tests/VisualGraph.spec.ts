@@ -20,6 +20,7 @@ describe("VisualGraph Component", () => {
       checkNeo4jConnection: vi.fn(),
       fetchSchemaData: vi.fn(),
       saveImageToExcel: vi.fn(),
+      fetchSummaryCounts: vi.fn(),
     };
   });
 
@@ -79,6 +80,7 @@ describe("VisualGraph Component", () => {
       props: {
         nodes: [{ id: "1", caption: "Node 1" }],
         rels: [],
+        layoutDirection: "down",
       },
     });
 

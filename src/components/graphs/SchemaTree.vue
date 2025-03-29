@@ -50,7 +50,12 @@
   <button @click="toggleLayoutDirection">
     Toggle Direction ({{ layoutDirection }})
   </button>
-  <VisualGraph ref="visualGraphRef" :nodes="nodes" :rels="rels" :layoutDirection="layoutDirection"/>
+  <VisualGraph
+    ref="visualGraphRef"
+    :nodes="nodes"
+    :rels="rels"
+    :layoutDirection="layoutDirection"
+  />
 </template>
 
 <style scoped></style>
