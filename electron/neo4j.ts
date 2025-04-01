@@ -11,7 +11,8 @@ export const driver = neo4j.driver(
 export const session = driver.session();
 
 //the golden promise - ZT
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const wait = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 //a litte test - ZT
 export const runTestQuery = async (): Promise<Record[]> => {
@@ -109,6 +110,20 @@ export const fetchSchemaData = async () => {
     const nodeResult = await session.run(nodeQuery);
     const relationshipResult = await session.run(relationshipQuery);
 
+    const node_colors: { [key: string]: string } = {
+      Location: "#f47535",
+      Server: "#b86eac",
+      Application: "#3dbfdf",
+      "Business Function": "#46a64e",
+      Default: "#ffdf81",
+    };
+
+    const edge_colors: { [key: string]: string } = {
+      HOSTS: "#f6a565",
+      RUNS: "#d89edc",
+      Default: "#ffffff",
+    };
+
     //process node results
     const nodes: SchemaNode[] = nodeResult.records.map((record) => {
       const nodeType = record.get("nodeType");
@@ -116,6 +131,7 @@ export const fetchSchemaData = async () => {
         id: Array.isArray(nodeType) ? nodeType.join(", ") : nodeType,
         label: Array.isArray(nodeType) ? nodeType.join(", ") : nodeType,
         count: record.get("nodeCount").low, //convert Neo4j integer to JS number
+        color: node_colors[nodeType] || node_colors["Default"],
       };
     });
 
@@ -123,10 +139,12 @@ export const fetchSchemaData = async () => {
     const edges: SchemaEdge[] = relationshipResult.records.map((record) => {
       const sourceType = record.get("sourceType");
       const targetType = record.get("targetType");
+      const edgeType = record.get("relationshipType");
       return {
         from: Array.isArray(sourceType) ? sourceType.join(", ") : sourceType,
         to: Array.isArray(targetType) ? targetType.join(", ") : targetType,
-        id: record.get("relationshipType"),
+        id: edgeType,
+        color: edge_colors[edgeType] || edge_colors["Default"],
       };
     });
 
