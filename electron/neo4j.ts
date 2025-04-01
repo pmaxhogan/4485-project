@@ -110,7 +110,7 @@ export const fetchSchemaData = async () => {
     const nodeResult = await session.run(nodeQuery);
     const relationshipResult = await session.run(relationshipQuery);
 
-    const node_colors: { [key: string]: string } = {
+    const nodeColors: { [key: string]: string } = {
       Location: "#f47535",
       Server: "#b86eac",
       Application: "#3dbfdf",
@@ -118,7 +118,15 @@ export const fetchSchemaData = async () => {
       Default: "#ffdf81",
     };
 
-    const edge_colors: { [key: string]: string } = {
+    const nodeLabels = {
+      Location: "Location",
+      Server: "Server",
+      Application: "App",
+      BusinessFunction: "BF",
+      Datacenter: "DC",
+    } as const;
+
+    const edgeColors: { [key: string]: string } = {
       HOSTS: "#f6a565",
       RUNS: "#d89edc",
       Default: "#ffffff",
@@ -126,12 +134,17 @@ export const fetchSchemaData = async () => {
 
     //process node results
     const nodes: SchemaNode[] = nodeResult.records.map((record) => {
-      const nodeType = record.get("nodeType");
+      const nodeType: string[] = record.get("nodeType");
+      type label = keyof typeof nodeLabels;
+
       return {
         id: Array.isArray(nodeType) ? nodeType.join(", ") : nodeType,
-        label: Array.isArray(nodeType) ? nodeType.join(", ") : nodeType,
+        label:
+          nodeType.length === 1 ?
+            nodeLabels[nodeType[0] as label] || nodeType
+          : nodeType.join(", "),
         count: record.get("nodeCount").low, //convert Neo4j integer to JS number
-        color: node_colors[nodeType] || node_colors["Default"],
+        color: nodeColors[nodeType[0] || "Default"],
       };
     });
 
@@ -144,7 +157,7 @@ export const fetchSchemaData = async () => {
         from: Array.isArray(sourceType) ? sourceType.join(", ") : sourceType,
         to: Array.isArray(targetType) ? targetType.join(", ") : targetType,
         id: edgeType,
-        color: edge_colors[edgeType] || edge_colors["Default"],
+        color: edgeColors[edgeType] || edgeColors["Default"],
       };
     });
 

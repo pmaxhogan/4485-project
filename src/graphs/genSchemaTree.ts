@@ -16,9 +16,16 @@ export const generateSchemaTree = async () => {
   const nodes = schemaTreeData.nodes.map((node) => ({
     ...node,
     captions: [{ value: node.label }, { value: node.count.toString() }],
-    size: 1000,
-    captionSize: 2,
+    size: 100,
+    captionSize: 1,
   }));
 
-  return { nodes, rels: schemaTreeData.edges };
+  const rels = schemaTreeData.edges.map((edge) => ({
+    ...edge,
+    captions: [{ value: edge.id }],
+    width: 4,
+    captionSize: 5,
+  }));
+
+  return { nodes, rels };
 };
