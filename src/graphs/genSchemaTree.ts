@@ -73,7 +73,9 @@ export const generateSchemaTree = async (summaryView: boolean) => {
       edges = schemaTreeData.edges.map((edge) => ({
         ...edge,
         width: 15,
+        captions: [{ value: edge.id }],
         arrowSize: 5,
+        captionSize: 5,
         color: "#FFC0CB",
       }));
     }
@@ -85,4 +87,5 @@ export const generateSchemaTree = async (summaryView: boolean) => {
     console.error("Error generating schema tree:", error);
     return { nodes: [], edges: [] };
   }
+
 };
