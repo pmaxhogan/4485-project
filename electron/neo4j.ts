@@ -114,20 +114,12 @@ export const fetchSchemaData = async () => {
     };
 
     const nodeColors: { [key: string]: string } = {
-      Location: "#f47535",
+      Datacenter: "#f47535",
       Server: "#b86eac",
       Application: "#3dbfdf",
-      "Business Function": "#46a64e",
+      BusinessFunction: "#46a64e",
       Default: "#ffdf81",
     };
-
-    const nodeLabels = {
-      Location: "Location",
-      Server: "Server",
-      Application: "App",
-      BusinessFunction: "BF",
-      Datacenter: "DC",
-    } as const;
 
     const edgeColors: { [key: string]: string } = {
       HOSTS: "#f6a565",
@@ -145,14 +137,11 @@ export const fetchSchemaData = async () => {
     const nodes = nodeResult.records.map((record) => {
       const nodeType: string[] = record.get("nodeType");
       const id = record.get("id").toString();
-      type label = keyof typeof nodeLabels;
+      const label = record.get("name") || "Unknown";
 
       return {
-        id,
-        label:
-          nodeType.length === 1 ?
-            nodeLabels[nodeType[0] as label] || nodeType
-          : nodeType.join(", "),
+        id: id,
+        label: label,
         color: nodeColors[nodeType[0] || "Default"],
       };
     });
@@ -160,12 +149,13 @@ export const fetchSchemaData = async () => {
     const edges = relationshipResult.records.map((record) => {
       const sourceId = record.get("sourceId").toString();
       const targetId = record.get("targetId").toString();
+      const id = `${record.get("sourceId")}_${record.get("targetId")}_${record.get("relationshipType")}`;
       const edgeType = record.get("relationshipType");
 
       return {
         from: sourceId,
         to: targetId,
-        id: `${sourceId}_${targetId}_${edgeType}`,
+        id: id,
         color: edgeColors[edgeType] || edgeColors["Default"],
       };
     });

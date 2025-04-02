@@ -31,32 +31,51 @@ export const generateSchemaTree = async (summaryView: boolean) => {
           label: `Datacenter (${totalDc})`,
           captions: [{ value: `Datacenters: ${totalDc}` }],
           size: 120,
+          color: "#f47535",
         },
         {
           id: "summary-1",
           label: `Server (${totalServer})`,
           captions: [{ value: `Servers: ${totalServer}` }],
           size: 120,
+          color: "#b86eac",
         },
         {
           id: "summary-2",
           label: `IT Application (${totalApp})`,
           captions: [{ value: `Applications: ${totalApp}` }],
           size: 120,
+          color: "#3dbfdf",
         },
         {
           id: "summary-3",
           label: `Business Function (${totalBf})`,
           captions: [{ value: `Business Functions: ${totalBf}` }],
           size: 120,
+          color: "#46a64e",
         },
       ];
 
       //Connect nodes with preset edges
       edges = [
-        { from: "summary-0", to: "summary-1", id: "summary-bf-app" },
-        { from: "summary-1", to: "summary-2", id: "summary-app-dc" },
-        { from: "summary-2", to: "summary-3", id: "summary-dc-sv" },
+        {
+          from: "summary-0",
+          to: "summary-1",
+          id: "summary-bf-app",
+          color: "#f6a565",
+        },
+        {
+          from: "summary-1",
+          to: "summary-2",
+          id: "summary-app-dc",
+          color: "#d89edc",
+        },
+        {
+          from: "summary-2",
+          to: "summary-3",
+          id: "summary-dc-sv",
+          color: "#ffffff",
+        },
       ];
     } else {
       console.log("Generating detailed graph...");
