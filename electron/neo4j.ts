@@ -113,12 +113,6 @@ export const fetchSchemaData = async () => {
       `,
     };
 
-    // Run queries inside the transaction
-    const [nodeResult, relationshipResult] = await Promise.all([
-      transaction.run(queries.nodes),
-      transaction.run(queries.relationships),
-    ]);
-
     const nodeColors: { [key: string]: string } = {
       Location: "#f47535",
       Server: "#b86eac",
@@ -141,43 +135,48 @@ export const fetchSchemaData = async () => {
       Default: "#ffffff",
     };
 
-    // Process node results
-    const nodes: SchemaNode[] = nodeResult.records.map((record) => {
+    //run queries inside the transaction
+    const [nodeResult, relationshipResult] = await Promise.all([
+      transaction.run(queries.nodes),
+      transaction.run(queries.relationships),
+    ]);
+
+    //process nodes and edges
+    const nodes = nodeResult.records.map((record) => {
       const nodeType: string[] = record.get("nodeType");
+      const id = record.get("id").toString();
       type label = keyof typeof nodeLabels;
 
       return {
-        id: Array.isArray(nodeType) ? nodeType.join(", ") : nodeType,
+        id,
         label:
-          nodeType.length === 1
-            ? nodeLabels[nodeType[0] as label] || nodeType
-            : nodeType.join(", "),
-        count: record.get("nodeCount").low, // Convert Neo4j integer to JS number
+          nodeType.length === 1 ?
+            nodeLabels[nodeType[0] as label] || nodeType
+          : nodeType.join(", "),
         color: nodeColors[nodeType[0] || "Default"],
       };
     });
 
-    // Process relationship results (edges)
-    const edges: SchemaEdge[] = relationshipResult.records.map((record) => {
-      const sourceType = record.get("sourceType");
-      const targetType = record.get("targetType");
+    const edges = relationshipResult.records.map((record) => {
+      const sourceId = record.get("sourceId").toString();
+      const targetId = record.get("targetId").toString();
       const edgeType = record.get("relationshipType");
 
       return {
-        source: Array.isArray(sourceType) ? sourceType.join(", ") : sourceType,
-        target: Array.isArray(targetType) ? targetType.join(", ") : targetType,
-        id: `${record.get("sourceId")}_${record.get("targetId")}_${record.get("relationshipType")}`,
+        from: sourceId,
+        to: targetId,
+        id: `${sourceId}_${targetId}_${edgeType}`,
         color: edgeColors[edgeType] || edgeColors["Default"],
       };
     });
 
-    // Commit transaction
+    //commit transaction
     await transaction.commit();
 
     console.log("Schema Data Retrieved:", { nodes, edges });
     return { nodes, edges };
   } catch (error) {
-    await transaction.rollback(); // Rollback transaction in case of error
+    await transaction.rollback(); //rollback transaction in case of error
     if (error instanceof Error) {
       console.error("Error fetching schema data:", error.message);
     } else {
@@ -188,7 +187,6 @@ export const fetchSchemaData = async () => {
     await session.close();
   }
 };
-
 
 //fetch summary count - zt
 const fetchSummaryCountsFromNeo4j = async () => {
