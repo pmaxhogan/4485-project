@@ -1,6 +1,7 @@
 import { Builder } from 'selenium-webdriver';
+import * as path from 'path';
 
-const electronPath = '/Users/maheeramemon/IdeaProjects/NetworksClientServer/4485-project/node_modules/.bin/electron';
+const electronPath = path.resolve(__dirname, '../node_modules/.bin/electron');
 
 async function runTest() {
   console.log("Connecting to ChromeDriver...");
@@ -17,13 +18,13 @@ async function runTest() {
 
   console.log("Electron launched");
 
-  await driver.get('file:///Users/maheeramemon/IdeaProjects/NetworksClientServer/4485-project/e2e/test.html');
-  console.log("HTML file loaded");
+  await driver.get('http://localhost:5173');
+  console.log("App loaded at http://localhost:5173");
 
   await driver.quit();
   console.log("Driver quit, test is done");
 }
 
 runTest().catch((err) => {
-  console.error("Test error", err);
+  console.error("Test error:", err);
 });
