@@ -69,30 +69,49 @@ describe("SchemaTree.vue", () => {
           label: "Datacenter (5)",
           captions: [{ value: "Datacenters: 5" }],
           size: 120,
+          color: "#f47535",
         },
         {
           id: "summary-1",
           label: "Server (10)",
           captions: [{ value: "Servers: 10" }],
           size: 120,
+          color: "#b86eac",
         },
         {
           id: "summary-2",
           label: "IT Application (20)",
           captions: [{ value: "Applications: 20" }],
           size: 120,
+          color: "#3dbfdf",
         },
         {
           id: "summary-3",
           label: "Business Function (8)",
           captions: [{ value: "Business Functions: 8" }],
           size: 120,
+          color: "#46a64e",
         },
       ],
       edges: [
-        { from: "summary-0", to: "summary-1", id: "summary-bf-app" },
-        { from: "summary-1", to: "summary-2", id: "summary-app-dc" },
-        { from: "summary-2", to: "summary-3", id: "summary-dc-sv" },
+        {
+          from: "summary-0",
+          to: "summary-1",
+          id: "summary-bf-app",
+          color: "#f6a565",
+        },
+        {
+          from: "summary-1",
+          to: "summary-2",
+          id: "summary-app-dc",
+          color: "#d89edc",
+        },
+        {
+          from: "summary-2",
+          to: "summary-3",
+          id: "summary-dc-sv",
+          color: "#ffffff",
+        },
       ],
     };
     vi.mocked(generateSchemaTree).mockResolvedValue(mockSummaryData);
