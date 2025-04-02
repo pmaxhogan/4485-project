@@ -16,149 +16,142 @@ interface DcToServerData {
   server: string;
 }
 
-let summaryCounts: SummaryCounts | null = null;
-
 //imports excel - zt
+//##REFACTORED
 const importExcel = async (filePath: string) => {
+  cleanupDatabase();
+
   console.log("Starting Excel import from:", filePath);
 
-  //creating workbook and assigning sheets
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile(filePath);
 
-  const informationSheet = workbook.getWorksheet(
-    "AirlineNodeCI-BF-AP-DC-SV-v2",
-  );
-  const appToBfSheet = workbook.getWorksheet("AirlineEdgeRelateBFAPv2");
-  const serverToAppSheet = workbook.getWorksheet(
-    "AirlineEdgeRelateAirlineSVAP",
-  );
-  const dcToServerSheet = workbook.getWorksheet("AirlineEdgeRelateAirlineDCSV");
+  //valid sheet names
+  type SheetType = "appToBf" | "serverToApp" | "dcToServer";
 
-  console.log("Sheets Found:", {
-    informationSheet: !!informationSheet,
-    appToBfSheet: !!appToBfSheet,
-    serverToAppSheet: !!serverToAppSheet,
-    dcToServerSheet: !!dcToServerSheet,
-  });
+  const sheets: { name: string; type: SheetType; cols: [number, number] }[] = [
+    { name: "AirlineEdgeRelateBFAPv2", type: "appToBf", cols: [1, 2] },
+    { name: "AirlineEdgeRelateAirlineSVAP", type: "serverToApp", cols: [1, 3] },
+    { name: "AirlineEdgeRelateAirlineDCSV", type: "dcToServer", cols: [1, 2] },
+  ];
 
-  if (
-    !informationSheet ||
-    !appToBfSheet ||
-    !serverToAppSheet ||
-    !dcToServerSheet
-  ) {
-    throw new Error("One or more required sheets are missing.");
-  }
-
-  const appToBfData: AppToBfData[] = [];
-  const serverToAppData: ServerToAppData[] = [];
-  const dcToServerData: DcToServerData[] = [];
-
-  //keep track of node totals
-  const uniqueApp = new Set(),
-    uniqueBf = new Set(),
-    uniqueServers = new Set(),
-    uniqueDc = new Set();
-
-  //application to Business Function mapping
-  appToBfSheet.eachRow((row, rowNumber) => {
-    if (rowNumber === 1) return;
-
-    const businessFunction = row.getCell(1).value?.toString().trim() || "";
-    const application = row.getCell(2).value?.toString().trim() || "";
-
-    if (businessFunction && application) {
-      appToBfData.push({ application, businessFunction });
-      uniqueApp.add(application);
-      uniqueBf.add(businessFunction);
-      console.log(`Mapped App -> BF: ${application} -> ${businessFunction}`);
-    }
-  });
-
-  //server to Application mapping
-  serverToAppSheet.eachRow((row, rowNumber) => {
-    if (rowNumber === 1) return;
-    const server = row.getCell(1).value?.toString().trim() || "";
-    const application = row.getCell(3).value?.toString().trim() || "";
-    if (server && application) {
-      serverToAppData.push({ server, application });
-      uniqueServers.add(server);
-      console.log(`Mapped Server -> App: ${server} -> ${application}`);
-    }
-  });
-
-  //datacenter to Server mapping
-  dcToServerSheet.eachRow((row, rowNumber) => {
-    if (rowNumber === 1) return;
-    const datacenter = row.getCell(1).value?.toString().trim() || "";
-    const server = row.getCell(2).value?.toString().trim() || "";
-    if (datacenter && server) {
-      dcToServerData.push({ datacenter, server });
-      uniqueDc.add(datacenter);
-      console.log(`Mapped DC -> Server: ${datacenter} -> ${server}`);
-    }
-  });
-
-  summaryCounts = {
-    totalDc: uniqueDc.size,
-    totalServer: uniqueServers.size,
-    totalApp: uniqueApp.size,
-    totalBf: uniqueBf.size,
+  //typed record to allow indexing with SheetType
+  const data: Record<
+    SheetType,
+    AppToBfData[] | ServerToAppData[] | DcToServerData[]
+  > = {
+    appToBf: [],
+    serverToApp: [],
+    dcToServer: [],
   };
 
-  await storeSummaryCounts(summaryCounts);
+  for (const sheetInfo of sheets) {
+    const sheet = workbook.getWorksheet(sheetInfo.name);
+    if (!sheet) {
+      throw new Error(`Required sheet "${sheetInfo.name}" is missing.`);
+    }
+
+    sheet.eachRow((row, rowNumber) => {
+      if (rowNumber === 1) return; //skip header
+
+      const field1 =
+        row.getCell(sheetInfo.cols[0]).value?.toString().trim() || "";
+      const field2 =
+        row.getCell(sheetInfo.cols[1]).value?.toString().trim() || "";
+
+      //type guarding
+      if (field1 && field2) {
+        if (sheetInfo.type === "appToBf") {
+          (data.appToBf as AppToBfData[]).push({
+            application: field2,
+            businessFunction: field1,
+          });
+        } else if (sheetInfo.type === "serverToApp") {
+          (data.serverToApp as ServerToAppData[]).push({
+            server: field1,
+            application: field2,
+          });
+        } else {
+          (data.dcToServer as DcToServerData[]).push({
+            datacenter: field1,
+            server: field2,
+          });
+        }
+
+        console.log(`Mapped ${sheetInfo.type}: ${field1} -> ${field2}`);
+      }
+    });
+  }
+
   console.log("Inserting data into Neo4j...");
-  await insertIntoNeo4j(dcToServerData, serverToAppData, appToBfData);
+  await insertIntoNeo4j(
+    data.dcToServer as DcToServerData[],
+    data.serverToApp as ServerToAppData[],
+    data.appToBf as AppToBfData[],
+  );
+
+  console.log("Storing node count into Neo4j...");
+  await storeSummaryCounts();
   console.log("Data import completed successfully.");
 };
 
 //inserts into neo4j - zt
+//##REFACTORED
 const insertIntoNeo4j = async (
   dcToServer: DcToServerData[],
   serverToApp: ServerToAppData[],
   appToBf: AppToBfData[],
 ) => {
   const session = getSession();
+  type Query<T> = {
+    data: T[];
+    query: string;
+  };
+  const queries: Array<
+    Query<DcToServerData> | Query<ServerToAppData> | Query<AppToBfData>
+  > = [
+    {
+      data: dcToServer,
+      query: `
+      UNWIND $rows AS row
+      MERGE (dc:Datacenter {name: row.datacenter})
+      MERGE (s:Server {name: row.server})
+      MERGE (dc)-[:HOSTS]->(s)`,
+    },
+    {
+      data: serverToApp,
+      query: `
+      UNWIND $rows AS row
+      MERGE (s:Server {name: row.server})
+      MERGE (app:Application {name: row.application})
+      MERGE (s)-[:RUNS]->(app)`,
+    },
+    {
+      data: appToBf,
+      query: `
+      UNWIND $rows AS row
+      MERGE (app:Application {name: row.application})
+      MERGE (bf:BusinessFunction {name: row.businessFunction})
+      MERGE (app)-[:USES]->(bf)`,
+    },
+  ];
+
   try {
-    //Insert Datacenter -> Server relationships
-    for (const row of dcToServer) {
-      console.log(
-        `Inserting DC -> Server into Neo4j: ${row.datacenter} -> ${row.server}`,
-      );
-      await session.run(
-        `MERGE (dc:Datacenter {name: $datacenter})
-         MERGE (s:Server {name: $server})
-         MERGE (dc)-[:HOSTS]->(s)`,
-        row,
-      );
+    for (const queryObj of queries) {
+      const { data, query } = queryObj;
+
+      if (data.length === 0) continue;
+
+      console.log(`Inserting ${data.length} records into Neo4j...`);
+
+      data.forEach((row) => {
+        console.log(row);
+      });
+
+      await session.run(query, { rows: data });
     }
 
-    //insert Server -> Application relationships
-    for (const row of serverToApp) {
-      console.log(
-        `Inserting Server -> App into Neo4j: ${row.server} -> ${row.application}`,
-      );
-      await session.run(
-        `MERGE (s:Server {name: $server})
-         MERGE (app:Application {name: $application})
-         MERGE (s)-[:RUNS]->(app)`,
-        row,
-      );
-    }
-
-    //insert Application -> Business Function relationships
-    for (const row of appToBf) {
-      console.log(
-        `Inserting App -> BF into Neo4j: ${row.application} -> ${row.businessFunction}`,
-      );
-      await session.run(
-        `MERGE (app:Application {name: $application})
-         MERGE (bf:BusinessFunction {name: $businessFunction})
-         MERGE (app)-[:USES]->(bf)`,
-        row,
-      );
-    }
+    console.log("Data successfully inserted into Neo4j.");
   } catch (error) {
     console.error("Error inserting data into Neo4j:", error);
   } finally {
@@ -166,20 +159,68 @@ const insertIntoNeo4j = async (
   }
 };
 
-const storeSummaryCounts = async (counts: SummaryCounts) => {
+//counts and stores total node counts as metadata
+const storeSummaryCounts = async () => {
   const session = getSession();
+  const nodeTypes = ["Datacenter", "Server", "Application", "BusinessFunction"];
+  const typeMappings: Record<string, string> = {
+    Datacenter: "totalDc",
+    Server: "totalServer",
+    Application: "totalApp",
+    BusinessFunction: "totalBf",
+  };
+
   try {
+    //dynamic query
+    const query = nodeTypes
+      .map(
+        (type) =>
+          `MATCH (n:${type}) RETURN "${typeMappings[type]}" AS type, count(n) AS count`,
+      )
+      .join(" UNION ALL ");
+
+    const result = await session.run(query);
+
+    //results into a key-value object
+    const summaryCounts = nodeTypes.reduce(
+      (acc, type) => {
+        acc[typeMappings[type]] = 0; //to prevent undefined values
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    result.records.forEach((record) => {
+      summaryCounts[record.get("type")] = record.get("count").toNumber();
+    });
+
+    //dynamic cypher query
+    const setClause = Object.keys(summaryCounts)
+      .map((key) => `meta.${key} = $${key}`)
+      .join(",\n    ");
+
     await session.run(
       `MERGE (meta:Metadata {name: "SummaryCounts"})
-       SET meta.totalDc = $totalDc,
-           meta.totalServer = $totalServer,
-           meta.totalApp = $totalApp,
-           meta.totalBf = $totalBf`,
-      counts,
+       SET ${setClause}`,
+      summaryCounts,
     );
-    console.log("Summary counts stored in Neo4j.");
+
+    console.log("Summary counts stored in Neo4j:", summaryCounts);
   } catch (error) {
     console.error("Error storing summary counts:", error);
+  } finally {
+    await session.close();
+  }
+};
+
+//cleans up the db on run
+const cleanupDatabase = async () => {
+  const session = getSession();
+  try {
+    await session.run("MATCH (n) DETACH DELETE n");
+    console.log("Database cleaned up successfully.");
+  } catch (error) {
+    console.error("Error cleaning up the database:", error);
   } finally {
     await session.close();
   }

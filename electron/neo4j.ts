@@ -90,53 +90,58 @@ export const connectToNeo4j = async (
 };
 
 //fetch schema data function - ZT
+//##REFACTORED
 export const fetchSchemaData = async () => {
   const session = getSession();
+  if (!session) throw new Error("Failed to establish Neo4j session.");
+
+  const transaction = session.beginTransaction();
+
   try {
     console.log("Fetching structured schema data...");
 
-    const nodeQuery = `
-      MATCH (n)
-      WHERE NOT n:Metadata
-      RETURN ID(n) AS id, labels(n) AS nodeType, n.name AS name
-    `;
+    const queries = {
+      nodes: `
+        MATCH (n)
+        WHERE NOT n:Metadata
+        RETURN ID(n) AS id, labels(n) AS nodeType, COALESCE(n.name, "Unnamed") AS name
+      `,
+      relationships: `
+        MATCH (a)-[r]->(b)
+        RETURN ID(a) AS sourceId, type(r) AS relationshipType, ID(b) AS targetId
+      `,
+    };
 
-    const relationshipQuery = `
-      MATCH (a)-[r]->(b)
-      RETURN ID(a) AS sourceId, type(r) AS relationshipType, ID(b) AS targetId
-    `;
+    //run queries inside the transaction
+    const [nodeResult, relationshipResult] = await Promise.all([
+      transaction.run(queries.nodes),
+      transaction.run(queries.relationships),
+    ]);
 
-    const nodeResult = await session.run(nodeQuery);
-    const relationshipResult = await session.run(relationshipQuery);
+    //process nodes and edges
+    const nodes = nodeResult.records.map((record) => ({
+      id: record.get("id").toString(),
+      label: record.get("name") || "Unknown",
+    }));
 
-    //map nodes
-    const nodes = nodeResult.records.map((record) => {
-      return {
-        id: record.get("id").toString(),
-        label: record.get("name") || "Unknown",
-      };
-    });
+    const edges = relationshipResult.records.map((record) => ({
+      from: record.get("sourceId").toString(),
+      to: record.get("targetId").toString(),
+      id: `${record.get("sourceId")}_${record.get("targetId")}_${record.get("relationshipType")}`,
+    }));
 
-    //map edges
-    const edges = relationshipResult.records.map((record) => {
-      const sourceId = record.get("sourceId").toString();
-      const targetId = record.get("targetId").toString();
-      const relationshipType = record.get("relationshipType");
-
-      //creates a unique edge ID using sourceId, targetId, and relationshipType
-      const edgeId = `${sourceId}_${targetId}_${relationshipType}`;
-
-      return {
-        from: sourceId,
-        to: targetId,
-        id: edgeId,
-      };
-    });
+    //commit transaction
+    await transaction.commit();
 
     console.log("Schema Data Retrieved:", { nodes, edges });
     return { nodes, edges };
   } catch (error) {
-    console.error("Error fetching schema data:", error);
+    await transaction.rollback(); //rollback transaction in case of error
+    if (error instanceof Error) {
+      console.error("Error fetching schema data:", error.message);
+    } else {
+      console.error("Error fetching schema data:", error);
+    }
     throw error;
   } finally {
     await session.close();
