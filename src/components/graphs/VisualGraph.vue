@@ -20,10 +20,12 @@
     defineProps<{
       nodes?: Node[];
       rels?: Relationship[];
+      layoutDirection: "down" | "up" | "left" | "right" | undefined; //for on the fly layout adjustment
     }>(),
     {
       nodes: () => [],
       rels: () => [],
+      layoutDirection: "down",
     },
   );
 
@@ -51,16 +53,23 @@
       await nextTick();
     }
     console.log(
-      `rendering ${props.nodes.length} nodes and ${props.rels.length} relationships`,
+      `Rendering ${props.nodes.length} nodes and ${props.rels.length} relationships`,
+      props.rels,
     );
 
     if (!container.value) return (updating.value = false);
-    nvlRef.value = new NVL(container.value, props.nodes, props.rels, {
-      initialZoom: 2.6,
-      layout: "forceDirected",
+    nvlRef.value = new NVL(container.value, [], [], {
+      initialZoom: 0,
+      layout: "hierarchical", // or any other layout type that works for large datasets
+      renderer: "canvas",
+      layoutOptions: {
+        direction: props.layoutDirection, //layout passed from the parent here
+      },
     });
 
-    nvlRef.value.addAndUpdateElementsInGraph();
+    console.log("Adding elements to graph:", props.nodes, props.rels);
+
+    nvlRef.value.addAndUpdateElementsInGraph(props.nodes, props.rels);
 
     click.value = new ClickInteraction(nvlRef.value);
     click.value.updateCallback("onNodeClick", (node: Node) => {
@@ -85,6 +94,7 @@
     console.log("Render complete");
   };
 
+  // once vue has finished mounting and page elements are already generated, nvlSetup will run
   // function to capture the graph container as an image
   const captureGraphImage = async () => {
     if (!container.value) {

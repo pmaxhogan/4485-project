@@ -5,7 +5,12 @@ import { ChildProcess, spawn, execFile } from "node:child_process"; //needed for
 import { once } from "events"; //needed for avoiding direct promises - ZT
 import fs from "fs"; //needed for neo4j stuff - ZT
 import path from "node:path";
-import { runTestQuery, connectToNeo4j, fetchSchemaData } from "./neo4j.ts"; //you guessed it pt 2. electric boogaloo - ZT
+import {
+  runTestQuery,
+  connectToNeo4j,
+  fetchSchemaData,
+  fetchSummaryCountsFromNeo4j,
+} from "./neo4j.ts"; //you guessed it pt 2. electric boogaloo - ZT
 import { indentInline } from "./util.ts";
 import { importExcel } from "./excelJSimport.ts";
 import { saveImageToExcel } from "./excelJSexport.ts";
@@ -255,8 +260,20 @@ ipcMain.handle("open-file-dialog", async () => {
   }
 });
 
+//fetches schemaData - zt
 ipcMain.handle("fetchSchemaData", async () => {
   return await fetchSchemaData();
+});
+
+//fetches summaryCount - zt
+ipcMain.handle("fetchSummaryCounts", async () => {
+  try {
+    const counts = await fetchSummaryCountsFromNeo4j();
+    return counts; // Sending counts back to the renderer process
+  } catch (error) {
+    console.error("Error fetching summary counts:", error);
+    return { totalDc: 0, totalServer: 0, totalApp: 0, totalBf: 0 };
+  }
 });
 
 // used for Feature: save rendered image of graph in CMDB - WK

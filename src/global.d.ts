@@ -14,18 +14,24 @@ declare global {
   interface SchemaNode {
     id: string;
     label: string;
-    count: number;
   }
 
   interface SchemaEdge {
-    from: string;
-    to: string;
     id: string;
+    source: string;
+    target: string;
   }
 
   interface SchemaTreeData {
     nodes: SchemaNode[];
     edges: SchemaEdge[];
+  }
+
+  interface SummaryCounts {
+    totalDc: number;
+    totalServer: number;
+    totalApp: number;
+    totalBf: number;
   }
 }
 
@@ -40,6 +46,7 @@ interface ElectronAPI {
   openFileDialog: () => Promise<OpenFileDialogResult>;
   importExcel: (filePath: string) => Promise<ImportExcelResponse>;
   fetchSchemaData: () => Promise<SchemaTreeData>;
+  fetchSummaryCounts: () => Promise<SummaryCounts>;
   saveImageToExcel(
     imageDataUrl: string,
   ): Promise<{ success: boolean; message: string }>;
