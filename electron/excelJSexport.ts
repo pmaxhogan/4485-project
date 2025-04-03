@@ -55,8 +55,8 @@ export async function saveImageToExcel(
   } catch (error: unknown) {
     if (error instanceof Error) {
       // type guard to check if error is an instance of Error
-      console.error("Error saving image to Excel:", error.message);
-      throw new Error(`Failed to save image to Excel: ${error.message}`);
+      console.error("Error saving image to Excel:", error);
+      throw new Error(`Failed to save image to Excel: ${error}`);
     } else {
       console.error("Unknown error occurred:", error);
       throw new Error("Failed to save image to Excel: Unknown error");

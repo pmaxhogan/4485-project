@@ -35,9 +35,12 @@ declare global {
   }
 }
 
+export type ConnectionStatus = "PENDING" | "CONNECTED" | "ERROR";
+
 interface ElectronAPI {
   invoke: (channel: string, ...args: unknown[]) => Promise<unknown>;
   launchNeo4j: () => Promise<string>;
+  onNeo4jStatus: (callback: (status: ConnectionStatus) => void) => void;
   onNeo4jLog: (callback: (data: string) => void) => void;
   onNeo4jError: (callback: (data: string) => void) => void;
   onNeo4jExit: (callback: (code: number) => void) => void;

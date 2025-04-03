@@ -19,7 +19,7 @@ interface DcToServerData {
 //imports excel - zt
 //##REFACTORED
 const importExcel = async (filePath: string) => {
-  cleanupDatabase();
+  await cleanupDatabase();
 
   console.log("Starting Excel import from:", filePath);
 

@@ -11,6 +11,7 @@ describe("VisualGraph Component", () => {
     global.window.electronAPI = {
       invoke: vi.fn(),
       launchNeo4j: vi.fn(),
+      onNeo4jStatus: vi.fn(),
       onNeo4jLog: vi.fn(),
       onNeo4jError: vi.fn(),
       onNeo4jExit: vi.fn(),
