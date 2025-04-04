@@ -1,23 +1,13 @@
-import { app, BrowserWindow, dialog, ipcMain } from "electron";
-import { fileURLToPath } from "node:url";
-import { promisify } from "node:util";
-import { ChildProcess, execFile, spawn } from "node:child_process"; //needed for neo4j stuff -ZT
-import { once } from "events"; //needed for avoiding direct promises - ZT
-import fs from "fs"; //needed for neo4j stuff - ZT
-import path from "node:path";
+import { app, BrowserWindow } from "electron";
+import "./handlers.ts";
 import {
-  connectToNeo4j,
-  fetchSchemaData,
-  fetchSummaryCountsFromNeo4j,
-  runTestQuery,
-} from "./neo4j.ts"; //you guessed it pt 2. electric boogaloo - ZT
-import { indentInline } from "./util.ts";
-import { importExcel } from "./excelJSimport.ts";
-import { saveImageToExcel } from "./excelJSexport.ts";
-
-const asyncExecFile = promisify(execFile);
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  checkAndSetupNeo4j,
+  launchNeo4j,
+  stopNeo4j,
+  neo4jProcess,
+} from "./neo4jStartup.ts";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 // The built directory structure
 //
@@ -28,7 +18,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // │ │ ├── main.js
 // │ │ └── preload.mjs
 // │
-process.env.APP_ROOT = path.join(__dirname, "..");
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 export const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
@@ -36,10 +28,6 @@ export const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
 
 //neo4j constants
-const neo4jFolderPath = path.join(__dirname, "..", "neo4j");
-const script1 = path.join(__dirname, "..", "download-neo4j.ps1");
-const script2 = path.join(__dirname, "..", "config-neo4j.ps1");
-const startNeo = path.join(neo4jFolderPath, "bin/neo4j.ps1");
 
 process.env.VITE_PUBLIC =
   VITE_DEV_SERVER_URL ?
@@ -47,260 +35,6 @@ process.env.VITE_PUBLIC =
   : RENDERER_DIST;
 
 let win: BrowserWindow | null;
-let neo4jProcess: ChildProcess | null; //tracks the process of our LITTLE CHILD - ZT
-
-let importedExcelFile: string = "graph.xlsx";
-
-//runs the scripts if needed - ZT
-async function runPowerShellScript(scriptPath: string) {
-  console.log(`Running PowerShell script: ${scriptPath}`);
-
-  const process = spawn("powershell", [
-    "-ExecutionPolicy",
-    "Bypass",
-    "-File",
-    scriptPath,
-  ]);
-
-  process.stdout.on("data", (data) => {
-    console.log(`PowerShell output: ${indentInline(data.toString())}`);
-  });
-
-  process.stderr.on("data", (data) => {
-    console.error(`PowerShell error: ${indentInline(data.toString())}`);
-  });
-
-  const [code] = await once(process, "close");
-
-  console.log(`PowerShell script exited with code ${code}`);
-
-  if (code !== 0) {
-    throw new Error(`Process exited with code ${code}`);
-  }
-}
-
-//sees if the scripts need to be ran -ZT
-async function checkAndSetupNeo4j() {
-  if (!fs.existsSync(neo4jFolderPath)) {
-    console.log("Neo4j folder not found. Running setup scripts...");
-
-    try {
-      await runPowerShellScript(script1);
-      await runPowerShellScript(script2);
-      console.log("Neo4j setup completed successfully.");
-    } catch (error) {
-      console.error(
-        "Error setting up Neo4j:",
-        error && indentInline(error.toString()),
-      );
-    }
-  } else {
-    console.log(`Detected neo4j at ${neo4jFolderPath}`);
-  }
-}
-
-//launches database and handles errors - ZT
-async function launchNeo4j() {
-  console.log("Starting Neo4j in hidden mode...");
-
-  if (neo4jProcess) {
-    console.log("Neo4j is already running.");
-    return "Neo4j is already running.";
-  }
-
-  const cmd = "powershell";
-  const args = [
-    "-NoProfile",
-    "-NonInteractive",
-    "-NoLogo",
-    "-ExecutionPolicy",
-    "Bypass",
-    "-File",
-    startNeo,
-    "console",
-  ];
-
-  console.log("Spawning", cmd, ...args);
-
-  neo4jProcess = spawn(cmd, args, {
-    stdio: ["ignore", "pipe", "pipe"],
-    shell: false,
-  });
-
-  // output feed
-  neo4jProcess?.stdout?.on("data", (data) => {
-    console.log(`Neo4j Output: ${indentInline(data.toString())}`);
-    win?.webContents.send("neo4j-log", data.toString().trim());
-
-    if (
-      data
-        .toString()
-        .includes(
-          "org.neo4j.io.locker.FileLockException: Lock file has been locked by another process",
-        )
-    ) {
-      console.error(
-        '\n\nNeo4j is already running!\n\nMaybe try:\ntaskkill /fi "IMAGENAME eq java.exe" /f\n\n',
-      );
-      win?.webContents.send("neo4j-error", data.toString().trim());
-    }
-  });
-
-  neo4jProcess?.stderr?.on("data", (data) => {
-    console.error(`Neo4j Error: ${indentInline(data.toString().trim())}`);
-    win?.webContents.send("neo4j-error", data.toString().trim());
-  });
-
-  neo4jProcess.on("error", (error) => {
-    console.error(`Failed to start Neo4j: ${indentInline(error.message)}`);
-    throw new Error(error.message);
-  });
-
-  neo4jProcess.on("spawn", () => {
-    console.log(`Waiting on Neo4j db ${neo4jProcess?.pid} to start`);
-  });
-
-  neo4jProcess.on("exit", (code, signal) => {
-    console.log(`Neo4j process exited with code: ${code} ${signal}`);
-    neo4jProcess = null;
-    win?.webContents.send("neo4j-exit", code);
-  });
-
-  return await new Promise((resolve) => {
-    // resolves when db starts
-    const checkStarted = (data: unknown) => {
-      if (data?.toString().trimEnd().endsWith(" INFO  Started.")) {
-        neo4jProcess?.stdout?.off("data", checkStarted);
-
-        resolve(data.toString().trim());
-      }
-    };
-
-    neo4jProcess?.stdout?.on("data", checkStarted);
-  });
-}
-
-ipcMain.handle("check-neo4j-connection", async () => {
-  try {
-    let finalStatus = "Checking connection...";
-
-    await connectToNeo4j(({ status, statusMsg }) => {
-      finalStatus = statusMsg;
-      win?.webContents.send("connection-status-update", status);
-    });
-    return finalStatus;
-  } catch (error) {
-    console.error(
-      "Error checking Neo4j connection:",
-      error && indentInline(error.toString()),
-    );
-    return "Failed to connect to Neo4j.";
-  }
-});
-
-//test query - ZT
-ipcMain.handle("run-test-query", async () => {
-  console.log("Received IPC call: run-test-query");
-  return runTestQuery();
-});
-
-//connect excel - ZT
-ipcMain.handle("import-excel", async (_, filePath: string) => {
-  try {
-    if (!filePath) throw new Error("No file path provided.");
-
-    console.log(`Importing file: ${filePath}`);
-    await importExcel(filePath);
-
-    importedExcelFile = filePath; // save excel file path for excelJSexport
-    return {
-      success: true,
-      message: `Excel file '${filePath}' imported successfully`,
-    };
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Import error:", error);
-      return {
-        success: false,
-        message: error.message || "Failed to import Excel file",
-      };
-    } else {
-      console.error("Import error: Unknown error", error);
-      return {
-        success: false,
-        message: "Failed to import Excel file",
-      };
-    }
-  }
-});
-
-//file select - ZT
-ipcMain.handle("open-file-dialog", async () => {
-  try {
-    console.log("Opening file dialog...");
-    const result = await dialog.showOpenDialog({
-      properties: ["openFile"],
-      filters: [{ name: "Excel Files", extensions: ["xlsx", "xls"] }],
-    });
-
-    console.log("File dialog result:", result);
-
-    if (result.canceled) {
-      console.log("File selection was canceled.");
-      return { filePaths: [] };
-    }
-
-    console.log("Selected file:", result.filePaths[0]);
-    return { filePaths: result.filePaths };
-  } catch (error) {
-    console.error("Error opening file dialog:", error);
-    throw error;
-  }
-});
-
-//fetches schemaData - zt
-ipcMain.handle("fetchSchemaData", async () => {
-  return await fetchSchemaData();
-});
-
-//fetches summaryCount - zt
-ipcMain.handle("fetchSummaryCounts", async () => {
-  try {
-    const counts = await fetchSummaryCountsFromNeo4j();
-    return counts; // Sending counts back to the renderer process
-  } catch (error) {
-    console.error("Error fetching summary counts:", error);
-    return { totalDc: 0, totalServer: 0, totalApp: 0, totalBf: 0 };
-  }
-});
-
-// used for Feature: save rendered image of graph in CMDB - WK
-ipcMain.handle("save-image-to-excel", async (_, imageDataUrl: string) => {
-  try {
-    if (!imageDataUrl) throw new Error("No image data provided.");
-
-    await saveImageToExcel(imageDataUrl, importedExcelFile);
-
-    return {
-      success: true,
-      message: `Saved to '${importedExcelFile}' successfully`,
-    };
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Export error:", error);
-      return {
-        success: false,
-        message: error.message || "Failed to export to Excel file",
-      };
-    } else {
-      console.error("EXport error: Unknown error", error);
-      return {
-        success: false,
-        message: "Failed to export to Excel file",
-      };
-    }
-  }
-});
 
 function openWindow() {
   win = new BrowserWindow({
@@ -342,42 +76,6 @@ app.whenReady().then(async () => {
   openWindow();
 });
 
-export async function stopNeo4j(pid: number) {
-  // yup, this sucks
-  // windows only supports SIGKILL-like behavior
-  // and .kill() on a ChildProcess does not properly kill the process either!
-  // even the windows api cannot save us
-  // https://learn.microsoft.com/en-us/windows/console/generateconsolectrlevent?redirectedfrom=MSDN
-  // https://github.com/nodejs/node/issues/35172
-  // https://stackoverflow.com/questions/42303377/gracefully-terminate-a-command-line-application-on-windows
-  const cmd = "taskkill";
-  const args = ["/PID", pid.toString(), "/T", "/F"];
-
-  console.log("Killing neo4j via ", cmd, ...args);
-  const { stdout, stderr } = await asyncExecFile(cmd, args);
-  if (stderr.toString().trim().length) {
-    throw new Error(
-      `Error stopping neo4j @${pid} ${indentInline(stderr.toString().trim())}`,
-    );
-  }
-
-  if (!stdout.includes(`SUCCESS: The process with PID ${pid}`)) {
-    throw new Error(
-      `Error stopping neo4j @${pid} ${indentInline(stdout.toString().trim())}`,
-    );
-  }
-
-  console.log(`Stopped neo4j @${pid}`);
-  neo4jProcess?.unref();
-  neo4jProcess = null;
-}
-
-process.on("uncaughtExceptionMonitor", () => {
-  if (neo4jProcess && !neo4jProcess.killed && neo4jProcess.pid) {
-    stopNeo4j(neo4jProcess.pid);
-  }
-});
-
 process.on("message", (msg) => {
   if (msg === "electron-vite&type=hot-reload") {
     for (const win of BrowserWindow.getAllWindows()) {
@@ -387,3 +85,10 @@ process.on("message", (msg) => {
     }
   }
 });
+
+//just incaseies
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+});
+
+export { win };
