@@ -11,6 +11,7 @@ describe("VisualGraph Component", () => {
     global.window.electronAPI = {
       invoke: vi.fn(),
       launchNeo4j: vi.fn(),
+      onNeo4jStatus: vi.fn(),
       onNeo4jLog: vi.fn(),
       onNeo4jError: vi.fn(),
       onNeo4jExit: vi.fn(),
@@ -20,6 +21,7 @@ describe("VisualGraph Component", () => {
       checkNeo4jConnection: vi.fn(),
       fetchSchemaData: vi.fn(),
       saveImageToExcel: vi.fn(),
+      fetchSummaryCounts: vi.fn(),
     };
   });
 
@@ -38,6 +40,7 @@ describe("VisualGraph Component", () => {
           { id: "2", caption: "Node 2" },
         ],
         rels: [{ from: "1", to: "2", id: "3" }],
+        layoutDirection: "down",
       },
     });
 
@@ -72,6 +75,7 @@ describe("VisualGraph Component", () => {
       props: {
         nodes: [{ id: "1", caption: "Node 1" }],
         rels: [],
+        layoutDirection: "down",
       },
     });
 

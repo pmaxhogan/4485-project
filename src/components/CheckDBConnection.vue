@@ -15,13 +15,14 @@
       connectionStatus.value = "Failed to connect to Neo4j.";
 
       if (error instanceof Error) {
-        console.error(error.message);
+        console.error(error);
       } else {
         console.error("An unknown error occurred", error);
       }
     }
   };
 </script>
+
 <template>
   <h2>Neo4j Connection Status</h2>
   <p>{{ connectionStatus }}</p>

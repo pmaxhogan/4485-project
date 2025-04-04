@@ -14,24 +14,33 @@ declare global {
   interface SchemaNode {
     id: string;
     label: string;
-    count: number;
   }
 
   interface SchemaEdge {
-    from: string;
-    to: string;
     id: string;
+    source: string;
+    target: string;
   }
 
   interface SchemaTreeData {
     nodes: SchemaNode[];
     edges: SchemaEdge[];
   }
+
+  interface SummaryCounts {
+    totalDc: number;
+    totalServer: number;
+    totalApp: number;
+    totalBf: number;
+  }
 }
+
+export type ConnectionStatus = "PENDING" | "CONNECTED" | "ERROR";
 
 interface ElectronAPI {
   invoke: (channel: string, ...args: unknown[]) => Promise<unknown>;
   launchNeo4j: () => Promise<string>;
+  onNeo4jStatus: (callback: (status: ConnectionStatus) => void) => void;
   onNeo4jLog: (callback: (data: string) => void) => void;
   onNeo4jError: (callback: (data: string) => void) => void;
   onNeo4jExit: (callback: (code: number) => void) => void;
@@ -40,6 +49,7 @@ interface ElectronAPI {
   openFileDialog: () => Promise<OpenFileDialogResult>;
   importExcel: (filePath: string) => Promise<ImportExcelResponse>;
   fetchSchemaData: () => Promise<SchemaTreeData>;
+  fetchSummaryCounts: () => Promise<SummaryCounts>;
   saveImageToExcel(
     imageDataUrl: string,
   ): Promise<{ success: boolean; message: string }>;

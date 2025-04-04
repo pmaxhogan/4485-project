@@ -1,5 +1,7 @@
-import neo4j, { Record } from "neo4j-driver";
+import neo4j from "neo4j-driver";
+import type { Record } from "neo4j-driver";
 import { indentInline } from "./util.ts";
+import { ConnectionStatus } from "./types.ts";
 
 const password = "changethis"; //replace w/ enviro vars or connect to config later, this is so insecure its funny - ZT
 
@@ -8,7 +10,7 @@ export const driver = neo4j.driver(
   neo4j.auth.basic("neo4j", password),
 );
 
-export const session = driver.session();
+const getSession = () => driver.session();
 
 //the golden promise - ZT
 export const wait = (ms: number) =>
@@ -16,7 +18,7 @@ export const wait = (ms: number) =>
 
 //a litte test - ZT
 export const runTestQuery = async (): Promise<Record[]> => {
-  const session = driver.session();
+  const session = getSession();
   try {
     console.log("Running test query against Neo4j...");
 
@@ -46,39 +48,46 @@ export const runTestQuery = async (): Promise<Record[]> => {
 
 // connect to Neo4j with retries - ZT
 export const connectToNeo4j = async (
-  updateStatus: (status: string) => void,
+  updateStatus: (s: { status: ConnectionStatus; statusMsg: string }) => void,
 ) => {
   const maxRetries = 5;
   const retryDelay = 10000; // 10 seconds
-  await wait(2000); //flat wait (helps with flow)
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    const session = driver.session();
+    const session = getSession();
 
     try {
       console.log(`Attempt ${attempt} to connect to Neo4j...`);
       await session.run("RETURN 1"); // Test query
       console.log("Neo4j connection successful.");
-      updateStatus("Neo4j connection successful.");
-      session.close();
+      updateStatus({
+        statusMsg: "Neo4j connection successful.",
+        status: "CONNECTED",
+      });
+      await session.close();
       return;
     } catch (error) {
       console.error(`Error connecting to Neo4j (Attempt ${attempt}):`, error);
 
       if (error instanceof Error) {
-        updateStatus(
-          `Error connecting to Neo4j (Attempt ${attempt}): ${error.message}`,
-        );
+        updateStatus({
+          statusMsg: `Error connecting to Neo4j (Attempt ${attempt}): ${error.message}`,
+          status: "PENDING",
+        });
       } else {
-        updateStatus(
-          `Error connecting to Neo4j (Attempt ${attempt}): Unknown error occurred.`,
-        );
+        updateStatus({
+          statusMsg: `Error connecting to Neo4j (Attempt ${attempt}): Unknown error occurred.`,
+          status: "PENDING",
+        });
       }
 
-      session.close();
+      await session.close();
 
       if (attempt === maxRetries) {
-        updateStatus("Failed to connect to Neo4j after maximum retries.");
+        updateStatus({
+          statusMsg: "Failed to connect to Neo4j after maximum retries.",
+          status: "ERROR",
+        });
         return;
       }
 
@@ -90,41 +99,36 @@ export const connectToNeo4j = async (
   }
 };
 
+export const queries = {
+  nodes: `
+        MATCH (n)
+        WHERE NOT n:Metadata
+        RETURN ID(n) AS id, labels(n) AS nodeType, COALESCE(n.name, "Unnamed") AS name
+      `,
+  relationships: `
+        MATCH (a)-[r]->(b)
+        RETURN ID(a) AS sourceId, type(r) AS relationshipType, ID(b) AS targetId
+      `,
+};
+
 //fetch schema data function - ZT
+//##REFACTORED
 export const fetchSchemaData = async () => {
-  const session = driver.session();
+  const session = getSession();
+  if (!session) throw new Error("Failed to establish Neo4j session.");
+
+  const transaction = session.beginTransaction();
+
   try {
-    console.log("in neo4j.ts -> Fetching schema data...");
-
-    const nodeQuery = `
-      MATCH (n)
-      RETURN labels(n) AS nodeType, count(n) AS nodeCount
-    `;
-
-    const relationshipQuery = `
-      MATCH (a)-[r]->(b)
-      RETURN labels(a) AS sourceType, type(r) AS relationshipType, labels(b) AS targetType
-    `;
-
-    //info queries
-    const nodeResult = await session.run(nodeQuery);
-    const relationshipResult = await session.run(relationshipQuery);
+    console.log("Fetching structured schema data...");
 
     const nodeColors: { [key: string]: string } = {
-      Location: "#f47535",
+      Datacenter: "#f47535",
       Server: "#b86eac",
       Application: "#3dbfdf",
-      "Business Function": "#46a64e",
+      BusinessFunction: "#46a64e",
       Default: "#ffdf81",
     };
-
-    const nodeLabels = {
-      Location: "Location",
-      Server: "Server",
-      Application: "App",
-      BusinessFunction: "BF",
-      Datacenter: "DC",
-    } as const;
 
     const edgeColors: { [key: string]: string } = {
       HOSTS: "#f6a565",
@@ -132,41 +136,79 @@ export const fetchSchemaData = async () => {
       Default: "#ffffff",
     };
 
-    //process node results
-    const nodes: SchemaNode[] = nodeResult.records.map((record) => {
+    //run queries inside the transaction
+    const [nodeResult, relationshipResult] = await Promise.all([
+      transaction.run(queries.nodes),
+      transaction.run(queries.relationships),
+    ]);
+
+    //process nodes and edges
+    const nodes = nodeResult.records.map((record) => {
       const nodeType: string[] = record.get("nodeType");
-      type label = keyof typeof nodeLabels;
+      const id = record.get("id").toString();
+      const label = record.get("name") || "Unknown";
 
       return {
-        id: Array.isArray(nodeType) ? nodeType.join(", ") : nodeType,
-        label:
-          nodeType.length === 1 ?
-            nodeLabels[nodeType[0] as label] || nodeType
-          : nodeType.join(", "),
-        count: record.get("nodeCount").low, //convert Neo4j integer to JS number
+        id: id,
+        label: label,
         color: nodeColors[nodeType[0] || "Default"],
       };
     });
 
-    //process relationship results
-    const edges: SchemaEdge[] = relationshipResult.records.map((record) => {
-      const sourceType = record.get("sourceType");
-      const targetType = record.get("targetType");
+    const edges = relationshipResult.records.map((record) => {
+      const sourceId = record.get("sourceId").toString();
+      const targetId = record.get("targetId").toString();
+      const id = `${record.get("sourceId")}_${record.get("targetId")}_${record.get("relationshipType")}`;
       const edgeType = record.get("relationshipType");
+
       return {
-        from: Array.isArray(sourceType) ? sourceType.join(", ") : sourceType,
-        to: Array.isArray(targetType) ? targetType.join(", ") : targetType,
-        id: edgeType,
+        from: sourceId,
+        to: targetId,
+        id: id,
         color: edgeColors[edgeType] || edgeColors["Default"],
       };
     });
 
-    console.log("in neo4j.ts -> Schema Data Retrieved");
-    return { nodes, edges }; //typeScript infers this as SchemaTreeData
+    //commit transaction
+    await transaction.commit();
+
+    console.log("Schema Data Retrieved:", { nodes, edges });
+    return { nodes, edges };
   } catch (error) {
+    await transaction.rollback(); //rollback transaction in case of error
+
     console.error("Error fetching schema data:", error);
     throw error;
   } finally {
     await session.close();
   }
 };
+
+//fetch summary count - zt
+const fetchSummaryCountsFromNeo4j = async () => {
+  const session = getSession();
+  try {
+    //using a metadata tag to hide the data later
+    const result = await session.run(
+      `MATCH (s:Metadata {name: "SummaryCounts"})
+       RETURN s.totalDc AS totalDc,
+              s.totalServer AS totalServer,
+              s.totalApp AS totalApp,
+              s.totalBf AS totalBf`,
+    );
+
+    if (result.records.length > 0) {
+      return result.records[0].toObject();
+    } else {
+      console.log("No summary counts found in Neo4j.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching summary counts:", error);
+    return null;
+  } finally {
+    await session.close();
+  }
+};
+
+export { getSession, fetchSummaryCountsFromNeo4j };
