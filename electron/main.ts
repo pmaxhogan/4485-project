@@ -86,9 +86,4 @@ process.on("message", (msg) => {
   }
 });
 
-//just incaseies
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("Unhandled Rejection at:", promise, "reason:", reason);
-});
-
 export { win };
