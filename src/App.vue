@@ -3,6 +3,7 @@
   import { importExcel } from "./db/import.ts";
   import CheckDBConnection from "./components/CheckDBConnection.vue";
   import SchemaTree from "./components/graphs/SchemaTree.vue";
+  import { ConnectionStatus } from "./global";
 
   const schemaTreeRef = ref<InstanceType<typeof SchemaTree> | null>(null);
   const saveImageToExcel = async () => {
@@ -21,12 +22,17 @@
   function handleNeo4jExit(code: number) {
     console.log(`Neo4j exited with code: ${code}`);
   }
+
+  const status = ref<ConnectionStatus>("PENDING");
+  const handleNeo4jStatus = (newStatus: ConnectionStatus) =>
+    (status.value = newStatus);
   //mounting - ZT
   onMounted(() => {
     //listen for events from the main process
     window.electronAPI.onNeo4jLog(handleNeo4jLog);
     window.electronAPI.onNeo4jError(handleNeo4jError);
     window.electronAPI.onNeo4jExit(handleNeo4jExit);
+    window.electronAPI.onNeo4jStatus(handleNeo4jStatus);
     window.electronAPI.runTestQuery();
   });
 
@@ -35,6 +41,7 @@
     window.electronAPI.onNeo4jLog(() => {});
     window.electronAPI.onNeo4jError(() => {});
     window.electronAPI.onNeo4jExit(() => {});
+    window.electronAPI.onNeo4jStatus(() => {});
   });
 </script>
 
@@ -42,11 +49,13 @@
   <!-- If you want to test database -->
   <CheckDBConnection />
 
-  <div>
-    <button @click="importExcel">Import Excel</button>
-    <div></div>
-    <button @click="saveImageToExcel">Save Graph Image to CMDB</button>
-  </div>
+  <template v-if="status === 'CONNECTED'">
+    <div>
+      <button @click="importExcel">Import Excel</button>
+      <div></div>
+      <button @click="saveImageToExcel">Save Graph Image to CMDB</button>
+    </div>
 
-  <SchemaTree ref="schemaTreeRef" />
+    <SchemaTree ref="schemaTreeRef" />
+  </template>
 </template>

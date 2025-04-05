@@ -1,5 +1,6 @@
 import { ipcRenderer, contextBridge, IpcRendererEvent } from "electron";
 import { Record } from "neo4j-driver";
+import { ConnectionStatus } from "./types.ts";
 
 // --------- Expose some API to the Renderer process ---------
 //security isn't an issue currently
@@ -32,6 +33,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.invoke(channel, ...args),
 
   launchNeo4j: (): Promise<string> => ipcRenderer.invoke("launch-neo4j"),
+
+  onNeo4jStatus: (callback: (data: ConnectionStatus) => void) =>
+    ipcRenderer.on(
+      "connection-status-update",
+      (_event: IpcRendererEvent, data: ConnectionStatus) => callback(data),
+    ),
 
   onNeo4jLog: (callback: (data: string) => void) =>
     ipcRenderer.on("neo4j-log", (_event: IpcRendererEvent, data: string) =>

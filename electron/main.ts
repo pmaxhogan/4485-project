@@ -1,15 +1,15 @@
-import { app, BrowserWindow, ipcMain, dialog } from "electron";
+import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
-import { ChildProcess, spawn, execFile } from "node:child_process"; //needed for neo4j stuff -ZT
+import { ChildProcess, execFile, spawn } from "node:child_process"; //needed for neo4j stuff -ZT
 import { once } from "events"; //needed for avoiding direct promises - ZT
 import fs from "fs"; //needed for neo4j stuff - ZT
 import path from "node:path";
 import {
-  runTestQuery,
   connectToNeo4j,
   fetchSchemaData,
   fetchSummaryCountsFromNeo4j,
+  runTestQuery,
 } from "./neo4j.ts"; //you guessed it pt 2. electric boogaloo - ZT
 import { indentInline } from "./util.ts";
 import { importExcel } from "./excelJSimport.ts";
@@ -184,12 +184,10 @@ ipcMain.handle("check-neo4j-connection", async () => {
   try {
     let finalStatus = "Checking connection...";
 
-    const updateStatus = (status: string) => {
-      finalStatus = status;
-      win?.webContents.send("connection-status-update", finalStatus);
-    };
-
-    await connectToNeo4j(updateStatus);
+    await connectToNeo4j(({ status, statusMsg }) => {
+      finalStatus = statusMsg;
+      win?.webContents.send("connection-status-update", status);
+    });
     return finalStatus;
   } catch (error) {
     console.error(
@@ -221,7 +219,7 @@ ipcMain.handle("import-excel", async (_, filePath: string) => {
     };
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Import error:", error.message); // Now you can safely access `message`
+      console.error("Import error:", error);
       return {
         success: false,
         message: error.message || "Failed to import Excel file",
@@ -289,7 +287,7 @@ ipcMain.handle("save-image-to-excel", async (_, imageDataUrl: string) => {
     };
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Export error:", error.message);
+      console.error("Export error:", error);
       return {
         success: false,
         message: error.message || "Failed to export to Excel file",

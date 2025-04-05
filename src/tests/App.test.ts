@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import App from "../App.vue";
 import { screen, render, fireEvent } from "@testing-library/vue";
+import { nextTick } from "vue";
 
 describe("App Component", () => {
   beforeEach(() => {
     // cast global directly to an object that contains window
     (global as { window: Window }).window.electronAPI = {
+      onNeo4jStatus: vi.fn(),
       onNeo4jLog: vi.fn(),
       onNeo4jError: vi.fn(),
       onNeo4jExit: vi.fn(),
@@ -38,6 +40,9 @@ describe("App Component", () => {
         },
       },
     });
+
+    vi.mocked(window.electronAPI.onNeo4jStatus).mock.lastCall?.[0]("CONNECTED");
+    await nextTick();
 
     const saveImageButton = screen.getByRole("button", {
       name: /Save Graph Image to CMDB/i,

@@ -30,28 +30,28 @@ export const generateSchemaTree = async (summaryView: boolean) => {
           id: "summary-0",
           label: `Datacenter (${totalDc})`,
           captions: [{ value: `Datacenters: ${totalDc}` }],
-          size: 120,
+          size: 17,
           color: "#f47535",
         },
         {
           id: "summary-1",
           label: `Server (${totalServer})`,
           captions: [{ value: `Servers: ${totalServer}` }],
-          size: 120,
+          size: 17,
           color: "#b86eac",
         },
         {
           id: "summary-2",
           label: `IT Application (${totalApp})`,
           captions: [{ value: `Applications: ${totalApp}` }],
-          size: 120,
+          size: 17,
           color: "#3dbfdf",
         },
         {
           id: "summary-3",
           label: `Business Function (${totalBf})`,
           captions: [{ value: `Business Functions: ${totalBf}` }],
-          size: 120,
+          size: 17,
           color: "#46a64e",
         },
       ];
@@ -84,22 +84,23 @@ export const generateSchemaTree = async (summaryView: boolean) => {
       nodes = schemaTreeData.nodes.map((node) => ({
         ...node,
         captions: [{ value: node.label }],
-        size: 100,
+        size: 20,
         captionSize: 1,
         maxLength: null,
       }));
 
       edges = schemaTreeData.edges.map((edge) => ({
         ...edge,
-        width: 15,
+        // width: 15,
+        width: 2,
         //captions: [{ value: edge.id }] this just seems like clutter
-        arrowSize: 5,
+        arrowSize: 1,
         captionSize: 5,
       }));
     }
 
-    console.log("Final Nodes:", nodes);
-    console.log("Final Edges:", edges);
+    console.log("Final Nodes:", nodes.length);
+    console.log("Final Edges:", edges.length);
     return { nodes, edges };
   } catch (error) {
     console.error("Error generating schema tree:", error);
