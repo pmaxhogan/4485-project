@@ -1,24 +1,24 @@
-import { Builder } from 'selenium-webdriver';
-import * as path from 'path';
+import { Builder } from "selenium-webdriver";
+import * as path from "path";
 
-const electronPath = path.resolve(__dirname, '../node_modules/.bin/electron');
+const electronPath = path.resolve(__dirname, "../node_modules/.bin/electron");
 
 async function runTest() {
   console.log("Connecting to ChromeDriver...");
 
   const driver = await new Builder()
-    .usingServer('http://localhost:9515')
+    .usingServer("http://localhost:9515")
     .withCapabilities({
-      'goog:chromeOptions': {
-        binary: electronPath
-      }
+      "goog:chromeOptions": {
+        binary: electronPath,
+      },
     })
-    .forBrowser('chrome')
+    .forBrowser("chrome")
     .build();
 
   console.log("Electron launched");
 
-  await driver.get('http://localhost:5173');
+  await driver.get("http://localhost:5173");
   console.log("App loaded at http://localhost:5173");
 
   await driver.quit();

@@ -58,7 +58,7 @@ describe("VisualGraph Component", () => {
         document.body.appendChild(a);
         a.dispatchEvent(new Event("click", { bubbles: true }));
         document.body.removeChild(a);
-      }
+      },
     );
 
     const clickHandler = vi.fn((event: MouseEvent) => {
@@ -83,7 +83,9 @@ describe("VisualGraph Component", () => {
     await new Promise((resolve) => setTimeout(resolve, 10));
 
     expect(capturedHref).toBe(mockImageDataUrl);
-    expect(window.electronAPI.saveImageToExcel).toHaveBeenCalledWith(mockImageDataUrl);
+    expect(window.electronAPI.saveImageToExcel).toHaveBeenCalledWith(
+      mockImageDataUrl,
+    );
 
     document.removeEventListener("click", clickHandler, true);
   });
