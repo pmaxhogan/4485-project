@@ -69,6 +69,51 @@
 
   const updating = ref(false);
   const updatingTimeout = ref<number | null>(null);
+  const selectedNodeIds = ref<string[]>([]); // support multiple selected
+  // mark selected nodes (and their children) as failed, or un-fail them
+  type ExtendedNode = Node & { originalColor?: string };
+  const markSelectedNodeAsFailed = () => {
+    if (!nvlRef.value || selectedNodeIds.value.length === 0) {
+      console.log(
+        "No node selected or NVL not initialized",
+        selectedNodeIds.value,
+      );
+      return;
+    }
+
+    console.log("Toggling failure state for:", selectedNodeIds.value);
+
+    // Map parent → children
+    const childMap = new Map<string, string[]>();
+    props.rels.forEach((rel) => {
+      if (!childMap.has(rel.from)) childMap.set(rel.from, []);
+      childMap.get(rel.from)?.push(rel.to);
+    });
+
+    const allToToggle = new Set<string>();
+    selectedNodeIds.value.forEach((nodeId) => {
+      allToToggle.add(nodeId);
+      (childMap.get(nodeId) || []).forEach((childId) =>
+        allToToggle.add(childId),
+      );
+    });
+
+    const updatedNodes = nvlRef.value
+      ?.getNodes()
+      .filter((node) => allToToggle.has(node.id))
+      .map((node) => {
+        const isCurrentlyFailed = node.color === "#ff0000";
+        const original = (node as ExtendedNode).originalColor || node.color;
+        return {
+          ...node,
+          color: isCurrentlyFailed ? original : "#ff0000",
+          originalColor: original,
+        };
+      });
+
+    nvlRef.value.updateElementsInGraph(updatedNodes, []);
+    console.log("Graph updated with toggled fail states", updatedNodes);
+  };
 
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
@@ -164,15 +209,47 @@
 
     click.value = new ClickInteraction(nvlRef.value);
     click.value.updateCallback("onNodeClick", (node: Node) => {
-      let isSelected = !node.selected;
+      if (!nvlRef.value) {
+        console.warn("NVL not initialized");
+        return;
+      }
 
-      console.log("Node clicked", node);
+      const idx = selectedNodeIds.value.indexOf(node.id);
+      if (idx !== -1) {
+        selectedNodeIds.value.splice(idx, 1); // unselect
+      } else {
+        selectedNodeIds.value.push(node.id); // add
+      }
 
-      if (nvlRef.value)
-        nvlRef.value.updateElementsInGraph(
-          [{ id: node.id, selected: isSelected }],
-          [],
-        );
+      const currentlySelected = new Set(
+        nvlRef.value.getSelectedNodes().map((node) => node.id) ?? [],
+      );
+      const shouldBeSelected = new Set(selectedNodeIds.value);
+
+      const shouldUnselect = currentlySelected.difference(shouldBeSelected);
+      const shouldSelect = shouldBeSelected.difference(currentlySelected);
+
+      nvlRef.value.updateElementsInGraph(
+        nvlRef.value
+          .getSelectedNodes()
+          .filter((node) => shouldUnselect.has(node.id))
+          .map((n) => ({
+            ...n,
+            selected: false,
+          })),
+        [],
+      );
+
+      nvlRef.value.updateElementsInGraph(
+        nvlRef.value
+          .getNodes()
+          .filter((node) => shouldSelect.has(node.id))
+          .map((n) => ({
+            ...n,
+            selected: true,
+          })),
+        [],
+      );
     });
 
     zoom.value = new ZoomInteraction(nvlRef.value);
@@ -298,6 +375,15 @@
 <template>
   <h2>Graph</h2>
   <button @click="zoomToFit">Zoom to Fit</button>
+  <!---Button to mark failed node -->
+  <button
+    @click="markSelectedNodeAsFailed"
+    :disabled="!selectedNodeIds.length"
+    class="mark-failed-btn"
+  >
+    Toggle Node Failure
+  </button>
+
   <div v-if="props.nodes.length" ref="nvl-container" class="graph"></div>
   <div v-else class="graph">No nodes to display...</div>
   <h2>Controls</h2>
@@ -306,6 +392,7 @@
     <li>Scroll in and out to zoom.</li>
     <li>Click on a node to select/deselect it.</li>
     <li>Click and drag a node to move the node.</li>
+    <li>Select a node to mark it as failed.</li>
   </ul>
 
   <img v-if="img && debugImg" :src="img" alt="Graph Image" />
@@ -319,5 +406,26 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .mark-failed-btn {
+    margin: 10px 0;
+    padding: 8px 16px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
+
+  .mark-failed-btn:hover:not(:disabled) {
+    background-color: #d32f2f;
+  }
+
+  .mark-failed-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
   }
 </style>
