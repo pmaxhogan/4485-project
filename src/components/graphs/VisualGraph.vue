@@ -74,7 +74,10 @@
   type ExtendedNode = Node & { originalColor?: string };
   const markSelectedNodeAsFailed = () => {
     if (!nvlRef.value || selectedNodeIds.value.length === 0) {
-      console.log("No node selected or NVL not initialized");
+      console.log(
+        "No node selected or NVL not initialized",
+        selectedNodeIds.value,
+      );
       return;
     }
 
@@ -95,8 +98,10 @@
       );
     });
 
-    const updatedNodes = props.nodes.map((node) => {
-      if (allToToggle.has(node.id)) {
+    const updatedNodes = nvlRef.value
+      ?.getNodes()
+      .filter((node) => allToToggle.has(node.id))
+      .map((node) => {
         const isCurrentlyFailed = node.color === "#ff0000";
         const original = (node as ExtendedNode).originalColor || node.color;
         return {
@@ -104,12 +109,10 @@
           color: isCurrentlyFailed ? original : "#ff0000",
           originalColor: original,
         };
-      }
-      return node;
-    });
+      });
 
     nvlRef.value.updateElementsInGraph(updatedNodes, []);
-    console.log("Graph updated with toggled fail states");
+    console.log("Graph updated with toggled fail states", updatedNodes);
   };
 
   const sleep = (ms: number) =>
@@ -206,6 +209,11 @@
 
     click.value = new ClickInteraction(nvlRef.value);
     click.value.updateCallback("onNodeClick", (node: Node) => {
+      if (!nvlRef.value) {
+        console.warn("NVL not initialized");
+        return;
+      }
+
       const idx = selectedNodeIds.value.indexOf(node.id);
       if (idx !== -1) {
         selectedNodeIds.value.splice(idx, 1); // unselect
@@ -213,18 +221,35 @@
         selectedNodeIds.value.push(node.id); // add
       }
 
-      const updatedNodes = props.nodes.map((n) => ({
-        ...n,
-        selected: selectedNodeIds.value.includes(n.id),
-      }));
+      const currentlySelected = new Set(
+        nvlRef.value.getSelectedNodes().map((node) => node.id) ?? [],
+      );
+      const shouldBeSelected = new Set(selectedNodeIds.value);
 
-      if (!nvlRef.value) {
-        console.warn("NVL not initialized");
-        return;
-      }
+      const shouldUnselect = currentlySelected.difference(shouldBeSelected);
+      const shouldSelect = shouldBeSelected.difference(currentlySelected);
 
-      nvlRef.value.updateElementsInGraph(updatedNodes, []);
-      console.log("Node clicked", node);
+      nvlRef.value.updateElementsInGraph(
+        nvlRef.value
+          .getSelectedNodes()
+          .filter((node) => shouldUnselect.has(node.id))
+          .map((n) => ({
+            ...n,
+            selected: false,
+          })),
+        [],
+      );
+
+      nvlRef.value.updateElementsInGraph(
+        nvlRef.value
+          .getNodes()
+          .filter((node) => shouldSelect.has(node.id))
+          .map((n) => ({
+            ...n,
+            selected: true,
+          })),
+        [],
+      );
     });
 
     zoom.value = new ZoomInteraction(nvlRef.value);
@@ -356,7 +381,7 @@
     :disabled="!selectedNodeIds.length"
     class="mark-failed-btn"
   >
-    Mark Node As Failed
+    Toggle Node Failure
   </button>
 
   <div v-if="props.nodes.length" ref="nvl-container" class="graph"></div>
