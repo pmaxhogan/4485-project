@@ -1,49 +1,29 @@
 import neo4j from "neo4j-driver";
-import type { Record } from "neo4j-driver";
-import { indentInline } from "./util.ts";
 import { ConnectionStatus } from "./types.ts";
 
+//neo4j constants
 const password = "changethis"; //replace w/ enviro vars or connect to config later, this is so insecure its funny - ZT
+const getSession = () => driver.session();
 
 export const driver = neo4j.driver(
   "bolt://localhost:7687", //neo4j Bolt URL
   neo4j.auth.basic("neo4j", password),
 );
 
-const getSession = () => driver.session();
-
 //the golden promise - ZT
 export const wait = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-//a litte test - ZT
-export const runTestQuery = async (): Promise<Record[]> => {
-  const session = getSession();
-  try {
-    console.log("Running test query against Neo4j...");
-
-    const result = await session.run("MATCH (n) RETURN n LIMIT 5");
-
-    console.log("Test Query Result:", result.records);
-
-    if (result.records.length === 0) {
-      console.log("No nodes found in the database.");
-    } else {
-      result.records.forEach((record) => {
-        console.log("Node:", record.get("n"));
-      });
-    }
-
-    return result.records; // return the records
-  } catch (error) {
-    console.error(
-      "Error running test query:",
-      error && indentInline(error.toString()),
-    );
-    throw error; // propagate the error
-  } finally {
-    await session.close();
-  }
+export const queries = {
+  nodes: `
+        MATCH (n)
+        WHERE NOT n:Metadata
+        RETURN ID(n) AS id, labels(n) AS nodeType, COALESCE(n.name, "Unnamed") AS name
+      `,
+  relationships: `
+        MATCH (a)-[r]->(b)
+        RETURN ID(a) AS sourceId, type(r) AS relationshipType, ID(b) AS targetId
+      `,
 };
 
 // connect to Neo4j with retries - ZT
@@ -97,18 +77,6 @@ export const connectToNeo4j = async (
       await wait(retryDelay);
     }
   }
-};
-
-export const queries = {
-  nodes: `
-        MATCH (n)
-        WHERE NOT n:Metadata
-        RETURN ID(n) AS id, labels(n) AS nodeType, COALESCE(n.name, "Unnamed") AS name
-      `,
-  relationships: `
-        MATCH (a)-[r]->(b)
-        RETURN ID(a) AS sourceId, type(r) AS relationshipType, ID(b) AS targetId
-      `,
 };
 
 //fetch schema data function - ZT
