@@ -48,14 +48,14 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["electron/*", "src/*"],
-      reporter: ["text", "lcov", "html"],
+      reporter: ["text", "lcov"],
       thresholds: { // these are  kinda arbitrary
         lines: 70,
         functions: 70,
         branches: 70,
         statements: 70,
+        autoUpdate: false 
       },
     },
   },
 });
-
