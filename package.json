@@ -16,7 +16,7 @@
     "package": "vue-tsc && vite build && electron-builder",
     "test": "vitest",
     "test:unit": "vitest dev src/tests electron/tests",
-    "test:e2e:unit": "vitest dev e2e",
+    "test:e2e": "vitest dev e2e",
     "test:e2e:bench": "vitest bench e2e",
     "test:e2e:driver": "chromedriver --port=9515",
     "coverage": "vitest run --coverage"
