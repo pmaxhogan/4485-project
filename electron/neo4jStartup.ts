@@ -7,17 +7,32 @@ import { getSession } from "./neo4j.ts";
 import path from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
-import { ChildProcess, spawn, execFile } from "node:child_process"; //needed for neo4j stuff -ZT
+import { ChildProcess, spawn, execFile } from "node:child_process";
+import { app } from "electron"; //needed for neo4j stuff -ZT
 
 const asyncExecFile = promisify(execFile);
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const root = path.resolve(__dirname, "..");
+
+const root = app.getAppPath();
+
+const basename = path.basename(root);
+
+// annoying workaround
+// see also https://www.electronjs.org/docs/latest/tutorial/asar-archives#adding-unpacked-files-to-asar-archives
+const isAsar = basename === "app.asar";
+const appRoot = path.join(
+  app.getAppPath(),
+  isAsar ? path.join("..", "app.asar.unpacked") : "",
+);
+const resourceRoot = path.join(appRoot, "resources");
+
 const paths = {
-  neo4jFolder: path.join(root, "neo4j"),
-  script1: path.join(root, "download-neo4j.ps1"),
-  script2: path.join(root, "config-neo4j.ps1"),
-  startNeo: path.join(root, "neo4j/bin/neo4j.ps1"),
+  neo4jFolder: path.join(appRoot, "neo4j"),
+  startNeo: path.join(appRoot, "neo4j/bin/neo4j.ps1"),
+
+  script1: path.join(resourceRoot, "download-neo4j.ps1"),
+  script2: path.join(resourceRoot, "config-neo4j.ps1"),
 };
 
 let neo4jProcess: ChildProcess | null; //tracks the process of our LITTLE CHILD - ZT
@@ -27,12 +42,13 @@ process.env.APP_ROOT = path.join(__dirname, "..");
 async function runPowerShellScript(scriptPath: string) {
   console.log(`Running PowerShell script: ${scriptPath}`);
 
-  const process = spawn("powershell", [
-    "-ExecutionPolicy",
-    "Bypass",
-    "-File",
-    scriptPath,
-  ]);
+  const process = spawn(
+    "powershell",
+    ["-ExecutionPolicy", "Bypass", "-File", scriptPath],
+    {
+      cwd: appRoot,
+    },
+  );
 
   process.stdout.on("data", (data) => {
     console.log(`PowerShell output: ${indentInline(data.toString())}`);
@@ -54,7 +70,9 @@ async function runPowerShellScript(scriptPath: string) {
 //sees if the scripts need to be ran -ZT
 async function checkAndSetupNeo4j() {
   if (!fs.existsSync(paths.neo4jFolder)) {
-    console.log("Neo4j folder not found. Running setup scripts...");
+    console.log(
+      `Neo4j folder ${paths.neo4jFolder} not found. Running setup scripts...`,
+    );
 
     try {
       await runPowerShellScript(paths.script1);
@@ -70,6 +88,14 @@ async function checkAndSetupNeo4j() {
     console.log(`Detected neo4j at ${paths.neo4jFolder}`);
   }
 }
+
+const allowRunningNeo =
+  process.env.ALLOW_RUNNING_NEO ||
+  process.execArgv.includes("--allow-running-neo") ||
+  true;
+console.log("allowRunningNeo", allowRunningNeo);
+console.log("env", process.env);
+console.log("args", process.argv0, process.argv);
 
 //launches database and handles errors - ZT
 async function launchNeo4j() {
