@@ -26,7 +26,8 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "electron",
-    "src/**/*.js"
+    "src/**/*.js",
+    "e2e/**/*.ts",
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
