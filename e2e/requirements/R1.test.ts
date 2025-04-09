@@ -1,5 +1,6 @@
 import { driver } from "../seleniumDriver";
 import { getByText } from "../e2eUtils.ts";
+import { describe, test } from "vitest";
 
 describe("R1 - The system shall work with an Excel spreadsheet as the CMDB.", () => {
   test.todo(

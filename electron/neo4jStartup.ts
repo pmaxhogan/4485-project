@@ -89,14 +89,6 @@ async function checkAndSetupNeo4j() {
   }
 }
 
-const allowRunningNeo =
-  process.env.ALLOW_RUNNING_NEO ||
-  process.execArgv.includes("--allow-running-neo") ||
-  true;
-console.log("allowRunningNeo", allowRunningNeo);
-console.log("env", process.env);
-console.log("args", process.argv0, process.argv);
-
 //launches database and handles errors - ZT
 async function launchNeo4j() {
   console.log("Starting Neo4j in hidden mode...");

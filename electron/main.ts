@@ -71,8 +71,6 @@ app.on("window-all-closed", async () => {
 });
 
 app.whenReady().then(async () => {
-  console.log("resources", process.resourcesPath, app.getAppPath(), __dirname);
-
   if (!(await checkConnectionStatus())) {
     await checkAndSetupNeo4j();
     await launchNeo4j();
