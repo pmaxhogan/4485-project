@@ -61,7 +61,6 @@
     "vue-tsc": "^2.2.8"
   },
   "main": "dist-electron/main.js",
-
   "build": {
     "appId": "com.group10.drmap",
     "productName": "DR Mapping Tool",
@@ -79,5 +78,4 @@
       "target": "msi"
     }
   }
-
 }
