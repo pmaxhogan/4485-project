@@ -7,7 +7,13 @@ import { saveImageToExcel } from "../excelJSexport";
 describe("exceljs export functions", () => {
   vi.mock("fs");
   vi.mock("image-size");
-  vi.mock("ExcelJS");
+  vi.mock("exceljs", () => {
+    return {
+      default: {
+        Workbook: vi.fn(),
+      },
+    };
+  });
 
   const mockImageDataUrl = "data:image/png;base64,mockBase64String";
   const mockFilePath = "mock.xlsx";
