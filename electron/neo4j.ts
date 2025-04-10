@@ -26,6 +26,27 @@ export const queries = {
       `,
 };
 
+const checkConnection = async () => {
+  const session = getSession();
+
+  try {
+    return await session.run("RETURN 1");
+  } finally {
+    await session.close();
+  }
+};
+
+export const checkConnectionStatus = async () => {
+  try {
+    await checkConnection();
+    console.log("Neo4j connection verified");
+    return true;
+  } catch (error) {
+    console.log("Could not connect to neo4j:", error);
+    return false;
+  }
+};
+
 // connect to Neo4j with retries - ZT
 export const connectToNeo4j = async (
   updateStatus: (s: { status: ConnectionStatus; statusMsg: string }) => void,
@@ -34,20 +55,16 @@ export const connectToNeo4j = async (
   const retryDelay = 10000; // 10 seconds
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    const session = getSession();
-
     try {
       console.log(`Attempt ${attempt} to connect to Neo4j...`);
-      await session.run("RETURN 1"); // Test query
-      console.log("Neo4j connection successful.");
+      await checkConnection();
       updateStatus({
         statusMsg: "Neo4j connection successful.",
         status: "CONNECTED",
       });
-      await session.close();
       return;
     } catch (error) {
-      console.error(`Error connecting to Neo4j (Attempt ${attempt}):`, error);
+      console.error(`Error connecting to Neo4j on attempt ${attempt}:`, error);
 
       if (error instanceof Error) {
         updateStatus({
@@ -60,8 +77,6 @@ export const connectToNeo4j = async (
           status: "PENDING",
         });
       }
-
-      await session.close();
 
       if (attempt === maxRetries) {
         updateStatus({

@@ -8,6 +8,7 @@ import {
 } from "./neo4jStartup.ts";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { checkConnectionStatus } from "./neo4j.ts";
 
 // The built directory structure
 //
@@ -70,8 +71,10 @@ app.on("window-all-closed", async () => {
 });
 
 app.whenReady().then(async () => {
-  await checkAndSetupNeo4j();
-  await launchNeo4j();
+  if (!(await checkConnectionStatus())) {
+    await checkAndSetupNeo4j();
+    await launchNeo4j();
+  }
 
   openWindow();
 });
