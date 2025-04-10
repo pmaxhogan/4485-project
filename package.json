@@ -60,5 +60,24 @@
     "vitest": "^3.1.1",
     "vue-tsc": "^2.2.8"
   },
-  "main": "dist-electron/main.js"
+  "main": "dist-electron/main.js",
+
+  "build": {
+    "appId": "com.group10.drmap",
+    "productName": "DR Mapping Tool",
+    "files": [
+      "dist/**",
+      "dist-electron/**",
+      "resources/**",
+      "neo4j/**"
+    ],
+    "directories": {
+      "buildResources": "resources",
+      "output": "release"
+    },
+    "win": {
+      "target": "msi"
+    }
+  }
+
 }
