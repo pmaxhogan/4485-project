@@ -1,6 +1,7 @@
 import { driver } from "./seleniumDriver.ts";
 import { until } from "selenium-webdriver";
 import { e2eBench, getByText } from "./e2eUtils.ts";
+import { expect } from "vitest";
 
 e2eBench(
   "webdriver launch",
