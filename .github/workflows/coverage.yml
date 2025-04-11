@@ -22,3 +22,6 @@ jobs:
 
       - name: Run coverage check
         run: npm run coverage
+
+      - name: Check for coverage threshold update
+        run: git diff-index --quiet HEAD -- || (echo "Please run 'npm run coverage' locally and push the changes" && exit 1)

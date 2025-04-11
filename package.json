@@ -19,7 +19,7 @@
     "test:e2e": "vitest dev e2e",
     "test:e2e:bench": "vitest bench e2e",
     "test:e2e:driver": "chromedriver --port=9515",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run src/tests electron/tests --coverage"
   },
   "dependencies": {
     "@neo4j-nvl/base": "^0.3.6",

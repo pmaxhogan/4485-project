@@ -3,6 +3,7 @@ import { mount } from "@vue/test-utils";
 import { nextTick, ComponentPublicInstance } from "vue";
 import VisualGraph from "../components/graphs/VisualGraph.vue";
 import NVL from "@neo4j-nvl/base";
+import { getByText, render, screen } from "@testing-library/vue";
 
 interface VisualGraphVM extends ComponentPublicInstance {
   selectedNodeIds: string[];
@@ -12,7 +13,7 @@ interface VisualGraphVM extends ComponentPublicInstance {
 
 describe("VisualGraph Component", () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    vi.restoreAllMocks(); // reset mocks before each test
 
     vi.spyOn(NVL.prototype, "addAndUpdateElementsInGraph").mockImplementation(
       () => {},
@@ -45,11 +46,31 @@ describe("VisualGraph Component", () => {
     };
   });
 
+  it("renders the correct header", () => {
+    render(VisualGraph);
+
+    const h2 = screen.getAllByRole("heading", { level: 2 })[0] as HTMLElement;
+    getByText(h2, "Graph");
+  });
+
   it("renders when there are no nodes", () => {
     const wrapper = mount(VisualGraph, {
       props: { nodes: [], rels: [] },
     });
     expect(wrapper.text()).toContain("No nodes to display...");
+  });
+
+  it("renders a graph", async () => {
+    render(VisualGraph, {
+      props: {
+        nodes: [
+          { id: "1", caption: "Node 1" },
+          { id: "2", caption: "Node 2" },
+        ],
+        rels: [{ from: "1", to: "2", id: "3" }],
+        layoutDirection: "down",
+      },
+    });
   });
 
   it("calls NVL.fit when clicking 'Zoom to Fit' button", async () => {
@@ -71,6 +92,20 @@ describe("VisualGraph Component", () => {
     expect(NVL.prototype.fit).toHaveBeenCalledWith(["1", "2"], {
       animated: true,
     });
+  });
+
+  it("captures an image of the graph container", async () => {
+    const mockImageDataUrl = "data:image/png;base64,mock-image-data";
+
+    vi.spyOn(NVL.prototype, "saveFullGraphToLargeFile").mockImplementation(
+      function () {
+        const a = document.createElement("a");
+        a.href = mockImageDataUrl;
+        document.body.appendChild(a);
+        a.dispatchEvent(new Event("click", { bubbles: true }));
+        document.body.removeChild(a);
+      },
+    );
   });
 
   it("toggles failure state for a selected node and its child", async () => {
