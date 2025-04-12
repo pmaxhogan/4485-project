@@ -227,3 +227,11 @@ const cleanupDatabase = async () => {
 };
 
 export { importExcel };
+
+// Export internals only during testing
+// At the bottom of excelJSimport.ts
+export const __testOnly = {
+  insertIntoNeo4j,
+  storeSummaryCounts,
+  cleanupDatabase,
+};

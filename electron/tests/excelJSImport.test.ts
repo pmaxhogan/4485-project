@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { importExcel } from "../excelJSimport";
 import * as neo4jModule from "../neo4j";
+import { __testOnly } from "../excelJSimport";
 
 // Mocks
 vi.mock("../neo4j");
@@ -8,12 +9,14 @@ vi.mock("../neo4j");
 const mockRun = vi.fn();
 const mockClose = vi.fn();
 
+const { insertIntoNeo4j, storeSummaryCounts, cleanupDatabase } = __testOnly;
+
 (neo4jModule.getSession as Mock).mockReturnValue({
   run: mockRun,
   close: mockClose,
 });
 
-// Prepare shared sheet mock helper
+//shared  mock helper
 interface MockRow {
   getCell: (i: number) => { value: string | undefined };
 }
@@ -31,10 +34,9 @@ const createMockSheet = (rows: string[][]) => ({
   },
 });
 
-// Create mock outside the module mock so we can access it
 const mockGetWorksheet = vi.fn();
 
-// Full ExcelJS mock
+//ExcelJS mock
 vi.mock("exceljs", () => {
   class MockWorkbook {
     xlsx = {
@@ -52,7 +54,7 @@ vi.mock("exceljs", () => {
 describe("importExcel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetWorksheet.mockReset(); // Reset mock between tests
+    mockGetWorksheet.mockReset(); //reset between tests
   });
 
   describe("with all sheets present", () => {
@@ -134,6 +136,100 @@ describe("importExcel", () => {
         { businessFunction: "BusinessFunc2", application: "App2" },
         { businessFunction: "ValidFunc", application: "ValidApp" },
       ]);
+    });
+  });
+
+  describe("insertIntoNeo4j", () => {
+    it("should insert provided records into Neo4j", async () => {
+      const dcToServer = [{ datacenter: "DC1", server: "Server1" }];
+      const serverToApp = [{ server: "Server1", application: "App1" }];
+      const appToBf = [{ application: "App1", businessFunction: "BF1" }];
+
+      await insertIntoNeo4j(dcToServer, serverToApp, appToBf);
+
+      expect(mockRun).toHaveBeenCalledTimes(3);
+      expect(mockRun).toHaveBeenCalledWith(
+        expect.stringContaining("MERGE (dc:Datacenter"),
+        { rows: dcToServer },
+      );
+      expect(mockRun).toHaveBeenCalledWith(
+        expect.stringContaining("MERGE (s:Server"),
+        { rows: serverToApp },
+      );
+      expect(mockRun).toHaveBeenCalledWith(
+        expect.stringContaining("MERGE (app:Application"),
+        { rows: appToBf },
+      );
+      expect(mockClose).toHaveBeenCalled();
+    });
+
+    it("should skip queries with empty data", async () => {
+      await insertIntoNeo4j([], [], []);
+      expect(mockRun).not.toHaveBeenCalled();
+      expect(mockClose).toHaveBeenCalled();
+    });
+  });
+
+  describe("storeSummaryCounts", () => {
+    it("should store summary counts into Neo4j", async () => {
+      const mockSummaryData = [
+        { type: "totalDc", count: { toNumber: () => 5 } },
+        { type: "totalServer", count: { toNumber: () => 10 } },
+        { type: "totalApp", count: { toNumber: () => 15 } },
+        { type: "totalBf", count: { toNumber: () => 20 } },
+      ];
+
+      mockRun.mockResolvedValueOnce({
+        records: mockSummaryData.map((entry) => ({
+          get: (key: "type" | "count") =>
+            key === "type" ? entry.type : entry.count,
+        })),
+      });
+
+      await storeSummaryCounts();
+
+      expect(mockRun).toHaveBeenCalledTimes(2);
+      expect(mockRun.mock.calls[1][0]).toMatch(/MERGE \(meta:Metadata/);
+      expect(mockRun.mock.calls[1][1]).toEqual({
+        totalDc: 5,
+        totalServer: 10,
+        totalApp: 15,
+        totalBf: 20,
+      });
+      expect(mockClose).toHaveBeenCalled();
+    });
+
+    it("should handle missing summary entries gracefully", async () => {
+      mockRun.mockResolvedValueOnce({ records: [] });
+
+      await storeSummaryCounts();
+
+      expect(mockRun).toHaveBeenCalledTimes(2);
+      expect(mockRun.mock.calls[1][1]).toEqual({
+        totalDc: 0,
+        totalServer: 0,
+        totalApp: 0,
+        totalBf: 0,
+      });
+    });
+  });
+
+  describe("cleanupDatabase", () => {
+    it("should delete all nodes from Neo4j", async () => {
+      await cleanupDatabase();
+
+      expect(mockRun).toHaveBeenCalledWith("MATCH (n) DETACH DELETE n");
+      expect(mockClose).toHaveBeenCalled();
+    });
+
+    it("should log error if deletion fails", async () => {
+      const error = new Error("Failed to delete");
+      mockRun.mockRejectedValueOnce(error);
+
+      await cleanupDatabase();
+
+      expect(mockRun).toHaveBeenCalled();
+      expect(mockClose).toHaveBeenCalled();
     });
   });
 });
