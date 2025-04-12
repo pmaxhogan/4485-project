@@ -130,10 +130,6 @@
     boxSelect.value?.destroy();
 
     const handleSelection = (nodes: Node[]) => {
-      console.log(
-        "handleSelection:",
-        nodes.map((n: Node) => n.id),
-      );
       selectedNodeIds.value = nodes.map((n: Node) => n.id);
       nvlRef.value!.updateElementsInGraph(
         nvlRef.value!.getNodes().map((node: Node) => ({
@@ -145,6 +141,14 @@
       );
     };
 
+    const updateSelectionHandler = (nodes: Node[]) => {
+      nvlRef.value!.updateElementsInGraph(
+        nodes.map((n: Node) => ({ ...n, highlighted: true })),
+        [],
+      );
+      handleSelection(nodes);
+    };
+
     if (selectionMode.value === "box") {
       boxSelect.value = new BoxSelectInteraction(nvlRef.value, {
         selectOnRelease: true,
@@ -153,15 +157,7 @@
         "onBoxSelect",
         (event: { nodes: Node[] }) => {
           const { nodes } = event;
-          console.log(
-            "onBoxSelect:",
-            nodes.map((n: Node) => n.id),
-          );
-          nvlRef.value!.updateElementsInGraph(
-            nodes.map((n: Node) => ({ ...n, highlighted: true })),
-            [],
-          );
-          handleSelection(nodes);
+          updateSelectionHandler(nodes);
         },
       );
     } else {
@@ -172,15 +168,7 @@
         "onLassoSelect",
         (event: { nodes: Node[] }) => {
           const { nodes } = event;
-          console.log(
-            "onLassoSelect:",
-            nodes.map((n: Node) => n.id),
-          );
-          nvlRef.value!.updateElementsInGraph(
-            nodes.map((n: Node) => ({ ...n, highlighted: true })),
-            [],
-          );
-          handleSelection(nodes);
+          updateSelectionHandler(nodes);
         },
       );
     }
@@ -308,7 +296,12 @@
       );
     });
 
+    const currentZoom = ref(1.0); // Using Vue's ref instead of let
+
     zoom.value = new ZoomInteraction(nvlRef.value);
+    zoom.value.updateCallback("onZoom", (zoomLevel) => {
+      currentZoom.value = zoomLevel; // Update the reactive value
+    });
 
     //PanInteraction
     container.value?.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -331,8 +324,12 @@
       lastPosition = { x: e.clientX, y: e.clientY };
 
       if (nvlRef.value) {
+        const zoomFactor = 1 / currentZoom.value; // Access reactive value
         const currentPan = nvlRef.value.getPan();
-        nvlRef.value.setPan(currentPan.x - deltaX, currentPan.y - deltaY);
+        nvlRef.value.setPan(
+          currentPan.x - deltaX * zoomFactor,
+          currentPan.y - deltaY * zoomFactor,
+        );
       }
     });
 
@@ -403,36 +400,12 @@
     deep: true,
   });
 
-  watch(nvlRef, () => {
-    if (nvlRef.value) {
-      toggleSelectionMode();
-    }
-  });
-
   watch([() => props.layout], () => {
     if (nvlRef.value) {
       nvlRef.value.setLayout(props.layout);
       postSetup();
     }
   });
-
-  watch(
-    selectedNodeIds,
-    (newVal) => {
-      if (!nvlRef.value) return;
-
-      // Update visual selection when selectedNodeIds changes
-      nvlRef.value.updateElementsInGraph(
-        nvlRef.value.getNodes().map((node) => ({
-          ...node,
-          selected: newVal.includes(node.id),
-          highlighted: false, // Clear any highlight
-        })),
-        [],
-      );
-    },
-    { deep: true },
-  );
 
   watch(
     [
