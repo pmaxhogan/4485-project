@@ -512,10 +512,10 @@
   <div v-else class="graph">No nodes to display...</div>
   <h2>Controls</h2>
   <ul>
-    <li>Click and drag the background to move the scene.</li>
+    <li>Right-click and drag the background to move the scene.</li>
     <li>Scroll in and out to zoom.</li>
     <li>Click on a node to select/deselect it.</li>
-    <li>Right-click and drag to lasso-select multiple nodes.</li>
+    <li>Left-click and drag to lasso or box select multiple nodes.</li>
     <li>Click and drag a node to move the node.</li>
     <li>Select a node to mark it as failed.</li>
   </ul>
