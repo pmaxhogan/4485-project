@@ -14,6 +14,7 @@ dist-ssr
 release
 /neo4j/
 *.local
+coverage/
 
 # Editor directories and files
 .vscode/*

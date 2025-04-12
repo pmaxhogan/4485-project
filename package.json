@@ -19,7 +19,7 @@
     "test:e2e": "vitest dev e2e",
     "test:e2e:bench": "vitest bench e2e",
     "test:e2e:driver": "chromedriver --port=9515",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run src/tests electron/tests --coverage"
   },
   "dependencies": {
     "@neo4j-nvl/base": "^0.3.6",
@@ -29,7 +29,7 @@
     "image-size": "^2.0.1",
     "neo4j-driver": "^5.28.1",
     "nvl": "^1.3.0",
-    "selenium-webdriver": "^4.30.0",
+    "selenium-webdriver": "^4.31.0",
     "vue": "^3.5.13"
   },
   "devDependencies": {
@@ -39,6 +39,7 @@
     "@types/node": "^22.13.9",
     "@types/selenium-webdriver": "^4.1.28",
     "@vitejs/plugin-vue": "^5.2.1",
+    "@vitest/coverage-v8": "^3.0.9",
     "@vue/test-utils": "^2.4.6",
     "electron": "^35.0.0",
     "electron-builder": "24.6.3",
