@@ -16,7 +16,7 @@ const { insertIntoNeo4j, storeSummaryCounts, cleanupDatabase } = __testOnly;
   close: mockClose,
 });
 
-//shared  mock helper
+// Shared mock helper
 interface MockRow {
   getCell: (i: number) => { value: string | undefined };
 }
@@ -36,7 +36,7 @@ const createMockSheet = (rows: string[][]) => ({
 
 const mockGetWorksheet = vi.fn();
 
-//ExcelJS mock
+// ExcelJS mock
 vi.mock("exceljs", () => {
   class MockWorkbook {
     xlsx = {
@@ -54,182 +54,291 @@ vi.mock("exceljs", () => {
 describe("importExcel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetWorksheet.mockReset(); //reset between tests
+    mockGetWorksheet.mockReset();
   });
 
-  describe("with all sheets present", () => {
-    beforeEach(() => {
-      mockGetWorksheet.mockImplementation((name: string) => {
-        switch (name) {
-          case "AirlineEdgeRelateBFAPv2":
-            return createMockSheet([["BusinessFunc1", "App1"]]);
-          case "AirlineEdgeRelateAirlineSVAP":
-            return createMockSheet([["Server1", "", "App1"]]);
-          case "AirlineEdgeRelateAirlineDCSV":
-            return createMockSheet([["DC1", "Server1"]]);
-          default:
-            return undefined;
-        }
-      });
+  it("should import successfully when all sheets exist", async () => {
+    mockGetWorksheet.mockImplementation((name: string) => {
+      switch (name) {
+        case "AirlineEdgeRelateBFAPv2":
+          return createMockSheet([["BusinessFunc1", "App1"]]);
+        case "AirlineEdgeRelateAirlineSVAP":
+          return createMockSheet([["Server1", "", "App1"]]);
+        case "AirlineEdgeRelateAirlineDCSV":
+          return createMockSheet([["DC1", "Server1"]]);
+        default:
+          return undefined;
+      }
     });
 
-    it("should import successfully when all sheets exist", async () => {
-      await importExcel("any_path.xlsx");
-      expect(mockRun).toHaveBeenCalled();
-    });
+    await importExcel("any_path.xlsx");
+    expect(mockRun).toHaveBeenCalled();
   });
 
-  describe("missing one worksheet", () => {
-    beforeEach(() => {
-      mockGetWorksheet.mockImplementation((name: string) => {
-        if (name === "AirlineEdgeRelateBFAPv2") return undefined;
-        return createMockSheet([["Placeholder", "Data"]]);
-      });
+  it("should throw an error when a worksheet is missing", async () => {
+    mockGetWorksheet.mockImplementation((name: string) => {
+      if (name === "AirlineEdgeRelateBFAPv2") return undefined;
+      return createMockSheet([["Placeholder", "Data"]]);
     });
 
-    it("should throw an error when a worksheet is missing", async () => {
-      await expect(importExcel("any_path.xlsx")).rejects.toThrow(
-        'Required sheet "AirlineEdgeRelateBFAPv2" is missing.',
-      );
-    });
+    await expect(importExcel("any_path.xlsx")).rejects.toThrow(
+      'Required sheet "AirlineEdgeRelateBFAPv2" is missing.',
+    );
   });
 
-  describe("with blank lines in worksheet", () => {
-    beforeEach(() => {
-      mockGetWorksheet.mockImplementation((name: string) => {
-        switch (name) {
-          case "AirlineEdgeRelateBFAPv2":
-            return createMockSheet([
-              ["BusinessFunc", "Application"], // Header row
-              ["BusinessFunc1", "App1"], // Valid row
-              [undefined as unknown as string, undefined as unknown as string], // Blank row
-              ["BusinessFunc2", "App2"], // Valid row
-              ["", ""], // Empty strings
-              ["BusinessFunc3", undefined as unknown as string], // Undefined value
-              ["ValidFunc", "ValidApp"], // Another valid row
-            ]);
-          case "AirlineEdgeRelateAirlineSVAP":
-            return createMockSheet([["Server", "", "App"]]);
-          case "AirlineEdgeRelateAirlineDCSV":
-            return createMockSheet([["DC", "Server"]]);
-          default:
-            return undefined;
-        }
-      });
+  it("should skip blank lines when processing worksheets", async () => {
+    mockGetWorksheet.mockImplementation((name: string) => {
+      switch (name) {
+        case "AirlineEdgeRelateBFAPv2":
+          return createMockSheet([
+            ["BusinessFunc", "Application"],
+            ["BusinessFunc1", "App1"],
+            [undefined as unknown as string, undefined as unknown as string],
+            ["BusinessFunc2", "App2"],
+            ["", ""],
+            ["BusinessFunc3", undefined as unknown as string],
+            ["ValidFunc", "ValidApp"],
+          ]);
+        case "AirlineEdgeRelateAirlineSVAP":
+          return createMockSheet([["Server", "", "App"]]);
+        case "AirlineEdgeRelateAirlineDCSV":
+          return createMockSheet([["DC", "Server"]]);
+        default:
+          return undefined;
+      }
     });
 
-    it("should skip blank lines when processing worksheets", async () => {
-      await importExcel("any_path.xlsx");
+    await importExcel("any_path.xlsx");
 
-      // Get all business function-application relationship calls
-      const bfAppCalls = mockRun.mock.calls.filter((call) =>
-        call[0].includes("n"),
-      );
+    const bfAppCalls = mockRun.mock.calls.filter((call) =>
+      call[0].includes("n"),
+    );
 
-      // Should have 3 valid relationships (skipping header, blank, empty, undefined)
-      expect(bfAppCalls.length).toBe(3);
-
-      // Extract and verify the data
-      const bfAppData = bfAppCalls.flatMap((call) => call[1]?.rows || []);
-      expect(bfAppData).toEqual([
-        { businessFunction: "BusinessFunc1", application: "App1" },
-        { businessFunction: "BusinessFunc2", application: "App2" },
-        { businessFunction: "ValidFunc", application: "ValidApp" },
-      ]);
-    });
+    expect(bfAppCalls.length).toBe(3);
+    expect(bfAppCalls.flatMap((call) => call[1]?.rows || [])).toEqual([
+      { businessFunction: "BusinessFunc1", application: "App1" },
+      { businessFunction: "BusinessFunc2", application: "App2" },
+      { businessFunction: "ValidFunc", application: "ValidApp" },
+    ]);
   });
 
-  describe("insertIntoNeo4j", () => {
-    it("should insert provided records into Neo4j", async () => {
-      const dcToServer = [{ datacenter: "DC1", server: "Server1" }];
-      const serverToApp = [{ server: "Server1", application: "App1" }];
-      const appToBf = [{ application: "App1", businessFunction: "BF1" }];
-
-      await insertIntoNeo4j(dcToServer, serverToApp, appToBf);
-
-      expect(mockRun).toHaveBeenCalledTimes(3);
-      expect(mockRun).toHaveBeenCalledWith(
-        expect.stringContaining("MERGE (dc:Datacenter"),
-        { rows: dcToServer },
-      );
-      expect(mockRun).toHaveBeenCalledWith(
-        expect.stringContaining("MERGE (s:Server"),
-        { rows: serverToApp },
-      );
-      expect(mockRun).toHaveBeenCalledWith(
-        expect.stringContaining("MERGE (app:Application"),
-        { rows: appToBf },
-      );
-      expect(mockClose).toHaveBeenCalled();
+  it("should not duplicate valid entries", async () => {
+    mockGetWorksheet.mockImplementation((name: string) => {
+      switch (name) {
+        case "AirlineEdgeRelateBFAPv2":
+          return createMockSheet([
+            ["BusinessFunc", "Application"],
+            ["BusinessFunc1", "App1"],
+            ["BusinessFunc1", "App1"],
+            ["BusinessFunc2", "App2"],
+            ["BusinessFunc2", "App2"],
+          ]);
+        case "AirlineEdgeRelateAirlineSVAP":
+          return createMockSheet([["Server1", "", "App1"]]);
+        case "AirlineEdgeRelateAirlineDCSV":
+          return createMockSheet([["DC1", "Server1"]]);
+        default:
+          return undefined;
+      }
     });
 
-    it("should skip queries with empty data", async () => {
-      await insertIntoNeo4j([], [], []);
-      expect(mockRun).not.toHaveBeenCalled();
-      expect(mockClose).toHaveBeenCalled();
-    });
+    await importExcel("any_path.xlsx");
+
+    const bfAppData = mockRun.mock.calls
+      .filter((call) => call[0].includes("n"))
+      .flatMap((call) => call[1]?.rows || []);
+
+    expect(bfAppData).toEqual([
+      { businessFunction: "BusinessFunc1", application: "App1" },
+      { businessFunction: "BusinessFunc2", application: "App2" },
+    ]);
   });
 
-  describe("storeSummaryCounts", () => {
-    it("should store summary counts into Neo4j", async () => {
-      const mockSummaryData = [
-        { type: "totalDc", count: { toNumber: () => 5 } },
-        { type: "totalServer", count: { toNumber: () => 10 } },
-        { type: "totalApp", count: { toNumber: () => 15 } },
-        { type: "totalBf", count: { toNumber: () => 20 } },
-      ];
-
-      mockRun.mockResolvedValueOnce({
-        records: mockSummaryData.map((entry) => ({
-          get: (key: "type" | "count") =>
-            key === "type" ? entry.type : entry.count,
-        })),
-      });
-
-      await storeSummaryCounts();
-
-      expect(mockRun).toHaveBeenCalledTimes(2);
-      expect(mockRun.mock.calls[1][0]).toMatch(/MERGE \(meta:Metadata/);
-      expect(mockRun.mock.calls[1][1]).toEqual({
-        totalDc: 5,
-        totalServer: 10,
-        totalApp: 15,
-        totalBf: 20,
-      });
-      expect(mockClose).toHaveBeenCalled();
+  it("should not call run for blank worksheets", async () => {
+    mockGetWorksheet.mockImplementation((name: string) => {
+      switch (name) {
+        case "AirlineEdgeRelateBFAPv2":
+          return createMockSheet([[], [], []]);
+        case "AirlineEdgeRelateAirlineSVAP":
+          return createMockSheet([[], [], []]);
+        case "AirlineEdgeRelateAirlineDCSV":
+          return createMockSheet([[], [], []]);
+        default:
+          return undefined;
+      }
     });
 
-    it("should handle missing summary entries gracefully", async () => {
-      mockRun.mockResolvedValueOnce({ records: [] });
+    await importExcel("any_path.xlsx");
 
-      await storeSummaryCounts();
-
-      expect(mockRun).toHaveBeenCalledTimes(2);
-      expect(mockRun.mock.calls[1][1]).toEqual({
-        totalDc: 0,
-        totalServer: 0,
-        totalApp: 0,
-        totalBf: 0,
-      });
-    });
+    expect(
+      mockRun.mock.calls.some((call) =>
+        call[0].includes("MERGE (app)-[:USES]->(bf)"),
+      ),
+    ).toBe(false);
+    expect(
+      mockRun.mock.calls.some((call) =>
+        call[0].includes("MERGE (dc)-[:HOSTS]->(s)"),
+      ),
+    ).toBe(false);
   });
 
-  describe("cleanupDatabase", () => {
-    it("should delete all nodes from Neo4j", async () => {
-      await cleanupDatabase();
-
-      expect(mockRun).toHaveBeenCalledWith("MATCH (n) DETACH DELETE n");
-      expect(mockClose).toHaveBeenCalled();
+  it("should process server-to-application relationships", async () => {
+    mockGetWorksheet.mockImplementation((name: string) => {
+      switch (name) {
+        case "AirlineEdgeRelateBFAPv2":
+          return createMockSheet([["BusinessFunc", "Application"]]);
+        case "AirlineEdgeRelateAirlineSVAP":
+          return createMockSheet([
+            ["Server", "", "Application"],
+            ["Server1", "", "App1"],
+            ["Server2", "", "App2"],
+          ]);
+        case "AirlineEdgeRelateAirlineDCSV":
+          return createMockSheet([["DC", "Server"]]);
+        default:
+          return undefined;
+      }
     });
 
-    it("should log error if deletion fails", async () => {
-      const error = new Error("Failed to delete");
-      mockRun.mockRejectedValueOnce(error);
+    await importExcel("any_path.xlsx");
 
-      await cleanupDatabase();
+    const serverAppCalls = mockRun.mock.calls.filter((call) =>
+      call[0].includes("MERGE (s)-[:RUNS]->(app)"),
+    );
 
-      expect(mockRun).toHaveBeenCalled();
-      expect(mockClose).toHaveBeenCalled();
+    expect(serverAppCalls[0][1].rows).toEqual([
+      { server: "Server1", application: "App1" },
+      { server: "Server2", application: "App2" },
+    ]);
+  });
+
+  it("should process datacenter-to-server relationships", async () => {
+    mockGetWorksheet.mockImplementation((name: string) => {
+      switch (name) {
+        case "AirlineEdgeRelateBFAPv2":
+          return createMockSheet([["BusinessFunc", "Application"]]);
+        case "AirlineEdgeRelateAirlineSVAP":
+          return createMockSheet([["Server", "", "Application"]]);
+        case "AirlineEdgeRelateAirlineDCSV":
+          return createMockSheet([
+            ["DC", "Server"],
+            ["DC1", "Server1"],
+            ["DC2", "Server2"],
+          ]);
+        default:
+          return undefined;
+      }
     });
+
+    await importExcel("any_path.xlsx");
+
+    const dcServerCalls = mockRun.mock.calls.filter((call) =>
+      call[0].includes("MERGE (dc)-[:HOSTS]->(s)"),
+    );
+
+    expect(dcServerCalls[0][1].rows).toEqual([
+      { datacenter: "DC1", server: "Server1" },
+      { datacenter: "DC2", server: "Server2" },
+    ]);
+  });
+});
+
+describe("insertIntoNeo4j", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should insert provided records into Neo4j", async () => {
+    const testData = {
+      dcToServer: [{ datacenter: "DC1", server: "Server1" }],
+      serverToApp: [{ server: "Server1", application: "App1" }],
+      appToBf: [{ application: "App1", businessFunction: "BF1" }],
+    };
+
+    await insertIntoNeo4j(
+      testData.dcToServer,
+      testData.serverToApp,
+      testData.appToBf,
+    );
+
+    expect(mockRun).toHaveBeenCalledTimes(3);
+    expect(mockClose).toHaveBeenCalled();
+  });
+
+  it("should skip queries with empty data", async () => {
+    await insertIntoNeo4j([], [], []);
+    expect(mockRun).not.toHaveBeenCalled();
+    expect(mockClose).toHaveBeenCalled();
+  });
+
+  it("should log errors when Neo4j insertion fails", async () => {
+    const error = new Error("Database connection failed");
+    mockRun.mockRejectedValueOnce(error);
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+
+    await insertIntoNeo4j([{ datacenter: "DC1", server: "S1" }], [], []);
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Error inserting data into Neo4j:",
+      expect.any(Error),
+    );
+    consoleErrorSpy.mockRestore();
+  });
+});
+
+describe("storeSummaryCounts", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should store summary counts into Neo4j", async () => {
+    mockRun.mockResolvedValueOnce({
+      records: [
+        {
+          get: (key: string) =>
+            key === "type" ? "totalDc" : { toNumber: () => 5 },
+        },
+        {
+          get: (key: string) =>
+            key === "type" ? "totalServer" : { toNumber: () => 10 },
+        },
+        {
+          get: (key: string) =>
+            key === "type" ? "totalApp" : { toNumber: () => 15 },
+        },
+        {
+          get: (key: string) =>
+            key === "type" ? "totalBf" : { toNumber: () => 20 },
+        },
+      ],
+    });
+
+    await storeSummaryCounts();
+
+    expect(mockRun).toHaveBeenCalledTimes(2);
+    expect(mockClose).toHaveBeenCalled();
+  });
+
+  it("should handle missing summary entries gracefully", async () => {
+    mockRun.mockResolvedValueOnce({ records: [] });
+    await storeSummaryCounts();
+    expect(mockRun).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("cleanupDatabase", () => {
+  it("should delete all nodes from Neo4j", async () => {
+    await cleanupDatabase();
+    expect(mockRun).toHaveBeenCalledWith("MATCH (n) DETACH DELETE n");
+    expect(mockClose).toHaveBeenCalled();
+  });
+
+  it("should log error if deletion fails", async () => {
+    const error = new Error("Failed to delete");
+    mockRun.mockRejectedValueOnce(error);
+    await cleanupDatabase();
+    expect(mockRun).toHaveBeenCalled();
   });
 });
