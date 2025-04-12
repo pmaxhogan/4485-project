@@ -2,6 +2,7 @@
   import { type Node, NVL, type Relationship } from "@neo4j-nvl/base";
   import {
     nextTick,
+    onBeforeUnmount,
     onMounted,
     onUnmounted,
     ref,
@@ -309,14 +310,14 @@
     let isRightClickPanning = false;
     let lastPosition = { x: 0, y: 0 };
 
-    container.value?.addEventListener("mousedown", (e) => {
+    const handleMouseDown = (e: MouseEvent) => {
       if (e.button !== 2) return; // Only right-click
       isRightClickPanning = true;
       lastPosition = { x: e.clientX, y: e.clientY };
       e.preventDefault();
-    });
+    };
 
-    container.value?.addEventListener("mousemove", (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       if (!isRightClickPanning) return;
 
       const deltaX = e.clientX - lastPosition.x;
@@ -324,19 +325,35 @@
       lastPosition = { x: e.clientX, y: e.clientY };
 
       if (nvlRef.value) {
-        const zoomFactor = 1 / currentZoom.value; // Access reactive value
+        const zoomFactor = 1 / currentZoom.value;
         const currentPan = nvlRef.value.getPan();
         nvlRef.value.setPan(
           currentPan.x - deltaX * zoomFactor,
           currentPan.y - deltaY * zoomFactor,
         );
       }
-    });
+    };
 
-    container.value?.addEventListener("mouseup", (e) => {
+    const handleMouseUp = (e: MouseEvent) => {
       if (e.button === 2) {
         isRightClickPanning = false;
       }
+    };
+
+    const handleMouseLeave = () => {
+      isRightClickPanning = false; //stop panning when mouse leaves the container
+    };
+
+    container.value?.addEventListener("mousedown", handleMouseDown);
+    container.value?.addEventListener("mouseleave", handleMouseLeave);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    onBeforeUnmount(() => {
+      container.value?.removeEventListener("mousedown", handleMouseDown);
+      container.value?.removeEventListener("mouseleave", handleMouseLeave);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
     });
 
     drag.value = new DragNodeInteraction(nvlRef.value);
