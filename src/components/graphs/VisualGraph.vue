@@ -14,6 +14,8 @@
     DragNodeInteraction,
     PanInteraction,
     ZoomInteraction,
+    LassoInteraction,
+    BoxSelectInteraction,
   } from "@neo4j-nvl/interaction-handlers";
 
   const props = withDefaults(
@@ -61,6 +63,8 @@
   const zoom = shallowRef<ZoomInteraction>();
   const pan = shallowRef<PanInteraction>();
   const drag = shallowRef<DragNodeInteraction>();
+  const lasso = shallowRef<LassoInteraction>();
+  const boxSelect = shallowRef<BoxSelectInteraction>();
 
   const C_A = 14.51585;
   const C_B = -0.623952;
@@ -69,6 +73,7 @@
 
   const updating = ref(false);
   const updatingTimeout = ref<number | null>(null);
+
   const selectedNodeIds = ref<string[]>([]); // support multiple selected
   // mark selected nodes (and their children) as failed, or un-fail them
   type ExtendedNode = Node & { originalColor?: string };
@@ -108,11 +113,82 @@
           ...node,
           color: isCurrentlyFailed ? original : "#ff0000",
           originalColor: original,
+          selected: false, // Clear the selection after marking
         };
       });
 
     nvlRef.value.updateElementsInGraph(updatedNodes, []);
+    selectedNodeIds.value = []; // Clear the selection IDs
     console.log("Graph updated with toggled fail states", updatedNodes);
+  };
+
+  const selectionMode = ref<"lasso" | "box">("lasso");
+  const setupSelectionTools = () => {
+    if (!nvlRef.value) return;
+    console.log("setupSelectionTools called; nvlRef =", nvlRef.value);
+    lasso.value?.destroy();
+    boxSelect.value?.destroy();
+
+    const handleSelection = (nodes: Node[]) => {
+      console.log(
+        "handleSelection:",
+        nodes.map((n: Node) => n.id),
+      );
+      selectedNodeIds.value = nodes.map((n: Node) => n.id);
+      nvlRef.value!.updateElementsInGraph(
+        nvlRef.value!.getNodes().map((node: Node) => ({
+          ...node,
+          selected: selectedNodeIds.value.includes(node.id),
+          highlighted: false,
+        })),
+        [],
+      );
+    };
+
+    if (selectionMode.value === "box") {
+      boxSelect.value = new BoxSelectInteraction(nvlRef.value, {
+        selectOnRelease: true,
+      });
+      boxSelect.value.updateCallback(
+        "onBoxSelect",
+        (event: { nodes: Node[] }) => {
+          const { nodes } = event;
+          console.log(
+            "onBoxSelect:",
+            nodes.map((n: Node) => n.id),
+          );
+          nvlRef.value!.updateElementsInGraph(
+            nodes.map((n: Node) => ({ ...n, highlighted: true })),
+            [],
+          );
+          handleSelection(nodes);
+        },
+      );
+    } else {
+      lasso.value = new LassoInteraction(nvlRef.value, {
+        selectOnRelease: true,
+      });
+      lasso.value.updateCallback(
+        "onLassoSelect",
+        (event: { nodes: Node[] }) => {
+          const { nodes } = event;
+          console.log(
+            "onLassoSelect:",
+            nodes.map((n: Node) => n.id),
+          );
+          nvlRef.value!.updateElementsInGraph(
+            nodes.map((n: Node) => ({ ...n, highlighted: true })),
+            [],
+          );
+          handleSelection(nodes);
+        },
+      );
+    }
+  };
+
+  const toggleSelectionMode = () => {
+    selectionMode.value = selectionMode.value === "lasso" ? "box" : "lasso";
+    setupSelectionTools();
   };
 
   const sleep = (ms: number) =>
@@ -136,8 +212,6 @@
 
     if (props.layout === "forceDirected") {
       if (props.nodes.length > 200) {
-        // await sleep(props.nodes.length / 2);
-        // await zoomToFit();
         const x = props.nodes.length;
         const zoomScale = C_A * x ** C_B + C_C * x ** C_D;
         console.log("zooming with heuristic", zoomScale);
@@ -152,6 +226,8 @@
 
   const nvlSetup = async () => {
     if (nvlRef.value) {
+      lasso.value = new LassoInteraction(nvlRef.value);
+      selectionMode.value = "lasso";
       nvlRef.value.destroy();
       click.value?.destroy();
       zoom.value?.destroy();
@@ -164,6 +240,7 @@
     );
 
     if (!container.value) return;
+
     nvlRef.value = new NVL(
       container.value,
       [],
@@ -209,55 +286,66 @@
 
     click.value = new ClickInteraction(nvlRef.value);
     click.value.updateCallback("onNodeClick", (node: Node) => {
-      if (!nvlRef.value) {
-        console.warn("NVL not initialized");
-        return;
-      }
+      if (!nvlRef.value) return;
 
-      const idx = selectedNodeIds.value.indexOf(node.id);
-      if (idx !== -1) {
-        selectedNodeIds.value.splice(idx, 1); // unselect
+      // Toggle selection for this node
+      const newSelected = new Set(selectedNodeIds.value);
+      if (newSelected.has(node.id)) {
+        newSelected.delete(node.id);
       } else {
-        selectedNodeIds.value.push(node.id); // add
+        newSelected.add(node.id);
       }
+      selectedNodeIds.value = Array.from(newSelected);
 
-      const currentlySelected = new Set(
-        nvlRef.value.getSelectedNodes().map((node) => node.id) ?? [],
-      );
-      const shouldBeSelected = new Set(selectedNodeIds.value);
-
-      const shouldUnselect = currentlySelected.difference(shouldBeSelected);
-      const shouldSelect = shouldBeSelected.difference(currentlySelected);
-
+      // Update visual selection
       nvlRef.value.updateElementsInGraph(
-        nvlRef.value
-          .getSelectedNodes()
-          .filter((node) => shouldUnselect.has(node.id))
-          .map((n) => ({
-            ...n,
-            selected: false,
-          })),
-        [],
-      );
-
-      nvlRef.value.updateElementsInGraph(
-        nvlRef.value
-          .getNodes()
-          .filter((node) => shouldSelect.has(node.id))
-          .map((n) => ({
-            ...n,
-            selected: true,
-          })),
+        nvlRef.value.getNodes().map((n) => ({
+          ...n,
+          selected: newSelected.has(n.id),
+          highlighted: false, // Clear any highlight
+        })),
         [],
       );
     });
 
     zoom.value = new ZoomInteraction(nvlRef.value);
-    pan.value = new PanInteraction(nvlRef.value);
+
+    //PanInteraction
+    container.value?.addEventListener("contextmenu", (e) => e.preventDefault());
+
+    let isRightClickPanning = false;
+    let lastPosition = { x: 0, y: 0 };
+
+    container.value?.addEventListener("mousedown", (e) => {
+      if (e.button !== 2) return; // Only right-click
+      isRightClickPanning = true;
+      lastPosition = { x: e.clientX, y: e.clientY };
+      e.preventDefault();
+    });
+
+    container.value?.addEventListener("mousemove", (e) => {
+      if (!isRightClickPanning) return;
+
+      const deltaX = e.clientX - lastPosition.x;
+      const deltaY = e.clientY - lastPosition.y;
+      lastPosition = { x: e.clientX, y: e.clientY };
+
+      if (nvlRef.value) {
+        const currentPan = nvlRef.value.getPan();
+        nvlRef.value.setPan(currentPan.x - deltaX, currentPan.y - deltaY);
+      }
+    });
+
+    container.value?.addEventListener("mouseup", (e) => {
+      if (e.button === 2) {
+        isRightClickPanning = false;
+      }
+    });
+
     drag.value = new DragNodeInteraction(nvlRef.value);
 
     console.log("Render complete");
-
+    setupSelectionTools();
     await postSetup();
   };
 
@@ -306,11 +394,19 @@
   };
   defineExpose({ captureGraphImage });
 
-  onMounted(() => nvlSetup()); // once vue has finished mounting and page elements are already generated, nvlSetup will run
+  onMounted(() => {
+    nvlSetup();
+  }); // once vue has finished mounting and page elements are already generated, nvlSetup will run
 
   watch([() => props.nodes, () => props.rels], nvlSetup, {
     flush: "post",
     deep: true,
+  });
+
+  watch(nvlRef, () => {
+    if (nvlRef.value) {
+      toggleSelectionMode();
+    }
   });
 
   watch([() => props.layout], () => {
@@ -319,6 +415,24 @@
       postSetup();
     }
   });
+
+  watch(
+    selectedNodeIds,
+    (newVal) => {
+      if (!nvlRef.value) return;
+
+      // Update visual selection when selectedNodeIds changes
+      nvlRef.value.updateElementsInGraph(
+        nvlRef.value.getNodes().map((node) => ({
+          ...node,
+          selected: newVal.includes(node.id),
+          highlighted: false, // Clear any highlight
+        })),
+        [],
+      );
+    },
+    { deep: true },
+  );
 
   watch(
     [
@@ -365,6 +479,8 @@
   );
 
   onUnmounted(() => {
+    lasso.value?.destroy();
+    boxSelect.value?.destroy();
     nvlRef?.value?.destroy();
   });
 
@@ -384,6 +500,14 @@
     Toggle Node Failure
   </button>
 
+  <button @click="toggleSelectionMode" class="selection-mode-btn">
+    {{
+      selectionMode === "lasso" ?
+        "Switch to Box Select"
+      : "Switch to Lasso Select"
+    }}
+  </button>
+
   <div v-if="props.nodes.length" ref="nvl-container" class="graph"></div>
   <div v-else class="graph">No nodes to display...</div>
   <h2>Controls</h2>
@@ -391,6 +515,7 @@
     <li>Click and drag the background to move the scene.</li>
     <li>Scroll in and out to zoom.</li>
     <li>Click on a node to select/deselect it.</li>
+    <li>Right-click and drag to lasso-select multiple nodes.</li>
     <li>Click and drag a node to move the node.</li>
     <li>Select a node to mark it as failed.</li>
   </ul>
