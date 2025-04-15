@@ -58,11 +58,12 @@ export const connectToNeo4j = async (
     try {
       console.log(`Attempt ${attempt} to connect to Neo4j...`);
       await checkConnection();
+
       updateStatus({
         statusMsg: "Neo4j connection successful.",
         status: "CONNECTED",
       });
-      return;
+      break;
     } catch (error) {
       console.error(`Error connecting to Neo4j on attempt ${attempt}:`, error);
 
@@ -83,15 +84,14 @@ export const connectToNeo4j = async (
           statusMsg: "Failed to connect to Neo4j after maximum retries.",
           status: "ERROR",
         });
-        return;
+      } else {
+        console.log(`Retrying in ${retryDelay / 1000} seconds...`);
+        await wait(retryDelay);
       }
-
-      console.log(`Retrying in ${retryDelay / 1000} seconds...`);
-
-      // Wait for the specified delay before retrying
-      await wait(retryDelay);
     }
   }
+
+  return;
 };
 
 //fetch schema data function - ZT
