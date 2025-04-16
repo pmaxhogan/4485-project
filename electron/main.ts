@@ -23,6 +23,12 @@ import { checkConnectionStatus } from "./neo4j.ts";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+if (!process.env.APP_ROOT) {
+  throw new Error(
+    `APP_ROOT environment variable is required : ${process.env.APP_ROOT}`,
+  );
+}
+
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 export const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
 export const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
