@@ -17,13 +17,17 @@
     layoutDirection.value = layoutDirection.value === "down" ? "right" : "down";
   };
 
+  const key = ref(0);
+
   const genTree = async (summaryView: boolean) => {
+    nodes.value = [];
+    rels.value = [];
+    key.value++;
+
     const tree = await generateSchemaTree(summaryView);
 
     if (!tree || !tree.nodes || !tree.edges) {
       console.error("Failed to generate schema tree.");
-      nodes.value = [];
-      rels.value = [];
       return;
     }
 
@@ -98,6 +102,7 @@
     :cytoscape="cytoscape"
     :packing="packing"
     v-if="nodes?.length && rels?.length"
+    :key="key"
   />
 </template>
 

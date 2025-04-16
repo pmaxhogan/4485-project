@@ -24,6 +24,25 @@ describe("App Component", () => {
   });
 
   it("calls captureGraphImage in VisualGraph on button click", async () => {
+    // get a mock version of the method to test if it is called
+    render(App);
+
+    vi.mocked(window.electronAPI.onNeo4jStatus).mock.lastCall?.[0]("CONNECTED");
+    await nextTick();
+
+    vi.mocked(window.electronAPI.openFileDialog).mockResolvedValueOnce({
+      filePaths: [],
+    });
+
+    const importButton = screen.getByRole("button", {
+      name: /import excel/i,
+    });
+    await fireEvent.click(importButton);
+
+    expect(window.electronAPI.openFileDialog).toHaveBeenCalled();
+  });
+
+  it("calls captureGraphImage in VisualGraph on button click", async () => {
     const captureGraphImageMock = vi.fn();
 
     // get a mock version of the method to test if it is called

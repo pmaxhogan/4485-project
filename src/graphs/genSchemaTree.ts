@@ -1,5 +1,7 @@
 //generates a schemaTree
 //just as a note, all console.log's happen in the application itself, not the console. - zt
+import { elemLabel } from "./elemLabel.ts";
+
 export const generateSchemaTree = async (summaryView: boolean) => {
   try {
     console.log("Fetching data...");
@@ -30,31 +32,38 @@ export const generateSchemaTree = async (summaryView: boolean) => {
           id: "summary-0",
           label: `Datacenter (${totalDc})`,
           captions: [{ value: `Datacenters: ${totalDc}` }],
-          size: 17,
+          size: 20,
           color: "#f47535",
+          type: "datacenter",
         },
         {
           id: "summary-1",
           label: `Server (${totalServer})`,
           captions: [{ value: `Servers: ${totalServer}` }],
-          size: 17,
+          size: 20,
           color: "#b86eac",
+          type: "server",
         },
         {
           id: "summary-2",
           label: `IT Application (${totalApp})`,
           captions: [{ value: `Applications: ${totalApp}` }],
-          size: 17,
+          size: 20,
           color: "#3dbfdf",
+          type: "application",
         },
         {
           id: "summary-3",
           label: `Business Function (${totalBf})`,
           captions: [{ value: `Business Functions: ${totalBf}` }],
-          size: 17,
+          size: 20,
           color: "#46a64e",
+          type: "business function",
         },
-      ];
+      ].map((node) => ({
+        ...node,
+        html: elemLabel(node),
+      }));
 
       //Connect nodes with preset edges
       edges = [
@@ -87,6 +96,8 @@ export const generateSchemaTree = async (summaryView: boolean) => {
         size: 20,
         captionSize: 1,
         maxLength: null,
+        highlighted: true,
+        html: elemLabel(node),
       }));
 
       edges = schemaTreeData.edges.map((edge) => ({

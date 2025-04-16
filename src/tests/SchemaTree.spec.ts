@@ -70,6 +70,8 @@ describe("SchemaTree.vue", () => {
           captions: [{ value: "Datacenters: 5" }],
           size: 17,
           color: "#f47535",
+          html: document.createElement("div"),
+          type: "node",
         },
         {
           id: "summary-1",
@@ -77,6 +79,8 @@ describe("SchemaTree.vue", () => {
           captions: [{ value: "Servers: 10" }],
           size: 17,
           color: "#b86eac",
+          html: document.createElement("div"),
+          type: "node",
         },
         {
           id: "summary-2",
@@ -84,6 +88,8 @@ describe("SchemaTree.vue", () => {
           captions: [{ value: "Applications: 20" }],
           size: 17,
           color: "#3dbfdf",
+          html: document.createElement("div"),
+          type: "node",
         },
         {
           id: "summary-3",
@@ -91,6 +97,8 @@ describe("SchemaTree.vue", () => {
           captions: [{ value: "Business Functions: 8" }],
           size: 17,
           color: "#46a64e",
+          html: document.createElement("div"),
+          type: "node",
         },
       ],
       edges: [
@@ -144,6 +152,9 @@ describe("SchemaTree.vue", () => {
           size: 100,
           captionSize: 1,
           maxLength: null,
+          color: "#FFC0CB",
+          html: document.createElement("div"),
+          type: "node",
         },
         {
           id: "2",
@@ -152,6 +163,9 @@ describe("SchemaTree.vue", () => {
           size: 100,
           captionSize: 1,
           maxLength: null,
+          color: "#FFC0CB",
+          html: document.createElement("div"),
+          type: "node",
         },
         {
           id: "3",
@@ -160,6 +174,9 @@ describe("SchemaTree.vue", () => {
           size: 100,
           captionSize: 1,
           maxLength: null,
+          color: "#FFC0CB",
+          html: document.createElement("div"),
+          type: "node",
         },
       ],
       edges: [

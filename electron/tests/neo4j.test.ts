@@ -303,6 +303,7 @@ describe("Neo4j Integration Tests", () => {
             id: "1", // Now properly stringified
             label: "AppNode",
             color: "#3dbfdf",
+            type: "Application",
           },
         ]);
 
