@@ -135,6 +135,7 @@ export const fetchSchemaData = async () => {
         id: id,
         label: label,
         color: nodeColors[nodeType[0] || "Default"],
+        type: nodeType[0],
       };
     });
 

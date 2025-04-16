@@ -1,15 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { mount } from "@vue/test-utils";
-import { nextTick, ComponentPublicInstance } from "vue";
+import { nextTick } from "vue";
 import VisualGraph from "../components/graphs/VisualGraph.vue";
-import NVL from "@neo4j-nvl/base";
-import { getByText, render, screen } from "@testing-library/vue";
-
-interface VisualGraphVM extends ComponentPublicInstance {
-  selectedNodeIds: string[];
-  markSelectedNodeAsFailed(): void;
-  zoomToFit(): void;
-}
+import NVL, { Point } from "@neo4j-nvl/base";
+import { type Node } from "@neo4j-nvl/base";
+import { fireEvent, getByText, render, screen } from "@testing-library/vue";
+import { ByRoleOptions } from "@testing-library/dom/types/queries";
 
 describe("VisualGraph Component", () => {
   beforeEach(() => {
@@ -28,6 +24,7 @@ describe("VisualGraph Component", () => {
     vi.spyOn(NVL.prototype, "setLayout").mockImplementation(() => {});
     vi.spyOn(NVL.prototype, "destroy").mockImplementation(() => {});
     vi.spyOn(NVL.prototype, "getNodes").mockReturnValue([]); // default to no nodes
+    vi.spyOn(NVL.prototype, "getSelectedNodes").mockReturnValue([]);
 
     global.window.electronAPI = {
       invoke: vi.fn(),
@@ -71,6 +68,61 @@ describe("VisualGraph Component", () => {
         layoutDirection: "down",
       },
     });
+  });
+
+  it("renders selection buttons", async () => {
+    render(VisualGraph, {
+      props: {
+        nodes: [
+          { id: "1", caption: "Node 1" },
+          { id: "2", caption: "Node 2" },
+        ],
+        rels: [{ from: "1", to: "2", id: "3" }],
+        layoutDirection: "down",
+      },
+    });
+
+    screen.logTestingPlaygroundURL();
+
+    const btn = (name: ByRoleOptions["name"]) =>
+      screen.getByRole("button", {
+        name,
+      });
+    const expectBtn = (name: ByRoleOptions["name"], disabled: boolean) =>
+      expect(btn(name)).toHaveProperty("disabled", disabled);
+
+    expectBtn("Pointer", true);
+    expectBtn("Move", false);
+    expectBtn("Lasso", false);
+    expectBtn("Box", false);
+
+    await fireEvent.click(btn("Pointer"));
+
+    expectBtn("Pointer", true);
+    expectBtn("Move", false);
+    expectBtn("Lasso", false);
+    expectBtn("Box", false);
+
+    await fireEvent.click(btn("Move"));
+
+    expectBtn("Pointer", false);
+    expectBtn("Move", true);
+    expectBtn("Lasso", false);
+    expectBtn("Box", false);
+
+    await fireEvent.click(btn("Lasso"));
+
+    expectBtn("Pointer", false);
+    expectBtn("Move", false);
+    expectBtn("Lasso", true);
+    expectBtn("Box", false);
+
+    await fireEvent.click(btn("Box"));
+
+    expectBtn("Pointer", false);
+    expectBtn("Move", false);
+    expectBtn("Lasso", false);
+    expectBtn("Box", true);
   });
 
   it("calls NVL.fit when clicking 'Zoom to Fit' button", async () => {
@@ -121,18 +173,28 @@ describe("VisualGraph Component", () => {
       { id: "2", color: "green" },
     ]);
 
-    const wrapper = mount(VisualGraph, {
+    render(VisualGraph, {
       props: { nodes, rels },
     });
-    await nextTick();
 
-    const vm = wrapper.vm as unknown as VisualGraphVM;
-    vm.selectedNodeIds = ["1"];
-    await nextTick();
+    let button = screen.getByRole("button", {
+      name: /Toggle Failure/i,
+    });
+    expect(button).toHaveProperty("disabled", true);
 
-    // click  "Toggle Node Failure" button
-    const toggleBtn = wrapper.get("button.mark-failed-btn");
-    await toggleBtn.trigger("click");
+    vi.spyOn(NVL.prototype, "getSelectedNodes").mockReturnValue([
+      nodes[0],
+    ] as (Point & Node)[]);
+    await fireEvent.click(screen.getByRole("img"));
+
+    button = screen.getByRole("button", {
+      name: /Toggle Failure/i,
+    });
+    expect(button).toHaveProperty("disabled", false);
+
+    await fireEvent.click(button);
+
+    expect(NVL.prototype.getSelectedNodes).toHaveBeenCalled();
 
     expect(NVL.prototype.updateElementsInGraph).toHaveBeenCalledWith(
       expect.arrayContaining([
@@ -152,18 +214,26 @@ describe("VisualGraph Component", () => {
   });
 
   it("enables the failure toggle button", async () => {
-    const wrapper = mount(VisualGraph, {
-      props: { nodes: [{ id: "1", caption: "X" }], rels: [] },
+    const nodes = [{ id: "1", caption: "X" }] as (Node & Point)[];
+    render(VisualGraph, {
+      props: { nodes, rels: [] },
     });
-    await nextTick();
 
-    const btn = wrapper.find("button.mark-failed-btn");
-    expect(btn.attributes("disabled")).toBeDefined();
+    let button = screen.getByRole("button", {
+      name: /Toggle Failure \(0\)/i,
+    });
+    expect(button).toHaveProperty("disabled", true);
 
-    const vm = wrapper.vm as unknown as VisualGraphVM;
-    vm.selectedNodeIds = ["1"];
-    await nextTick();
-    expect(btn.attributes("disabled")).toBeUndefined();
+    vi.spyOn(NVL.prototype, "getSelectedNodes").mockReturnValue(
+      nodes as (Point & Node)[],
+    );
+    await fireEvent.click(screen.getByRole("img"));
+
+    expect(NVL.prototype.getSelectedNodes).toHaveBeenCalled();
+    button = screen.getByRole("button", {
+      name: /Toggle Failure \(1\)/i,
+    });
+    expect(button).toHaveProperty("disabled", false);
   });
 
   it("updates layout options + restarts when layoutDirection changes", async () => {

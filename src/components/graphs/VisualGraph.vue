@@ -13,10 +13,9 @@
   import {
     ClickInteraction,
     DragNodeInteraction,
-    PanInteraction,
-    ZoomInteraction,
     LassoInteraction,
     BoxSelectInteraction,
+    ZoomInteraction,
   } from "@neo4j-nvl/interaction-handlers";
 
   const props = withDefaults(
@@ -62,7 +61,6 @@
   const nvlRef = shallowRef<NVL>();
   const click = shallowRef<ClickInteraction>();
   const zoom = shallowRef<ZoomInteraction>();
-  const pan = shallowRef<PanInteraction>();
   const drag = shallowRef<DragNodeInteraction>();
   const lasso = shallowRef<LassoInteraction>();
   const boxSelect = shallowRef<BoxSelectInteraction>();
@@ -75,19 +73,18 @@
   const updating = ref(false);
   const updatingTimeout = ref<number | null>(null);
 
-  const selectedNodeIds = ref<string[]>([]); // support multiple selected
+  const selectedNodeIds = () =>
+    nvlRef.value?.getSelectedNodes().map((n) => n.id) ?? [];
   // mark selected nodes (and their children) as failed, or un-fail them
   type ExtendedNode = Node & { originalColor?: string };
   const markSelectedNodeAsFailed = () => {
-    if (!nvlRef.value || selectedNodeIds.value.length === 0) {
-      console.log(
-        "No node selected or NVL not initialized",
-        selectedNodeIds.value,
-      );
+    counter.value++;
+    if (!nvlRef.value || selectedNodeIds().length === 0) {
+      console.log("No node selected or NVL not initialized", selectedNodeIds());
       return;
     }
 
-    console.log("Toggling failure state for:", selectedNodeIds.value);
+    console.log("Toggling failure state for:", selectedNodeIds());
 
     // Map parent → children
     const childMap = new Map<string, string[]>();
@@ -97,7 +94,7 @@
     });
 
     const allToToggle = new Set<string>();
-    selectedNodeIds.value.forEach((nodeId) => {
+    selectedNodeIds().forEach((nodeId) => {
       allToToggle.add(nodeId);
       (childMap.get(nodeId) || []).forEach((childId) =>
         allToToggle.add(childId),
@@ -119,66 +116,58 @@
       });
 
     nvlRef.value.updateElementsInGraph(updatedNodes, []);
-    selectedNodeIds.value = []; // Clear the selection IDs
     console.log("Graph updated with toggled fail states", updatedNodes);
   };
 
-  const selectionMode = ref<"lasso" | "box">("lasso");
+  const mouseMode = ref<"pointer" | "lasso" | "box" | "drag">("pointer");
   const setupSelectionTools = () => {
     if (!nvlRef.value) return;
     console.log("setupSelectionTools called; nvlRef =", nvlRef.value);
     lasso.value?.destroy();
     boxSelect.value?.destroy();
+    drag.value?.destroy();
+    click.value?.destroy();
 
-    const handleSelection = (nodes: Node[]) => {
-      selectedNodeIds.value = nodes.map((n: Node) => n.id);
-      nvlRef.value!.updateElementsInGraph(
-        nvlRef.value!.getNodes().map((node: Node) => ({
-          ...node,
-          selected: selectedNodeIds.value.includes(node.id),
-          highlighted: false,
-        })),
-        [],
-      );
-    };
-
-    const updateSelectionHandler = (nodes: Node[]) => {
-      nvlRef.value!.updateElementsInGraph(
-        nodes.map((n: Node) => ({ ...n, highlighted: true })),
-        [],
-      );
-      handleSelection(nodes);
-    };
-
-    if (selectionMode.value === "box") {
+    if (mouseMode.value === "box") {
       boxSelect.value = new BoxSelectInteraction(nvlRef.value, {
         selectOnRelease: true,
       });
-      boxSelect.value.updateCallback(
-        "onBoxSelect",
-        (event: { nodes: Node[] }) => {
-          const { nodes } = event;
-          updateSelectionHandler(nodes);
-        },
-      );
-    } else {
+    } else if (mouseMode.value === "lasso") {
       lasso.value = new LassoInteraction(nvlRef.value, {
         selectOnRelease: true,
       });
-      lasso.value.updateCallback(
-        "onLassoSelect",
-        (event: { nodes: Node[] }) => {
-          const { nodes } = event;
-          updateSelectionHandler(nodes);
-        },
-      );
+    } else if (mouseMode.value === "pointer") {
+      click.value = new ClickInteraction(nvlRef.value, {
+        selectOnClick: false,
+      });
+      click.value.updateCallback("onNodeClick", (node: Node) => {
+        if (!nvlRef.value) return;
+
+        nvlRef.value.updateElementsInGraph(
+          [{ id: node.id, selected: !node.selected }],
+          [],
+        );
+      });
+      click.value.updateCallback("onNodeDoubleClick", (node: Node) => {
+        if (!nvlRef.value) return;
+
+        nvlRef.value.deselectAll();
+        nvlRef.value.updateElementsInGraph(
+          [{ id: node.id, selected: true }],
+          [],
+        );
+      });
+      click.value.updateCallback("onCanvasDoubleClick", () => {
+        if (!nvlRef.value) return;
+
+        nvlRef.value.deselectAll();
+      });
+    } else if (mouseMode.value === "drag") {
+      drag.value = new DragNodeInteraction(nvlRef.value);
     }
   };
 
-  const toggleSelectionMode = () => {
-    selectionMode.value = selectionMode.value === "lasso" ? "box" : "lasso";
-    setupSelectionTools();
-  };
+  watch(mouseMode, () => setupSelectionTools());
 
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
@@ -213,15 +202,16 @@
     }
   };
 
+  const counter = ref(0);
+
   const nvlSetup = async () => {
     if (nvlRef.value) {
-      lasso.value = new LassoInteraction(nvlRef.value);
-      selectionMode.value = "lasso";
       nvlRef.value.destroy();
+      lasso.value?.destroy();
+      boxSelect.value?.destroy();
       click.value?.destroy();
-      zoom.value?.destroy();
-      pan.value?.destroy();
       drag.value?.destroy();
+      zoom.value?.destroy();
       await nextTick();
     }
     console.log(
@@ -237,7 +227,7 @@
       {
         initialZoom: 0.2,
         layout: props.layout,
-        renderer: "canvas",
+        renderer: "webgl",
         layoutOptions: {
           gravity: 0.00005,
           direction: "right", //props.layoutDirection, //layout passed from the parent here
@@ -271,46 +261,36 @@
       props.rels.length,
     );
 
-    nvlRef.value.addAndUpdateElementsInGraph(props.nodes, props.rels);
+    function deepClone<T>(obj: T): T {
+      return JSON.parse(JSON.stringify(obj));
+    }
 
-    click.value = new ClickInteraction(nvlRef.value);
-    click.value.updateCallback("onNodeClick", (node: Node) => {
-      if (!nvlRef.value) return;
-
-      // Toggle selection for this node
-      const newSelected = new Set(selectedNodeIds.value);
-      if (newSelected.has(node.id)) {
-        newSelected.delete(node.id);
-      } else {
-        newSelected.add(node.id);
+    function deepCloneNodes(nodes: Node[]): Node[] {
+      const newNodes: Node[] = [];
+      for (const node of nodes) {
+        const { html, ...oldNode } = node;
+        newNodes.push({
+          ...deepClone(oldNode),
+          html,
+        });
       }
-      selectedNodeIds.value = Array.from(newSelected);
+      return newNodes;
+    }
 
-      // Update visual selection
-      nvlRef.value.updateElementsInGraph(
-        nvlRef.value.getNodes().map((n) => ({
-          ...n,
-          selected: newSelected.has(n.id),
-          highlighted: false, // Clear any highlight
-        })),
-        [],
-      );
-    });
-
-    const currentZoom = ref(1.0); // Using Vue's ref instead of let
+    nvlRef.value.addAndUpdateElementsInGraph(
+      deepCloneNodes(props.nodes),
+      deepClone(props.rels),
+    );
 
     zoom.value = new ZoomInteraction(nvlRef.value);
-    zoom.value.updateCallback("onZoom", (zoomLevel) => {
-      currentZoom.value = zoomLevel; // Update the reactive value
-    });
-
-    //PanInteraction
     container.value?.addEventListener("contextmenu", (e) => e.preventDefault());
 
     let isRightClickPanning = false;
     let lastPosition = { x: 0, y: 0 };
 
     const handleMouseDown = (e: MouseEvent) => {
+      counter.value++;
+
       if (e.button !== 2) return; // Only right-click
       isRightClickPanning = true;
       lastPosition = { x: e.clientX, y: e.clientY };
@@ -320,17 +300,15 @@
     const handleMouseMove = (e: MouseEvent) => {
       if (!isRightClickPanning) return;
 
-      const deltaX = e.clientX - lastPosition.x;
-      const deltaY = e.clientY - lastPosition.y;
-      lastPosition = { x: e.clientX, y: e.clientY };
-
       if (nvlRef.value) {
-        const zoomFactor = 1 / currentZoom.value;
-        const currentPan = nvlRef.value.getPan();
-        nvlRef.value.setPan(
-          currentPan.x - deltaX * zoomFactor,
-          currentPan.y - deltaY * zoomFactor,
-        );
+        const zoom = nvlRef.value.getScale();
+        const { x, y } = nvlRef.value.getPan();
+        const dx =
+          ((e.clientX - lastPosition.x) / zoom) * window.devicePixelRatio;
+        const dy =
+          ((e.clientY - lastPosition.y) / zoom) * window.devicePixelRatio;
+        nvlRef.value.setPan(x - dx, y - dy);
+        lastPosition = { x: e.clientX, y: e.clientY };
       }
     };
 
@@ -355,8 +333,6 @@
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     });
-
-    drag.value = new DragNodeInteraction(nvlRef.value);
 
     console.log("Render complete");
     setupSelectionTools();
@@ -414,7 +390,6 @@
 
   watch([() => props.nodes, () => props.rels], nvlSetup, {
     flush: "post",
-    deep: true,
   });
 
   watch([() => props.layout], () => {
@@ -456,6 +431,7 @@
       updating.value = true;
       updatingTimeout.value = setTimeout(() => {
         if (updatingTimeout.value !== null) clearTimeout(updatingTimeout.value);
+        updating.value = false;
         updatingTimeout.value = null;
 
         console.warn("gave up waiting for layout");
@@ -484,21 +460,32 @@
   <!---Button to mark failed node -->
   <button
     @click="markSelectedNodeAsFailed"
-    :disabled="!selectedNodeIds.length"
+    :disabled="!selectedNodeIds().length"
     class="mark-failed-btn"
+    :key="counter"
   >
-    Toggle Node Failure
+    Toggle Failure ({{ selectedNodeIds().length }})
   </button>
 
-  <button @click="toggleSelectionMode" class="selection-mode-btn">
-    {{
-      selectionMode === "lasso" ?
-        "Switch to Box Select"
-      : "Switch to Lasso Select"
-    }}
+  <button @click="mouseMode = 'pointer'" :disabled="mouseMode === 'pointer'">
+    Pointer
+  </button>
+  <button @click="mouseMode = 'drag'" :disabled="mouseMode === 'drag'">
+    Move
+  </button>
+  <button @click="mouseMode = 'lasso'" :disabled="mouseMode === 'lasso'">
+    Lasso
+  </button>
+  <button @click="mouseMode = 'box'" :disabled="mouseMode === 'box'">
+    Box
   </button>
 
-  <div v-if="props.nodes.length" ref="nvl-container" class="graph"></div>
+  <div
+    v-if="props.nodes.length"
+    ref="nvl-container"
+    class="graph"
+    @click="counter++"
+  ></div>
   <div v-else class="graph">No nodes to display...</div>
   <h2>Controls</h2>
   <ul>
@@ -513,7 +500,7 @@
   <img v-if="img && debugImg" :src="img" alt="Graph Image" />
 </template>
 
-<style scoped>
+<style>
   .graph {
     margin: 0 auto;
     min-height: 80vh;
@@ -522,25 +509,41 @@
     align-items: center;
     justify-content: center;
   }
-  .mark-failed-btn {
-    margin: 10px 0;
-    padding: 8px 16px;
-    background-color: #f44336;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
+
+  .graph-node {
+    --p: 1px;
+    min-height: 100%;
+    max-height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    font-size: 6px;
+    text-align: center;
+    line-height: 1;
+    height: 40px;
+    padding: 11% 0 11%;
+    overflow: hidden;
+    color: black;
+    word-break: auto-phrase;
+  }
+  .graph-node .aligner,
+  .graph-node::before {
+    content: "";
+    float: left;
+    height: 100%;
+    width: 50%;
+    shape-outside: radial-gradient(
+      farthest-side at right,
+      transparent calc(100% - var(--p)),
+      #fff 0
+    );
   }
 
-  .mark-failed-btn:hover:not(:disabled) {
-    background-color: #d32f2f;
-  }
-
-  .mark-failed-btn:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-    opacity: 0.7;
+  .graph-node .aligner {
+    float: right;
+    shape-outside: radial-gradient(
+      farthest-side at left,
+      transparent calc(100% - var(--p)),
+      #fff 0
+    );
   }
 </style>
