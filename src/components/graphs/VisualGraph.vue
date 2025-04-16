@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { type Node, NVL, type Relationship } from "@neo4j-nvl/base";
   import {
+    computed,
     nextTick,
     onBeforeUnmount,
     onMounted,
@@ -17,40 +18,37 @@
     BoxSelectInteraction,
     ZoomInteraction,
   } from "@neo4j-nvl/interaction-handlers";
+  import LoadingSpinner from "../LoadingSpinner.vue";
+
+  /**
+   * layout: "hierarchical", // very structured
+   * layout: "forceDirected", // pretty organic, not very structured
+   * layout: "d3Force", // the most organic, slow
+   * layout: "grid", // the most structured, not very useful
+   */
+  const layout = ref<"hierarchical" | "forceDirected" | "d3Force" | "grid">(
+    "d3Force",
+  ); //Default layout.
+
+  const verlet = ref<true | false>(false);
+  const cytoscape = ref<true | false>(true);
+  const layoutDirection = ref<"down" | "up" | "left" | "right">("down"); //Default facing direction.
+  const packing = ref<"stack" | "bin">("stack");
 
   const props = withDefaults(
     defineProps<{
       nodes?: Node[];
       rels?: Relationship[];
-      layoutDirection?: "down" | "up" | "left" | "right" | undefined; //for on the fly layout adjustment
-      layout?:
-        | "hierarchical"
-        | "forceDirected"
-        | "d3Force"
-        | "grid"
-        | undefined;
-      /**
-       * layout: "hierarchical", // very structured
-       * layout: "forceDirected", // pretty organic, not very structured
-       * layout: "d3Force", // the most organic, slow
-       * layout: "grid", // the most structured, not very useful
-       */
-      verlet?: boolean;
-      cytoscape?: boolean;
-      packing?: "stack" | "bin";
+      loading?: boolean;
     }>(),
     {
       nodes: () => [],
       rels: () => [],
-      layoutDirection: "down",
-      layout: "hierarchical",
-      verlet: true,
-      cytoscape: true,
-      packing: "stack",
+      loading: false,
     },
   );
 
-  const MAX_WAIT_FOR_LAYOUT = 2000; // ms
+  const MAX_WAIT_FOR_LAYOUT = 4000; // ms
 
   const container = useTemplateRef("nvl-container");
 
@@ -122,7 +120,6 @@
   const mouseMode = ref<"pointer" | "lasso" | "box" | "drag">("pointer");
   const setupSelectionTools = () => {
     if (!nvlRef.value) return;
-    console.log("setupSelectionTools called; nvlRef =", nvlRef.value);
     lasso.value?.destroy();
     boxSelect.value?.destroy();
     drag.value?.destroy();
@@ -151,6 +148,7 @@
       click.value.updateCallback("onNodeDoubleClick", (node: Node) => {
         if (!nvlRef.value) return;
 
+        counter.value++;
         nvlRef.value.deselectAll();
         nvlRef.value.updateElementsInGraph(
           [{ id: node.id, selected: true }],
@@ -160,6 +158,7 @@
       click.value.updateCallback("onCanvasDoubleClick", () => {
         if (!nvlRef.value) return;
 
+        counter.value++;
         nvlRef.value.deselectAll();
       });
     } else if (mouseMode.value === "drag") {
@@ -182,13 +181,15 @@
     console.log("Zoomed to fit");
   };
 
+  const isRightClickPanning = ref(false);
+
   const postSetup = async () => {
     if (!nvlRef.value) return;
 
     await nextTick();
     await sleep(props.nodes.length);
 
-    if (props.layout === "forceDirected") {
+    if (layout.value === "forceDirected") {
       if (props.nodes.length > 200) {
         const x = props.nodes.length;
         const zoomScale = C_A * x ** C_B + C_C * x ** C_D;
@@ -203,6 +204,9 @@
   };
 
   const counter = ref(0);
+
+  const isLMouseDown = ref(false);
+  const isRMouseDown = ref(false);
 
   const nvlSetup = async () => {
     if (nvlRef.value) {
@@ -226,18 +230,18 @@
       [],
       {
         initialZoom: 0.2,
-        layout: props.layout,
+        layout: layout.value,
         renderer: "webgl",
         layoutOptions: {
           gravity: 0.00005,
-          direction: "right", //props.layoutDirection, //layout passed from the parent here
-          packing: props.packing,
-          enableVerlet: props.verlet,
-          enableCytoscape: props.cytoscape,
+          direction: "right", //layout.valueDirection, //layout passed from the parent here
+          packing: packing.value,
+          enableVerlet: verlet.value,
+          enableCytoscape: cytoscape.value,
         },
-        logging: {
+        /*logging: {
           level: "info",
-        },
+        },*/
       },
       {
         onLayoutDone() {
@@ -277,6 +281,8 @@
       return newNodes;
     }
 
+    await nextTick();
+
     nvlRef.value.addAndUpdateElementsInGraph(
       deepCloneNodes(props.nodes),
       deepClone(props.rels),
@@ -285,20 +291,25 @@
     zoom.value = new ZoomInteraction(nvlRef.value);
     container.value?.addEventListener("contextmenu", (e) => e.preventDefault());
 
-    let isRightClickPanning = false;
     let lastPosition = { x: 0, y: 0 };
 
     const handleMouseDown = (e: MouseEvent) => {
       counter.value++;
 
+      if (e.button === 0) {
+        isLMouseDown.value = true;
+      } else if (e.button === 2) {
+        isRMouseDown.value = true;
+      }
+
       if (e.button !== 2) return; // Only right-click
-      isRightClickPanning = true;
+      isRightClickPanning.value = true;
       lastPosition = { x: e.clientX, y: e.clientY };
       e.preventDefault();
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!isRightClickPanning) return;
+      if (!isRightClickPanning.value) return;
 
       if (nvlRef.value) {
         const zoom = nvlRef.value.getScale();
@@ -314,12 +325,15 @@
 
     const handleMouseUp = (e: MouseEvent) => {
       if (e.button === 2) {
-        isRightClickPanning = false;
+        isRightClickPanning.value = false;
+        isRMouseDown.value = false;
+      } else if (e.button === 0) {
+        isLMouseDown.value = false;
       }
     };
 
     const handleMouseLeave = () => {
-      isRightClickPanning = false; //stop panning when mouse leaves the container
+      isRightClickPanning.value = false; //stop panning when mouse leaves the container
     };
 
     container.value?.addEventListener("mousedown", handleMouseDown);
@@ -365,7 +379,7 @@
 
           const imageDataUrl = this.href as string;
           console.log(
-            `saving image data URI ${imageDataUrl?.slice(0, 100)}...`,
+            `saving image data URI ${imageDataUrl?.slice(0, 50)}...`,
             this,
           );
 
@@ -392,27 +406,27 @@
     flush: "post",
   });
 
-  watch([() => props.layout], () => {
+  watch([() => layout.value], () => {
     if (nvlRef.value) {
-      nvlRef.value.setLayout(props.layout);
+      nvlRef.value.setLayout(layout.value);
       postSetup();
     }
   });
 
   watch(
     [
-      () => props.layoutDirection,
-      () => props.verlet,
-      () => props.cytoscape,
-      () => props.packing,
+      () => layoutDirection.value,
+      () => verlet.value,
+      () => cytoscape.value,
+      () => packing.value,
     ],
     () => {
       if (nvlRef.value) {
         const newOptions = {
           ...(nvlRef.value.getCurrentOptions().layoutOptions ?? {}),
-          direction: props.layoutDirection,
-          enableVerlet: props.verlet,
-          enableCytoscape: props.cytoscape,
+          direction: layoutDirection.value,
+          enableVerlet: verlet.value,
+          enableCytoscape: cytoscape.value,
         };
         console.log("New layout options", newOptions);
         nvlRef.value.setLayoutOptions(newOptions);
@@ -452,62 +466,179 @@
 
   const img = ref<string | null>(null);
   const debugImg = ref<boolean>(false);
+
+  const showControls = ref<boolean>(false);
+
+  const isLoading = computed(
+    () => props.loading || (props.nodes?.length && updating.value),
+  );
 </script>
 
 <template>
-  <h2>Graph</h2>
-  <button @click="zoomToFit">Zoom to Fit</button>
-  <!---Button to mark failed node -->
-  <button
-    @click="markSelectedNodeAsFailed"
-    :disabled="!selectedNodeIds().length"
-    class="mark-failed-btn"
-    :key="counter"
-  >
-    Toggle Failure ({{ selectedNodeIds().length }})
-  </button>
+  <div class="graph-container">
+    <!--    <h2>Graph</h2>-->
+    <div class="graph-controls">
+      <button @click="zoomToFit">Zoom to Fit</button>
+      <!---Button to mark failed node -->
+      <hr />
 
-  <button @click="mouseMode = 'pointer'" :disabled="mouseMode === 'pointer'">
-    Pointer
-  </button>
-  <button @click="mouseMode = 'drag'" :disabled="mouseMode === 'drag'">
-    Move
-  </button>
-  <button @click="mouseMode = 'lasso'" :disabled="mouseMode === 'lasso'">
-    Lasso
-  </button>
-  <button @click="mouseMode = 'box'" :disabled="mouseMode === 'box'">
-    Box
-  </button>
+      <h3>Cursor</h3>
+      <button
+        @click="mouseMode = 'pointer'"
+        :disabled="mouseMode === 'pointer'"
+      >
+        Pointer
+      </button>
+      <button @click="mouseMode = 'drag'" :disabled="mouseMode === 'drag'">
+        Move
+      </button>
+      <button @click="mouseMode = 'lasso'" :disabled="mouseMode === 'lasso'">
+        Lasso
+      </button>
+      <button @click="mouseMode = 'box'" :disabled="mouseMode === 'box'">
+        Box
+      </button>
+      <hr />
 
-  <div
-    v-if="props.nodes.length"
-    ref="nvl-container"
-    class="graph"
-    @click="counter++"
-  ></div>
-  <div v-else class="graph">No nodes to display...</div>
-  <h2>Controls</h2>
-  <ul>
-    <li>Right-click and drag the background to move the scene.</li>
-    <li>Scroll in and out to zoom.</li>
-    <li>Click on a node to select/deselect it.</li>
-    <li>Left-click and drag to lasso or box select multiple nodes.</li>
-    <li>Click and drag a node to move the node.</li>
-    <li>Select a node to mark it as failed.</li>
-  </ul>
+      <button
+        @click="
+          () => {
+            nvlRef?.deselectAll();
+            counter++;
+          }
+        "
+        :disabled="!selectedNodeIds().length"
+        class="mark-failed-btn"
+        :key="counter"
+      >
+        Deselect All
+      </button>
+      <button
+        @click="markSelectedNodeAsFailed"
+        :disabled="!selectedNodeIds().length"
+        class="mark-failed-btn"
+        :key="counter"
+      >
+        Toggle Failure ({{ selectedNodeIds().length }})
+      </button>
+      <hr />
+
+      <template v-if="layout === 'hierarchical' || layout === 'grid'">
+        <button
+          @click="layoutDirection = 'up'"
+          :disabled="layoutDirection === 'up'"
+        >
+          ⮝
+        </button>
+        <button
+          @click="layoutDirection = 'down'"
+          :disabled="layoutDirection === 'down'"
+        >
+          ⮟
+        </button>
+        <button
+          @click="layoutDirection = 'left'"
+          :disabled="layoutDirection === 'left'"
+        >
+          ⮜
+        </button>
+        <button
+          @click="layoutDirection = 'right'"
+          :disabled="layoutDirection === 'right'"
+        >
+          ⮞
+        </button>
+        <hr />
+      </template>
+      <h3>Layout</h3>
+      <label>
+        <input type="radio" value="forceDirected" v-model="layout" />
+        Force Directed
+      </label>
+      <label>
+        <input type="radio" value="hierarchical" v-model="layout" />
+        Hierarchical
+      </label>
+      <label>
+        <input type="radio" value="d3Force" v-model="layout" />
+        D3 Force
+      </label>
+      <label>
+        <input type="radio" value="grid" v-model="layout" />
+        Grid
+      </label>
+      <hr />
+      <h3>Renderer</h3>
+      <label>
+        <input type="checkbox" v-model="verlet" />
+        Verlet
+      </label>
+      <label>
+        <input type="checkbox" v-model="cytoscape" />
+        Cytos
+      </label>
+      <hr />
+      <template v-if="layout === 'hierarchical'">
+        <label>
+          <input type="radio" value="stack" v-model="packing" />
+          Stack
+        </label>
+        <label>
+          <input type="radio" value="bin" v-model="packing" />
+          Bin
+        </label>
+        <hr />
+      </template>
+      <button @click="showControls = !showControls">Help</button>
+    </div>
+
+    <div class="graph-holder">
+      <div
+        v-if="props.nodes.length || isLoading"
+        class="graph-loader"
+        :class="{ 'graph-loading': isLoading }"
+      >
+        <LoadingSpinner />
+      </div>
+      <div class="graph-help" :class="{ 'graph-show-help': showControls }">
+        <h2>Controls</h2>
+        <ul>
+          <li>Right-click and drag the background to move the scene.</li>
+          <li>Scroll in and out to zoom.</li>
+          <li>Click on a node to select/deselect it.</li>
+          <li>Left-click and drag to lasso or box select multiple nodes.</li>
+          <li>Click and drag a node to move the node.</li>
+          <li>Select a node to mark it as failed.</li>
+        </ul>
+        <button @click="showControls = false">Ok</button>
+      </div>
+      <div
+        ref="nvl-container"
+        class="graph"
+        v-if="props.nodes.length"
+        :class="{
+          'graph-loading': isLoading,
+          'graph-panning': isRightClickPanning,
+          ['graph-cursor-' + mouseMode]: true,
+          'graph-l-mouse-down': isLMouseDown,
+          'graph-r-mouse-down': isRMouseDown,
+        }"
+        @click="counter++"
+      ></div>
+      <div v-else class="graph graph-empty">No nodes to display...</div>
+    </div>
+    <div class="graph-footer">
+      <button @click="captureGraphImage">Save Graph Image to CMDB</button>
+    </div>
+  </div>
 
   <img v-if="img && debugImg" :src="img" alt="Graph Image" />
 </template>
 
 <style>
-  .graph {
-    margin: 0 auto;
-    min-height: 80vh;
-    background: rgba(255, 255, 255, 0.07);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .graph.graph-empty {
+    align-content: center;
+    text-align: center;
   }
 
   .graph-node {

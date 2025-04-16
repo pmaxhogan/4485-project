@@ -50,10 +50,10 @@ describe("SchemaTree.vue", () => {
 
     //check for existence
     const hasSchemaButton = buttons.some((btn) =>
-      btn.text().includes("Generate Schema Graph"),
+      btn.text().includes("Schema Graph"),
     );
     const hasDataButton = buttons.some((btn) =>
-      btn.text().includes("Generate Data Graph"),
+      btn.text().includes("Data Graph"),
     );
 
     expect(hasSchemaButton).toBe(true);
@@ -129,7 +129,7 @@ describe("SchemaTree.vue", () => {
     //find and click schema button
     const buttons = wrapper.findAll("button");
     const schemaButton = buttons.find((btn) =>
-      btn.text().includes("Generate Schema Graph"),
+      btn.text().includes("Schema Graph"),
     );
     if (!schemaButton) throw new Error("Schema button not found");
 
@@ -204,9 +204,7 @@ describe("SchemaTree.vue", () => {
 
     //find and click the data button
     const buttons = wrapper.findAll("button");
-    const dataButton = buttons.find((btn) =>
-      btn.text().includes("Generate Data Graph"),
-    );
+    const dataButton = buttons.find((btn) => btn.text().includes("Data Graph"));
     if (!dataButton) throw new Error("Data button not found");
 
     await dataButton.trigger("click");

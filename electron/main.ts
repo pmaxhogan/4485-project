@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, Menu } from "electron";
 import "./handlers.ts";
 import {
   checkAndSetupNeo4j,
@@ -45,7 +45,7 @@ let win: BrowserWindow | null;
 
 function openWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    icon: path.join(process.env.VITE_PUBLIC, "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
     },
@@ -66,6 +66,8 @@ function openWindow() {
   // uncomment to open devtools on startup
   // win?.webContents.openDevTools();
 }
+
+Menu.setApplicationMenu(null);
 
 // quit when all windows are closed
 app.on("window-all-closed", async () => {
