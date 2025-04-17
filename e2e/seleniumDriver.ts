@@ -23,7 +23,7 @@ export const electronPath = path.resolve(
 
 if (!existsSync(electronPath)) {
   const e = new Error(
-    "Electron binary not found at " + electronPath + ", try `npm run package`",
+    "Electron binary not found at " + electronPath + ", try `npm run test:package`",
   );
   console.error(e);
   throw e;

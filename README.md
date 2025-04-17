@@ -1,8 +1,10 @@
 # 4485 Project: Disaster Recovery Mapping
 
+- `npm run package` - builds the app
+
 ## Running e2e tests
 
-- `npm run package` - builds the app
+- `npm run test:package` - builds the app binaries required for testing
 - `npm run test:e2e:driver` - runs test chromedriver server
 
 Then open a new terminal tab (keep the driver running!) and run:
