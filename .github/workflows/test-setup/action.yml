@@ -15,7 +15,7 @@ runs:
     - name: Set Java Version
       uses: actions/setup-java@v4
       with:
-        distribution: 'temurin'
+        distribution: "temurin"
         java-version: "21"
 
     # for some reason this step completely fails sometimes but doesnt other times

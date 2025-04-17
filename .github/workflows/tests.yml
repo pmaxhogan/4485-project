@@ -22,14 +22,16 @@ jobs:
         uses: ./.github/workflows/test-setup
 
       - name: Run unit tests
-      # see microsoft API for reference on the difference between & and &&: 
-      # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_operators?view=powershell-7.5&viewFallbackFrom=powershell-7.1#call-operator-
-      # - oli
+        # see microsoft API for reference on the difference between & and &&:
+        # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_operators?view=powershell-7.5&viewFallbackFrom=powershell-7.1#call-operator-
+        # - oli
         run: |
           .\resources\config-neo4j.ps1 &
           sleep 10 && 
-          npm run test:unit -- -- --run
-          
+          npm run test:unit "--" --run
+      # you can pass arguments to npm with an extra -- for ubuntu,
+      # but -- does something for powershell, so need to put it in quotes
+
   e2e-test:
     runs-on: windows-latest
     # concurrency:
@@ -42,19 +44,19 @@ jobs:
       - name: Set up environment
         uses: ./.github/workflows/test-setup
 
-      - name: Run e2e requirements tests 
-        run: | 
+      - name: Run e2e requirements tests
+        run: |
           .\resources\config-neo4j.ps1 &
           sleep 10 && npm run test:e2e:driver &
-          npm run test:e2e -- -- --run
+          npm run test:e2e "--" --run
 
       - name: Run e2e bench/NFR tests
         run: |
           .\resources\config-neo4j.ps1 &
           sleep 10 && 
           npm run test:e2e:driver &
-          npm run test:e2e:bench -- -- --run
+          npm run test:e2e:bench "--" --run
 
 # - name: Configure Neo4j
-    #   run: .\resources\config-neo4j.ps1
-    #   shell: pwsh
+#   run: .\resources\config-neo4j.ps1
+#   shell: pwsh
