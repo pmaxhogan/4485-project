@@ -10,7 +10,7 @@ on:
 
 jobs:
   unit-test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
         run: npm ci
 
       - name: Run unit tests
-        run: npm run test:unit -- --run
+        run: npm run test:unit -- -- --run
   e2e-test:
     runs-on: ubuntu-latest
     steps:
@@ -43,10 +43,10 @@ jobs:
         run: | 
           npm run test:e2e:driver &
           sleep 10 &&
-          npm run test:e2e -- --run
+          npm run test:e2e -- -- --run
           
       - name: Run e2e bench/NFR tests
         run: | 
           npm run test:e2e:driver &
           sleep 10 &&
-          npm run test:e2e:bench -- --run
+          npm run test:e2e:bench -- -- --run
