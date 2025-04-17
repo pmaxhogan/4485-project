@@ -1,13 +1,13 @@
 name: End-to-End Testing
 
-on: workflow_dispatch
-# on:
-#   push:
-#     branches:
-#       - main
-#   pull_request:
-#     branches:
-#       - main
+# on: workflow_dispatch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   e2e-frs:
@@ -42,7 +42,7 @@ jobs:
         # but -- does something else for powershell, so need to put it in quotes. - oli
         run: |
           npm run test:e2e:driver &
-          sleep 10 && npm run test:e2e
+          sleep 10 && npm run test:e2e "--" --run
 
   e2e-nfrs:
     runs-on: windows-latest
@@ -61,7 +61,7 @@ jobs:
         # see the comment for "Run e2e requirements tests" for info on how this command works
         run: |
           npm run test:e2e:driver &
-          sleep 10 && npm run test:e2e:bench
+          sleep 10 && npm run test:e2e:bench "--" --run
 
 # - name: Configure Neo4j
 #   run: .\resources\config-neo4j.ps1
