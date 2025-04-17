@@ -24,13 +24,13 @@ jobs:
         uses: ./.github/workflows/test-setup
 
       - name: Run e2e requirements tests
-        run: | 
+        run: |
           npm run test:e2e:driver &
           sleep 10 &&
           npm run test:e2e -- -- --run
-          
+
       - name: Run e2e bench/NFR tests
-        run: | 
+        run: |
           npm run test:e2e:driver &
           sleep 10 &&
           npm run test:e2e:bench -- -- --run
