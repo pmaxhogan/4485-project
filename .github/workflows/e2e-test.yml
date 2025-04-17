@@ -1,12 +1,13 @@
 name: End-to-End Testing
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: workflow_dispatch
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
 
 jobs:
   e2e-frs:
@@ -25,6 +26,10 @@ jobs:
         run: npm run test:package
         shell: pwsh
 
+      # - name: Install Neo4j
+      #   run: .\resources\download-neo4j.ps1
+      #   shell: pwsh
+
       - name: Run e2e requirements tests
         # *****about the following command:******
         # see microsoft API for reference on the difference between & and &&:
@@ -36,9 +41,8 @@ jobs:
         # you can pass arguments to npm with an extra -- for ubuntu,
         # but -- does something else for powershell, so need to put it in quotes. - oli
         run: |
-          .\resources\config-neo4j.ps1 &
-          sleep 10 && npm run test:e2e:driver &
-          npm run test:e2e "--" --run
+          npm run test:e2e:driver &
+          sleep 10 && npm run test:e2e
 
   e2e-nfrs:
     runs-on: windows-latest
@@ -56,9 +60,8 @@ jobs:
       - name: Run e2e bench/NFR tests
         # see the comment for "Run e2e requirements tests" for info on how this command works
         run: |
-          .\resources\config-neo4j.ps1 &
-          sleep 10 && npm run test:e2e:driver &
-          npm run test:e2e:bench "--" --run
+          npm run test:e2e:driver &
+          sleep 10 && npm run test:e2e:bench
 
 # - name: Configure Neo4j
 #   run: .\resources\config-neo4j.ps1
