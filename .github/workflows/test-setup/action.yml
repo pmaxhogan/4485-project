@@ -21,6 +21,8 @@ runs:
         distribution: 'temurin'
         java-version: "21"
 
+    # for some reason this step completely fails sometimes but doesnt other times
+    # and i have no idea why. - oli
     - name: Install Neo4j
       run: .\resources\download-neo4j.ps1
       shell: pwsh
