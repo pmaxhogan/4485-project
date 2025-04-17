@@ -11,9 +11,6 @@ on:
 jobs:
   unit-test:
     runs-on: windows-latest
-    # concurrency:
-    #   group: testing
-    #   cancel-in-progress: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,16 +24,13 @@ jobs:
         # - oli
         run: |
           .\resources\config-neo4j.ps1 &
-          sleep 10 && 
-          npm run test:unit "--" --run
+          sleep 10 && npm run test:unit "--" --run
+      # https://stackoverflow.com/a/65530483
       # you can pass arguments to npm with an extra -- for ubuntu,
-      # but -- does something for powershell, so need to put it in quotes
+      # but -- does something for powershell, so need to put it in quotes - oli
 
-  e2e-test:
+  e2e-frs-test:
     runs-on: windows-latest
-    # concurrency:
-    #   group: testing
-    #   cancel-in-progress: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,17 +38,37 @@ jobs:
       - name: Set up environment
         uses: ./.github/workflows/test-setup
 
+        # action needs the Electron Binary when running e2e tests,
+        # running npm run package is what ended up making stuff work
+        # but if there's a better way you should prolly do it because
+        # building a release version just to run tests kinda sucks - oli
+      - name: Create Electron Binary
+        run: npm run package
+        shell: pwsh
+
       - name: Run e2e requirements tests
         run: |
           .\resources\config-neo4j.ps1 &
           sleep 10 && npm run test:e2e:driver &
           npm run test:e2e "--" --run
 
+  e2e-nfrs-benchmark:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up environment
+        uses: ./.github/workflows/test-setup
+
+      - name: Create Electron Binary # action needs the Electron Binary when running e2e tests,
+        run: npm run package
+        shell: pwsh
+
       - name: Run e2e bench/NFR tests
         run: |
           .\resources\config-neo4j.ps1 &
-          sleep 10 && 
-          npm run test:e2e:driver &
+          sleep 10 && npm run test:e2e:driver &
           npm run test:e2e:bench "--" --run
 
 # - name: Configure Neo4j
