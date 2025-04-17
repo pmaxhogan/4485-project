@@ -64,11 +64,10 @@ export default defineConfig({
       include: ["electron/**", "src/**"],
       reporter: ["text", "lcov", "html"],
       thresholds: {
-        // these are  kinda arbitrary
-        functions: 66.17,
-        branches: 89.62,
-        statements: 68.52,
-        autoUpdate: true,
+        // https://testing.googleblog.com/2020/08/code-coverage-best-practices.html
+        functions: 80,
+        branches: 80,
+        statements: 80,
       },
     },
 
