@@ -12,6 +12,10 @@ runs:
       run: npm ci
       shell: pwsh
 
+    - name: Create Electron Binary
+      run: npm run package
+      shell: pwsh
+
     - name: Set Java Version
       uses: actions/setup-java@v4
       with:
