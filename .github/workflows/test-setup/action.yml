@@ -25,6 +25,6 @@ runs:
       run: .\resources\download-neo4j.ps1
       shell: pwsh
 
-    - name: Configure Neo4j
-      run: .\resources\config-neo4j.ps1
-      shell: pwsh
+    # - name: Configure Neo4j
+    #   run: .\resources\config-neo4j.ps1
+    #   shell: pwsh
