@@ -45,13 +45,13 @@ jobs:
         run: | 
           .\resources\config-neo4j.ps1 &
           sleep 10 && npm run test:e2e:driver &
-          sleep 10 && npm run test:e2e -- -- --run &
+          sleep 10 && npm run test:e2e -- -- --run
 
       - name: Run e2e bench/NFR tests
         run: |
           .\resources\config-neo4j.ps1 &
           sleep 10 && npm run test:e2e:driver &
-          sleep 10 && npm run test:e2e:bench -- -- --run &
+          sleep 10 && npm run test:e2e:bench -- -- --run
 
 # - name: Configure Neo4j
     #   run: .\resources\config-neo4j.ps1
