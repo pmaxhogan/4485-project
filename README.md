@@ -2,6 +2,7 @@
 
 ## Running e2e tests
 
+- `npm run package` - builds the app
 - `npm run test:e2e:driver` - runs test chromedriver server
 
 Then open a new terminal tab (keep the driver running!) and run:
