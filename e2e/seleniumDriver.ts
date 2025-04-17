@@ -1,6 +1,5 @@
 import { Builder, type ThenableWebDriver, until } from "selenium-webdriver";
 import * as path from "path";
-import { beforeEach, afterEach } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 
 const packageFile = path.resolve(__dirname, "..", "package.json");
@@ -14,23 +13,20 @@ const osName =
 
 const fileExtension = osName === "win" ? ".exe" : "";
 
-const electronPath = path.resolve(
+export const electronPath = path.resolve(
   __dirname,
   "../release/",
   version,
   osName + "-unpacked",
   "DisasterRecoveryMapping" + fileExtension,
 );
-//
-// const electronPath = path.resolve(
-//   __dirname,
-//   "../node_modules/.bin/electron" +
-//     (process.platform === "win32" ? ".cmd" : ""),
-// );
 
 if (!existsSync(electronPath)) {
-  console.error("Electron binary not found at", electronPath);
-  process.exit(1);
+  const e = new Error(
+    "Electron binary not found at " + electronPath + ", try `npm run package`",
+  );
+  console.error(e);
+  throw e;
 }
 
 export let driver: ThenableWebDriver;
@@ -48,16 +44,5 @@ export async function setupDriver() {
     .build();
 
   // Wait for the app to load
-  await driver.wait(until.elementLocated({ css: "body" }), 10000);
+  await driver.wait(until.elementLocated({ css: "body" }), 5000);
 }
-
-beforeEach(setupDriver);
-
-afterEach(
-  async () => {
-    if (driver) {
-      await driver.quit();
-    }
-  },
-  1000 * 60 * 5,
-); // 5 minutes timeout
