@@ -16,6 +16,12 @@ interface DcToServerData {
   server: string;
 }
 
+function dedupe<T>(arr: T[]): T[] {
+  return Array.from(
+    new Map(arr.map((item) => [JSON.stringify(item), item])).values(),
+  );
+}
+
 //imports excel - zt
 //##REFACTORED
 const importExcel = async (filePath: string) => {
@@ -84,10 +90,11 @@ const importExcel = async (filePath: string) => {
   }
 
   console.log("Inserting data into Neo4j...");
+
   await insertIntoNeo4j(
-    data.dcToServer as DcToServerData[],
-    data.serverToApp as ServerToAppData[],
-    data.appToBf as AppToBfData[],
+    dedupe(data.dcToServer as DcToServerData[]),
+    dedupe(data.serverToApp as ServerToAppData[]),
+    dedupe(data.appToBf as AppToBfData[]),
   );
 
   console.log("Storing node count into Neo4j...");
@@ -107,6 +114,7 @@ const insertIntoNeo4j = async (
     data: T[];
     query: string;
   };
+
   const queries: Array<
     Query<DcToServerData> | Query<ServerToAppData> | Query<AppToBfData>
   > = [
@@ -140,14 +148,14 @@ const insertIntoNeo4j = async (
     for (const queryObj of queries) {
       const { data, query } = queryObj;
 
-      if (data.length === 0) continue;
+      if (data.length === 0) {
+        console.log(
+          `No data for ${queryObj.query.split("\n")[0]} - Skipping...`,
+        );
+        continue;
+      }
 
       console.log(`Inserting ${data.length} records into Neo4j...`);
-
-      data.forEach((row) => {
-        console.log(row);
-      });
-
       await session.run(query, { rows: data });
     }
 
@@ -227,3 +235,11 @@ const cleanupDatabase = async () => {
 };
 
 export { importExcel };
+
+// Export internals only during testing
+// At the bottom of excelJSimport.ts
+export const __testOnly = {
+  insertIntoNeo4j,
+  storeSummaryCounts,
+  cleanupDatabase,
+};

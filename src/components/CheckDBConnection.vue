@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { onMounted, ref } from "vue";
+  import { ConnectionStatus } from "../global";
 
   const connectionStatus = ref("Checking connection...");
   onMounted(() => {
@@ -21,9 +22,20 @@
       }
     }
   };
+
+  withDefaults(
+    defineProps<{
+      status: ConnectionStatus;
+    }>(),
+    {
+      status: "CONNECTED",
+    },
+  );
 </script>
 
 <template>
-  <h2>Neo4j Connection Status</h2>
-  <p>{{ connectionStatus }}</p>
+  <template v-if="connectionStatus === 'ERROR'">
+    <h2>Neo4j Connection Error</h2>
+    <p>{{ connectionStatus }}</p>
+  </template>
 </template>

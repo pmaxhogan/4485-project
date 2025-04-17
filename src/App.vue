@@ -1,16 +1,12 @@
 <script setup lang="ts">
-  import { onMounted, onUnmounted, ref } from "vue";
+  import { nextTick, onMounted, onUnmounted, ref } from "vue";
   import { importExcel } from "./db/import.ts";
   import CheckDBConnection from "./components/CheckDBConnection.vue";
   import SchemaTree from "./components/graphs/SchemaTree.vue";
   import { ConnectionStatus } from "./global";
+  import LoadingSpinner from "./components/LoadingSpinner.vue";
 
   const schemaTreeRef = ref<InstanceType<typeof SchemaTree> | null>(null);
-  const saveImageToExcel = async () => {
-    if (schemaTreeRef.value) {
-      await schemaTreeRef.value.captureGraphImage(); // Call captureGraphImage from SchemaTree
-    }
-  };
 
   //handling - ZT
   function handleNeo4jLog(log: string) {
@@ -24,8 +20,10 @@
   }
 
   const status = ref<ConnectionStatus>("PENDING");
-  const handleNeo4jStatus = (newStatus: ConnectionStatus) =>
-    (status.value = newStatus);
+  const handleNeo4jStatus = async (newStatus: ConnectionStatus) => {
+    await nextTick();
+    status.value = newStatus;
+  };
   //mounting - ZT
   onMounted(() => {
     //listen for events from the main process
@@ -47,15 +45,17 @@
 
 <template>
   <!-- If you want to test database -->
-  <CheckDBConnection />
-
+  <div
+    :class="status === 'PENDING' ? 'neo-loading' : ''"
+    class="connecting-to-neo"
+  >
+    <p>Connecting to Neo4j...</p>
+    <LoadingSpinner />
+  </div>
   <template v-if="status === 'CONNECTED'">
-    <div>
-      <button @click="importExcel">Import Excel</button>
-      <div></div>
-      <button @click="saveImageToExcel">Save Graph Image to CMDB</button>
-    </div>
+    <button @click="importExcel">Import Excel</button>
 
     <SchemaTree ref="schemaTreeRef" />
   </template>
+  <CheckDBConnection :status="status" />
 </template>

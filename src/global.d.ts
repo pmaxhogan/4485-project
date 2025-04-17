@@ -14,6 +14,7 @@ declare global {
   interface SchemaNode {
     id: string;
     label: string;
+    type: string;
   }
 
   interface SchemaEdge {

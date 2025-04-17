@@ -3,6 +3,7 @@ import { defineConfig } from "vitest/config";
 import path from "node:path";
 import electron from "vite-plugin-electron/simple";
 import vue from "@vitejs/plugin-vue";
+import csp from "vite-plugin-csp-guard";
 
 export default defineConfig({
   plugins: [
@@ -26,6 +27,19 @@ export default defineConfig({
           undefined
         : {},
     }),
+    csp({
+      algorithm: "sha256", // The algorithm to use for hashing
+      dev: {
+        run: true, // If you want to run the plugin in `vite dev` mode
+        outlierSupport: ["vue"],
+      },
+      policy: {
+        // Specify the policy here.
+        "default-src": ["'self'", "file:", "data:"],
+        "style-src-elem": ["'self'", "'unsafe-inline'"],
+        "connect-src": ["'self'", "file:", "data:", "localhost", "127.0.0.1"],
+      },
+    }),
   ],
   // fix bizarre awful vite bug
   // see also:
@@ -48,14 +62,35 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["electron/**", "src/**"],
-      reporter: ["text", "lcov"],
+      reporter: ["text", "lcov", "html"],
       thresholds: {
         // these are  kinda arbitrary
-        functions: 45.28,
-        branches: 79.46,
-        statements: 42.76,
+        functions: 66.17,
+        branches: 89.62,
+        statements: 68.52,
         autoUpdate: true,
       },
     },
+
+    workspace: [
+      {
+        extends: true,
+        test: {
+          name: "e2e",
+          include: ["**/e2e/**/*.test.ts", "**/e2e/**/*.spec.ts"],
+          testTimeout: 30_000,
+          hookTimeout: 120_000,
+          globalSetup: "./e2e/setupGlobal.ts",
+          setupFiles: ["./e2e/setup.ts", "./vitest.setup.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          include: ["{src,electron}/tests/**/*.{test,spec}.ts"],
+        },
+      },
+    ],
   },
 });

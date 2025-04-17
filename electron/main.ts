@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, Menu } from "electron";
 import "./handlers.ts";
 import {
   checkAndSetupNeo4j,
@@ -23,6 +23,12 @@ import { checkConnectionStatus } from "./neo4j.ts";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+if (!process.env.APP_ROOT) {
+  throw new Error(
+    `APP_ROOT environment variable is required : ${process.env.APP_ROOT}`,
+  );
+}
+
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 export const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
 export const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
@@ -35,11 +41,18 @@ process.env.VITE_PUBLIC =
     path.join(process.env.APP_ROOT, "public")
   : RENDERER_DIST;
 
+async function checkNeo() {
+  if (!(await checkConnectionStatus())) {
+    await checkAndSetupNeo4j();
+    await launchNeo4j();
+  }
+}
+
 let win: BrowserWindow | null;
 
 function openWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    icon: path.join(process.env.VITE_PUBLIC, "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
     },
@@ -61,32 +74,37 @@ function openWindow() {
   // win?.webContents.openDevTools();
 }
 
-// quit when all windows are closed
-app.on("window-all-closed", async () => {
-  if (neo4jProcess && !neo4jProcess.killed && neo4jProcess.pid) {
-    await stopNeo4j(neo4jProcess.pid);
-  }
-  app.quit();
-  win = null;
-});
+Menu.setApplicationMenu(null);
 
-app.whenReady().then(async () => {
-  if (!(await checkConnectionStatus())) {
-    await checkAndSetupNeo4j();
-    await launchNeo4j();
-  }
+const neoOnly = process.argv.slice(1).includes("--neo-only");
 
-  openWindow();
-});
-
-process.on("message", (msg) => {
-  if (msg === "electron-vite&type=hot-reload") {
-    for (const win of BrowserWindow.getAllWindows()) {
-      console.log("reloading window", win);
-      // Hot reload preload scripts
-      win.webContents.reload();
+if (neoOnly) {
+  checkNeo().then(() => process.exit(0));
+} else {
+  // quit when all windows are closed
+  app.on("window-all-closed", async () => {
+    if (neo4jProcess && !neo4jProcess.killed && neo4jProcess.pid) {
+      await stopNeo4j(neo4jProcess.pid);
     }
-  }
-});
+    app.quit();
+    win = null;
+  });
+
+  app.whenReady().then(async () => {
+    await checkNeo();
+
+    openWindow();
+  });
+
+  process.on("message", (msg) => {
+    if (msg === "electron-vite&type=hot-reload") {
+      for (const win of BrowserWindow.getAllWindows()) {
+        console.log("reloading window", win);
+        // Hot reload preload scripts
+        win.webContents.reload();
+      }
+    }
+  });
+}
 
 export { win };
