@@ -1,0 +1,65 @@
+name: Unit and e2e Testing
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  e2e-frs:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up environment
+        uses: ./.github/workflows/test-setup
+
+      - name: Create Electron Binaries
+        # action needs the Electron Binaries when running e2e tests;
+        # test:package is the same as npm run package
+        # but builds only the unpacked binaries necessary, rather than the whole release build
+        run: npm run test:package
+        shell: pwsh
+
+      - name: Run e2e requirements tests
+        # *****about the following command:******
+        # see microsoft API for reference on the difference between & and &&:
+        # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_operators?view=powershell-7.5&viewFallbackFrom=powershell-7.1#call-operator-
+
+        # we need to pass --run to the npm testing script
+        # to make sure it quits after it has finished running tests.
+        # https://stackoverflow.com/a/65530483
+        # you can pass arguments to npm with an extra -- for ubuntu,
+        # but -- does something else for powershell, so need to put it in quotes. - oli
+        run: |
+          .\resources\config-neo4j.ps1 &
+          sleep 10 && npm run test:e2e:driver &
+          npm run test:e2e "--" --run
+
+  e2e-nfrs:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up environment
+        uses: ./.github/workflows/test-setup
+
+      - name: Create Electron Binary
+        run: npm run test:package
+        shell: pwsh
+
+      - name: Run e2e bench/NFR tests
+        # see the comment for "Run e2e requirements tests" for info on how this command works
+        run: |
+          .\resources\config-neo4j.ps1 &
+          sleep 10 && npm run test:e2e:driver &
+          npm run test:e2e:bench "--" --run
+
+# - name: Configure Neo4j
+#   run: .\resources\config-neo4j.ps1
+#   shell: pwsh
