@@ -1,4 +1,4 @@
-name: Run unit tests and e2e tests on push or pull-request
+name: Unit and e2e Testing
 
 on:
   push:
@@ -19,6 +19,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Run unit tests
         run: npm run test:unit
