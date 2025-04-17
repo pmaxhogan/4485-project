@@ -11,6 +11,9 @@ on:
 jobs:
   unit-test:
     runs-on: windows-latest
+    concurrency:
+      group: testing
+      cancel-in-progress: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,6 +29,9 @@ jobs:
           
   e2e-test:
     runs-on: ubuntu-latest
+    concurrency:
+      group: testing
+      cancel-in-progress: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
