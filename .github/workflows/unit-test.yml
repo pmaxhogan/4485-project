@@ -30,5 +30,4 @@ jobs:
         # you can pass arguments to npm with an extra -- for ubuntu,
         # but -- does something else for powershell, so need to put it in quotes. - oli
         run: |
-          .\resources\config-neo4j.ps1 &
           sleep 10 && npm run test:unit "--" --run
