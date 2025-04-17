@@ -19,7 +19,11 @@ jobs:
         uses: ./.github/workflows/test-setup
 
       - name: Run unit tests
-        run: npm run test:unit -- -- --run
+        run: |
+          .\resources\config-neo4j.ps1 &
+          sleep 10 &&  
+          npm run test:unit -- -- --run
+          
   e2e-test:
     runs-on: ubuntu-latest
     steps:
