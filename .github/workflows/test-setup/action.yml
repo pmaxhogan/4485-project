@@ -17,7 +17,3 @@ runs:
       with:
         distribution: "temurin"
         java-version: "21"
-
-    - name: Install Neo4j
-      run: .\resources\download-neo4j.ps1
-      shell: pwsh
