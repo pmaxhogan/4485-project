@@ -12,6 +12,9 @@ jobs:
   unit-test:
     runs-on: windows-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up environment
         uses: ./.github/workflows/test-setup
 
@@ -20,6 +23,9 @@ jobs:
   e2e-test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up environment
         uses: ./.github/workflows/test-setup
 
