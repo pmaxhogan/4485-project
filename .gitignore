@@ -15,7 +15,6 @@ release
 /neo4j/
 *.local
 coverage/
-graph.xlsx
 
 # Editor directories and files
 .vscode/*
