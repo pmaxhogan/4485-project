@@ -15,6 +15,7 @@
     "lint:ci": "eslint",
     "package": "vue-tsc && vite build && electron-builder",
     "test": "vitest",
+    "test:package": "vue-tsc && vite build && electron-builder --dir",
     "test:unit": "vitest dev --project unit",
     "test:e2e": "vitest dev --project e2e --disableConsoleIntercept",
     "test:e2e:bench": "vitest bench --project e2e",
