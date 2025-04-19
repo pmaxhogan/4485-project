@@ -3,7 +3,7 @@
   "author": "Group 10",
   "description": "A disaster recovery mapping application.",
   "private": true,
-  "version": "0.2.2",
+  "version": "0.2.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,8 +17,8 @@
     "test": "vitest",
     "test:package": "vue-tsc && vite build && electron-builder --dir",
     "test:unit": "vitest dev --project unit",
-    "test:e2e": "vitest dev --project e2e --disableConsoleIntercept",
-    "test:e2e:bench": "vitest bench --project e2e",
+    "test:e2e": "vitest dev --project e2e --disableConsoleIntercept --no-file-parallelism",
+    "test:e2e:bench": "vitest bench --project e2e --no-file-parallelism",
     "test:e2e:driver": "chromedriver --port=9515",
     "coverage": "vitest run src/tests electron/tests --coverage",
     "coverage:ui": "vitest src/tests electron/tests --coverage --ui"

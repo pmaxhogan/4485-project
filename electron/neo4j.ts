@@ -8,6 +8,7 @@ const getSession = () => driver.session();
 export const driver = neo4j.driver(
   "bolt://localhost:7687", //neo4j Bolt URL
   neo4j.auth.basic("neo4j", password),
+  { disableLosslessIntegers: true },
 );
 
 //the golden promise - ZT
