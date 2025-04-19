@@ -5,9 +5,7 @@ import { until, Button, By } from "selenium-webdriver";
 import { getSession } from "../../electron/neo4j.ts";
 import * as fs from "fs";
 import * as path from "path";
-import { promisify } from "util";
 
-const stat = promisify(fs.stat);
 const testCMDB = path.resolve("e2e/data/test.xlsx");
 const tempFile = path.resolve("e2e/data/test.tmp.xlsx");
 
@@ -33,7 +31,7 @@ describe("TC-R6: E2E Test - Zoom, Pan, Drag, Layout, and Reset", () => {
     if (fs.existsSync(tempFile)) fs.unlinkSync(tempFile);
     fs.copyFileSync(testCMDB, tempFile);
 
-    await driver.executeScript((filePath) => {
+    await driver.executeScript((filePath: string) => {
       return window.electronAPI.importExcel(filePath);
     }, tempFile);
 
@@ -66,7 +64,6 @@ describe("TC-R6: E2E Test - Zoom, Pan, Drag, Layout, and Reset", () => {
     await driver.findElement(getByText("Zoom to Fit")).click();
     await driver.sleep(2000);
 
-    // Verify zoom by checking node visibility rather than direct NVL access
     const nodes = await driver.findElements(By.css(".graph-node"));
     expect(nodes.length).toBeGreaterThan(0);
     expect(await nodes[0].isDisplayed()).toBe(true);
