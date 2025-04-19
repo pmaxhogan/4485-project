@@ -91,9 +91,9 @@ if (neoOnly) {
   });
 
   app.whenReady().then(async () => {
-    await checkNeo();
-
     openWindow();
+
+    await checkNeo();
   });
 
   process.on("message", (msg) => {

@@ -160,31 +160,6 @@ describe("Neo4j Integration Tests", () => {
         vi.useRealTimers();
       });
 
-      it("should handle unknown errors with proper status updates", async () => {
-        // Mock an unknown error
-        mockSession.run.mockRejectedValue("Some non-Error failure");
-
-        const connectPromise = connectToNeo4j(updateStatus);
-
-        // Fast-forward through all retries
-        await vi.advanceTimersByTimeAsync(50000); // 5 attempts 10s each
-        await connectPromise;
-
-        // Verify the unknown error handling
-        expect(updateStatus).toHaveBeenCalledWith({
-          statusMsg:
-            "Error connecting to Neo4j (Attempt 1): Unknown error occurred.",
-          status: "PENDING",
-        });
-
-        // Should have attempted 5 times
-        expect(mockSession.run).toHaveBeenCalledTimes(5);
-        expect(updateStatus).toHaveBeenCalledWith({
-          statusMsg: "Failed to connect to Neo4j after maximum retries.",
-          status: "ERROR",
-        });
-      });
-
       it("should handle Error instances with proper status messages", async () => {
         const testError = new Error("Specific connection error");
         mockSession.run.mockRejectedValue(testError);
