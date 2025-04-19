@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { nextTick, onMounted, onUnmounted, ref } from "vue";
+  import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
   import { importExcel } from "./db/import.ts";
   import CheckDBConnection from "./components/CheckDBConnection.vue";
   import SchemaTree from "./components/graphs/SchemaTree.vue";
@@ -41,6 +41,26 @@
     window.electronAPI.onNeo4jExit(() => {});
     window.electronAPI.onNeo4jStatus(() => {});
   });
+
+  const waitedLong = ref(false);
+  let waitTimer: number | null = null;
+  watch(
+    status,
+    (status) => {
+      if (status === "PENDING") {
+        waitTimer = setTimeout(() => {
+          waitedLong.value = true;
+        }, 10000) as unknown as number; // the types are not great
+      } else {
+        waitedLong.value = false;
+        if (waitTimer !== null) {
+          clearTimeout(waitTimer);
+          waitTimer = null;
+        }
+      }
+    },
+    { immediate: true },
+  );
 </script>
 
 <template>
@@ -51,6 +71,10 @@
   >
     <p>Connecting to Neo4j...</p>
     <LoadingSpinner />
+    <p v-show="waitedLong">
+      This may take a few minutes on first launch. <br />
+      Please be patient, future startups will be much faster...
+    </p>
   </div>
   <template v-if="status === 'CONNECTED'">
     <button @click="importExcel">Import Excel</button>

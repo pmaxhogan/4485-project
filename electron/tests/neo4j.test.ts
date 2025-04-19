@@ -130,24 +130,6 @@ describe("Neo4j Integration Tests", () => {
         });
       });
 
-      it("should retry and fail after 5 attempts", async () => {
-        const updateStatus = vi.fn();
-        mockSession.run.mockRejectedValue(new Error("failure"));
-
-        // Start the test without waiting for delays
-        const connectPromise = connectToNeo4j(updateStatus);
-
-        // Fast-forward through all retries
-        await vi.advanceTimersByTimeAsync(50000); // 5 attempts 10s
-
-        await connectPromise;
-
-        expect(updateStatus).toHaveBeenCalledWith(
-          expect.objectContaining({ status: "ERROR" }),
-        );
-        expect(updateStatus).toHaveBeenCalledTimes(6); // 5 attempts n final error
-      });
-
       // Combined new tests:
       const updateStatus = vi.fn();
 
@@ -158,31 +140,6 @@ describe("Neo4j Integration Tests", () => {
 
       afterEach(() => {
         vi.useRealTimers();
-      });
-
-      it("should handle unknown errors with proper status updates", async () => {
-        // Mock an unknown error
-        mockSession.run.mockRejectedValue("Some non-Error failure");
-
-        const connectPromise = connectToNeo4j(updateStatus);
-
-        // Fast-forward through all retries
-        await vi.advanceTimersByTimeAsync(50000); // 5 attempts 10s each
-        await connectPromise;
-
-        // Verify the unknown error handling
-        expect(updateStatus).toHaveBeenCalledWith({
-          statusMsg:
-            "Error connecting to Neo4j (Attempt 1): Unknown error occurred.",
-          status: "PENDING",
-        });
-
-        // Should have attempted 5 times
-        expect(mockSession.run).toHaveBeenCalledTimes(5);
-        expect(updateStatus).toHaveBeenCalledWith({
-          statusMsg: "Failed to connect to Neo4j after maximum retries.",
-          status: "ERROR",
-        });
       });
 
       it("should handle Error instances with proper status messages", async () => {
@@ -229,10 +186,10 @@ describe("Neo4j Integration Tests", () => {
         expect(mockSession.run).toHaveBeenCalledTimes(1);
 
         // Fast-forward through retry attempts
-        await vi.advanceTimersByTimeAsync(10000); // First retry
+        await vi.advanceTimersByTimeAsync(1000); // First retry
         expect(mockSession.run).toHaveBeenCalledTimes(2);
 
-        await vi.advanceTimersByTimeAsync(10000); // Second retry
+        await vi.advanceTimersByTimeAsync(1000); // Second retry
         expect(mockSession.run).toHaveBeenCalledTimes(3);
       });
 

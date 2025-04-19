@@ -199,7 +199,7 @@ const storeSummaryCounts = async () => {
     );
 
     result.records.forEach((record) => {
-      summaryCounts[record.get("type")] = record.get("count").toNumber();
+      summaryCounts[record.get("type")] = record.get("count");
     });
 
     //dynamic cypher query

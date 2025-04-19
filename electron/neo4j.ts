@@ -8,6 +8,7 @@ const getSession = () => driver.session();
 export const driver = neo4j.driver(
   "bolt://localhost:7687", //neo4j Bolt URL
   neo4j.auth.basic("neo4j", password),
+  { disableLosslessIntegers: true },
 );
 
 //the golden promise - ZT
@@ -51,10 +52,9 @@ export const checkConnectionStatus = async () => {
 export const connectToNeo4j = async (
   updateStatus: (s: { status: ConnectionStatus; statusMsg: string }) => void,
 ) => {
-  const maxRetries = 5;
-  const retryDelay = 10000; // 10 seconds
+  const retryDelay = 1000; // 1 second
 
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+  for (let attempt = 1; ; attempt++) {
     try {
       console.log(`Attempt ${attempt} to connect to Neo4j...`);
       await checkConnection();
@@ -79,15 +79,8 @@ export const connectToNeo4j = async (
         });
       }
 
-      if (attempt === maxRetries) {
-        updateStatus({
-          statusMsg: "Failed to connect to Neo4j after maximum retries.",
-          status: "ERROR",
-        });
-      } else {
-        console.log(`Retrying in ${retryDelay / 1000} seconds...`);
-        await wait(retryDelay);
-      }
+      console.log(`Retrying in ${retryDelay / 1000} seconds...`);
+      await wait(retryDelay);
     }
   }
 

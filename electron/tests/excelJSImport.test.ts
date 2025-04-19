@@ -297,20 +297,16 @@ describe("storeSummaryCounts", () => {
     mockRun.mockResolvedValueOnce({
       records: [
         {
-          get: (key: string) =>
-            key === "type" ? "totalDc" : { toNumber: () => 5 },
+          get: (key: string) => (key === "type" ? "totalDc" : 5),
         },
         {
-          get: (key: string) =>
-            key === "type" ? "totalServer" : { toNumber: () => 10 },
+          get: (key: string) => (key === "type" ? "totalServer" : 10),
         },
         {
-          get: (key: string) =>
-            key === "type" ? "totalApp" : { toNumber: () => 15 },
+          get: (key: string) => (key === "type" ? "totalApp" : 15),
         },
         {
-          get: (key: string) =>
-            key === "type" ? "totalBf" : { toNumber: () => 20 },
+          get: (key: string) => (key === "type" ? "totalBf" : 20),
         },
       ],
     });

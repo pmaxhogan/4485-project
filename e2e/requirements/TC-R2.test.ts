@@ -1,17 +1,10 @@
 import { driver } from "../seleniumDriver.ts";
 import { getByText } from "../e2eUtils.ts";
-import { describe, test, expect, afterAll, beforeEach } from "vitest";
+import { describe, test, expect, beforeEach } from "vitest";
 import { until } from "selenium-webdriver";
 import { getSession } from "../../electron/neo4j.ts";
-import * as fs from "fs";
-import * as path from "path";
-import { promisify } from "util";
 
-const stat = promisify(fs.stat);
-const testCMDB = path.resolve("e2e/data/test.xlsx");
-const tempFile = path.resolve("e2e/data/test.tmp.xlsx");
-
-describe("The system shall support saving, loading, and editing of graphs from the CMDB", () => {
+describe("TC-R2 - Trigger schema graph creation and check high-level overview", () => {
   beforeEach(async () => {
     const session = getSession();
 
@@ -34,25 +27,9 @@ describe("The system shall support saving, loading, and editing of graphs from t
     } finally {
       await session.close();
     }
-
-    // clean temp file
-    if (fs.existsSync(tempFile)) fs.unlinkSync(tempFile);
-    fs.copyFileSync(testCMDB, tempFile);
   });
 
-  afterAll(async () => {
-    // clean temp file
-    if (fs.existsSync(tempFile)) fs.unlinkSync(tempFile);
-  });
-
-  test("Save image of graph to CMDB", async () => {
-    // mock import excel so we can change which file is used
-    await driver.executeScript((filePath: string) => {
-      return window.electronAPI.importExcel(filePath);
-    }, tempFile);
-
-    const statsBefore = await stat(tempFile);
-
+  test("Create schema graph with valid data", async () => {
     // click the "Schema Graph" button
     const generateGraphButton = await driver.findElement(
       getByText("Schema Graph"),
@@ -69,20 +46,15 @@ describe("The system shall support saving, loading, and editing of graphs from t
     const nodes = await driver.findElements({ css: ".graph-node" });
     expect(nodes.length).toBeGreaterThan(0);
 
-    // click the "Save Image" button
-    const saveImageButton = await driver.findElement(
-      getByText("Save Graph Image to CMDB"),
-    );
-    expect(saveImageButton).toBeDefined();
-    await saveImageButton.click();
+    // verify nodes once found
+    const nodeText = await Promise.all(nodes.map((node) => node.getText()));
+    expect(nodeText).toBeTruthy();
 
-    await driver.sleep(2000);
-
-    // verify file was modified  by checking that size is different
-    const statsAfter = await stat(tempFile);
-    expect(statsAfter.size).toBeGreaterThan(statsBefore.size);
-    expect(statsAfter.mtime.getTime()).toBeGreaterThan(
-      statsBefore.mtime.getTime(),
-    );
+    expect(nodeText.sort()).toEqual([
+      "Business Function (1)",
+      "Datacenter (1)",
+      "IT Application (1)",
+      "Server (1)",
+    ]);
   });
 });
