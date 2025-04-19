@@ -3,7 +3,7 @@ import { getByText } from "../e2eUtils";
 import { driver } from "../seleniumDriver";
 import { describe, test, expect } from "vitest";
 
-describe("NFR6", () => {
+describe("TC-NFR6", () => {
   test("Operation of Help Dialog", async () => {
     // open help dialog
     const helpButton = await driver.findElement(getByText("Help"));
