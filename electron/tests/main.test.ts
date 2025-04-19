@@ -22,6 +22,9 @@ vi.mock("electron", async () => {
     },
     BrowserWindow: FakeBW,
     ipcMain: { handle: vi.fn(), on: vi.fn(), removeHandler: vi.fn() },
+    Menu: {
+      setApplicationMenu: vi.fn(),
+    },
   };
 });
 
