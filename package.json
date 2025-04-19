@@ -45,7 +45,7 @@
     "@vitest/ui": "^3.1.1",
     "@vue/test-utils": "^2.4.6",
     "electron": "^35.0.0",
-    "electron-builder": "24.6.3",
+    "electron-builder": "26.0.12",
     "electron-chromedriver": "^35.1.2",
     "eslint": "^9.20.1",
     "eslint-config-prettier": "^10.1.1",
