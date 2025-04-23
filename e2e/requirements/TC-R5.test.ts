@@ -41,7 +41,7 @@ describe("TC-R5 - Mark nodes as failed and verify propagation", () => {
     const allNodes = await driver.findElements({ css: "[data-node-id]" });
 
     for (const node of allNodes) {
-      const color = await getElementColor(node, driver);
+      const color = await getElementColor(node);
       expect(color.r).toBeLessThan(200);
       expect(color.g).toBeGreaterThan(10);
       expect(color.b).toBeGreaterThan(10);
@@ -89,14 +89,14 @@ describe("TC-R5 - Mark nodes as failed and verify propagation", () => {
     await failButton.click();
 
     // Wait for visual update
-    await driver.sleep(500); // Adjust as needed
+    await driver.sleep(1500); // Adjust as needed
 
-    const appColor = await getElementColor(nodeApp, driver);
+    const appColor = await getElementColor(nodeApp, true);
     expect(appColor.r).toBeGreaterThan(100);
     expect(appColor.g).toBeLessThan(20);
     expect(appColor.b).toBeLessThan(20);
 
-    const serverColor = await getElementColor(nodeServer, driver);
+    const serverColor = await getElementColor(nodeServer, true);
     expect(serverColor.r).toBeGreaterThan(100);
     expect(serverColor.g).toBeLessThan(20);
     expect(serverColor.b).toBeLessThan(20);
