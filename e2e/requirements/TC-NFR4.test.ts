@@ -4,15 +4,12 @@ import { execSync } from "node:child_process";
 // have to import version; using process.env.npm_package_version results in build failure
 import { version } from "../../package.json";
 
-// if there's an easier and less hard-coded way to get neo4j's location let me know.
-// this code brings me pain - oli
+// if there's an easier and less hard-coded way to get neo4j's location let me know - oli
 const neo4jPath = path.resolve(
   "release",
   version,
   "win-unpacked/resources/app.asar.unpacked/neo4j",
 );
-
-// console.log(neo4jDB); // for debug purposes
 
 describe("TC-NFR4", () => {
   test("TC-NFR4: Correct setup of OS permissions verified by test case ", async () => {
@@ -23,22 +20,22 @@ describe("TC-NFR4", () => {
     // locally on my machine but not in github actions runner. i dont think we need to check for that group tho
     const args = "/t /c";
     const groups = ["Guests", "Everyone", "Authenticated Users"];
-    let unAuthAccess = false;
-    // for each group to be tested,
+    let foundAccessViolation = false;
+
     groups.forEach((g) => {
-      // find if it is included in the permissions list,
+      // for each group, check if icacls finds permissions for that group
       const command = "icacls " + neo4jPath + ' /findsid "' + g + '" ' + args;
-      console.log(command);
+
       const results = execSync(command, {
         encoding: "utf-8",
       });
 
-      // if it is, set foundGroup to be true
+      // if we do find perms, this is an access violation
       if (results.includes("SID Found")) {
-        unAuthAccess = true;
+        foundAccessViolation = true;
       }
     });
 
-    expect(unAuthAccess).toBe(false);
+    expect(foundAccessViolation).toBe(false);
   });
 });
