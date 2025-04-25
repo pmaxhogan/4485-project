@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 import * as path from "path";
-import { execSync } from 'node:child_process';
+import { execSync } from "node:child_process";
 
 const neo4jDB = path.resolve("./neo4j/data");
 console.log(neo4jDB);
@@ -14,10 +14,17 @@ describe("TC-NFR4", () => {
     // https://learn.microsoft.com/en-us/windows/win32/secauthz/well-known-sids
 
     // users and authusers are most likely all we need, but included everyone just to be sure
-    const foundEveryone = execSync('icacls ' + neo4jDB + ' /findsid Everyone', { encoding: 'utf-8' });
-    const foundUsers = execSync('icacls ' + neo4jDB + ' /findsid Users /t /c', { encoding: 'utf-8' });
-    const foundAuthUsers = execSync('icacls ' + neo4jDB + ' /findsid "Authenticated Users" /t /c', { encoding: 'utf-8' });
-    
+    const foundEveryone = execSync("icacls " + neo4jDB + " /findsid Everyone", {
+      encoding: "utf-8",
+    });
+    const foundUsers = execSync("icacls " + neo4jDB + " /findsid Users /t /c", {
+      encoding: "utf-8",
+    });
+    const foundAuthUsers = execSync(
+      "icacls " + neo4jDB + ' /findsid "Authenticated Users" /t /c',
+      { encoding: "utf-8" },
+    );
+
     // i should probably check command success rather than finding this specific string
     // but i could not figure it out in a timely manner
     expect(foundEveryone.includes("SID Found")).toBe(false);
