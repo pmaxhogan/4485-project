@@ -1,9 +1,19 @@
 import { describe, test, expect } from "vitest";
 import * as path from "path";
 import { execSync } from "node:child_process";
+// if you don't want to use the npm process env variable for version, use this and replace
+// process.env.npm_package_version with version
+// import { version } from '../../package.json';
 
-const neo4jDB = path.resolve("./neo4j/data");
-console.log(neo4jDB);
+// if there's an easier and less hard-coded way to get neo4j's location let me know.
+// this code brings me pain - oli
+const neo4jDB = path.resolve(
+  "release",
+  process.env.npm_package_version,
+  "win-unpacked/resources/app.asar.unpacked/neo4j",
+);
+
+// console.log(neo4jDB); // for debug purposes
 
 describe("TC-NFR4", () => {
   test("TC-NFR4: Correct setup of OS permissions verified by test case ", async () => {
@@ -14,14 +24,21 @@ describe("TC-NFR4", () => {
     // https://learn.microsoft.com/en-us/windows/win32/secauthz/well-known-sids
 
     // users and authusers are most likely all we need, but included everyone just to be sure
-    const foundEveryone = execSync("icacls " + neo4jDB + " /findsid Everyone", {
-      encoding: "utf-8",
-    });
-    const foundUsers = execSync("icacls " + neo4jDB + " /findsid Users /t /c", {
-      encoding: "utf-8",
-    });
+    const args = "/t /c";
+    const foundEveryone = execSync(
+      "icacls " + neo4jDB + " /findsid Everyone " + args,
+      {
+        encoding: "utf-8",
+      },
+    );
+    const foundUsers = execSync(
+      "icacls " + neo4jDB + " /findsid Users " + args,
+      {
+        encoding: "utf-8",
+      },
+    );
     const foundAuthUsers = execSync(
-      "icacls " + neo4jDB + ' /findsid "Authenticated Users" /t /c',
+      "icacls " + neo4jDB + ' /findsid "Authenticated Users" ' + args,
       { encoding: "utf-8" },
     );
 
