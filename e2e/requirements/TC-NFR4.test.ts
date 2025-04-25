@@ -1,15 +1,14 @@
 import { describe, test, expect } from "vitest";
 import * as path from "path";
 import { execSync } from "node:child_process";
-// if you don't want to use the npm process env variable for version, use this and replace
-// process.env.npm_package_version with version
-// import { version } from '../../package.json';
+// have to import version; using process.env.npm_package_version results in build failure
+import { version } from "../../package.json";
 
 // if there's an easier and less hard-coded way to get neo4j's location let me know.
 // this code brings me pain - oli
 const neo4jDB = path.resolve(
   "release",
-  process.env.npm_package_version,
+  version,
   "win-unpacked/resources/app.asar.unpacked/neo4j",
 );
 
