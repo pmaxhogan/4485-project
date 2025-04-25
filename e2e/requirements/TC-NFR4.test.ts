@@ -43,6 +43,8 @@ describe("TC-NFR4", () => {
 
     // i should probably check command success rather than finding this specific string
     // but i could not figure it out in a timely manner
+    const icaclsResults = execSync("icacls " + neo4jDB, { encoding: "utf-8" });
+    console.log(icaclsResults);
     expect(foundEveryone.includes("SID Found")).toBe(false);
     expect(foundUsers.includes("SID Found")).toBe(false);
     expect(foundAuthUsers.includes("SID Found")).toBe(false);
