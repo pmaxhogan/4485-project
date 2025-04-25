@@ -2,7 +2,8 @@ import { describe, test, expect } from "vitest";
 import * as path from "path";
 import { execSync } from 'node:child_process';
 
-const neo4jDB = path.resolve("neo4j/data");
+const neo4jDB = path.resolve("./neo4j/data");
+console.log(neo4jDB);
 
 describe("TC-NFR4", () => {
   test("TC-NFR4: Correct setup of OS permissions verified by test case ", async () => {
