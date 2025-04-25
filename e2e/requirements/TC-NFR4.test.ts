@@ -6,7 +6,7 @@ import { version } from "../../package.json";
 
 // if there's an easier and less hard-coded way to get neo4j's location let me know.
 // this code brings me pain - oli
-const neo4jDB = path.resolve(
+const neo4jPath = path.resolve(
   "release",
   version,
   "win-unpacked/resources/app.asar.unpacked/neo4j",
@@ -16,41 +16,29 @@ const neo4jDB = path.resolve(
 
 describe("TC-NFR4", () => {
   test("TC-NFR4: Correct setup of OS permissions verified by test case ", async () => {
-    // using exec to call a shell command using node js - oli
-    // https://stackoverflow.com/questions/1880198/how-to-execute-shell-commands-in-javascript
-
-    // and using the icacls Windows cmd command to determine access privilege - oli
+    // using the icacls Windows cmd command to determine access privilege - oli
     // https://learn.microsoft.com/en-us/windows/win32/secauthz/well-known-sids
 
-    // users and authusers are most likely all we need, but included everyone just to be sure
+    // checks auth users and everyone, tried the "users" group too initially which worked
+    // locally on my machine but not in github actions runner. i dont think we need to check for that group tho
     const args = "/t /c";
-    const foundEveryone = execSync(
-      "icacls " + neo4jDB + " /findsid Everyone " + args,
-      {
+    const groups = ["Guests", "Everyone", "Authenticated Users"];
+    let unAuthAccess = false;
+    // for each group to be tested,
+    groups.forEach((g) => {
+      // find if it is included in the permissions list,
+      const command = "icacls " + neo4jPath + ' /findsid "' + g + '" ' + args;
+      console.log(command);
+      const results = execSync(command, {
         encoding: "utf-8",
-      },
-    );
-    // this fails in github actions, probably due to how github runners are set up
-    // i think authenticated users is what we want to test anyway, so just going to not run
-    // checking the Users group
-    // const foundUsers = execSync(
-    //   "icacls " + neo4jDB + " /findsid Users " + args,
-    //   {
-    //     encoding: "utf-8",
-    //   },
-    // );
-    const foundAuthUsers = execSync(
-      "icacls " + neo4jDB + ' /findsid "Authenticated Users" ' + args,
-      { encoding: "utf-8" },
-    );
+      });
 
-    // const icaclsResults = execSync("icacls " + neo4jDB, { encoding: "utf-8" }); // for debug purposes
-    // console.log(icaclsResults);
+      // if it is, set foundGroup to be true
+      if (results.includes("SID Found")) {
+        unAuthAccess = true;
+      }
+    });
 
-    // i should probably check command success rather than finding this specific string
-    // but i could not figure it out in a timely manner
-    expect(foundEveryone.includes("SID Found")).toBe(false);
-    // expect(foundUsers.includes("SID Found")).toBe(false);
-    expect(foundAuthUsers.includes("SID Found")).toBe(false);
+    expect(unAuthAccess).toBe(false);
   });
 });
