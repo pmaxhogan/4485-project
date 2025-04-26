@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import App from "../App.vue";
 import { screen, render, fireEvent } from "@testing-library/vue";
 import { nextTick } from "vue";
+import { checkConnectionStatus } from "../../electron/neo4j";
 
 describe("App Component", () => {
   beforeEach(() => {
@@ -23,20 +24,21 @@ describe("App Component", () => {
     };
   });
 
-  it("calls captureGraphImage in VisualGraph on button click", async () => {
+  it("calls openFileDialog in VisualGraph on button click", async () => {
     // get a mock version of the method to test if it is called
     render(App);
 
     vi.mocked(window.electronAPI.onNeo4jStatus).mock.lastCall?.[0]("CONNECTED");
+
+    console.log(window.electronAPI.onNeo4jStatus);
+
     await nextTick();
 
     vi.mocked(window.electronAPI.openFileDialog).mockResolvedValueOnce({
       filePaths: [],
     });
 
-    const importButton = screen.getByRole("button", {
-      name: /import excel/i,
-    });
+    const importButton = screen.getByText("Import Excel");
     await fireEvent.click(importButton);
 
     expect(window.electronAPI.openFileDialog).toHaveBeenCalled();
@@ -60,9 +62,13 @@ describe("App Component", () => {
       },
     });
 
+    //console.log("methods: " + SchemaTree.methods);
+
     vi.mocked(window.electronAPI.onNeo4jStatus).mock.lastCall?.[0]("CONNECTED");
     await nextTick();
 
+    await checkConnectionStatus()
+    screen.getByText("Save Graph")
     const saveImageButton = screen.getByRole("button", {
       name: /Save Graph Image to CMDB/i,
     });

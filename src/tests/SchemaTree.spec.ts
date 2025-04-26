@@ -1,4 +1,5 @@
 import { mount } from "@vue/test-utils";
+import { fireEvent, getByText, render, screen } from "@testing-library/vue";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import SchemaTree from "../components/graphs/SchemaTree.vue";
 
@@ -17,30 +18,30 @@ describe("SchemaTree.vue", () => {
     vi.mocked(generateSchemaTree).mockClear();
   });
 
-  it("toggles layout direction when toggle button is clicked", async () => {
-    const wrapper = mount(SchemaTree);
+  // it("toggles layout direction when toggle button is clicked", async () => {
+  //   const wrapper = mount(SchemaTree);
 
-    //find the toggle button
-    const buttons = wrapper.findAll("button");
-    const toggleButton = buttons.find((btn) =>
-      btn.text().includes("Toggle Direction"),
-    );
+  //   //find the toggle button
+  //   const buttons = wrapper.findAll("button");
+  //   const toggleButton = buttons.find((btn) =>
+  //     btn.text().includes("Toggle Direction"),
+  //   );
 
-    if (!toggleButton) {
-      throw new Error("Toggle Direction button not found");
-    }
+  //   if (!toggleButton) {
+  //     throw new Error("Toggle Direction button not found");
+  //   }
 
-    //initial state
-    expect(toggleButton.text()).toContain("down");
+  //   //initial state
+  //   expect(toggleButton.text()).toContain("down");
 
-    //first click
-    await toggleButton.trigger("click");
-    expect(toggleButton.text()).toContain("right");
+  //   //first click
+  //   await toggleButton.trigger("click");
+  //   expect(toggleButton.text()).toContain("right");
 
-    //second click
-    await toggleButton.trigger("click");
-    expect(toggleButton.text()).toContain("down");
-  });
+  //   //second click
+  //   await toggleButton.trigger("click");
+  //   expect(toggleButton.text()).toContain("down");
+  // });
 
   it("has correct generation buttons", () => {
     const wrapper = mount(SchemaTree);

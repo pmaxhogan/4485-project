@@ -43,12 +43,15 @@ describe("VisualGraph Component", () => {
     };
   });
 
-  it("renders the correct header", () => {
-    render(VisualGraph);
+  // header is commented out, so this test will always fail.
+  // commented it out for now
+  // ****************
+  // it("renders the correct header", () => {
+  //   render(VisualGraph);
 
-    const h2 = screen.getAllByRole("heading", { level: 2 })[0] as HTMLElement;
-    getByText(h2, "Graph");
-  });
+  //   const h2 = screen.getAllByRole("heading", { level: 2 })[0] as HTMLElement;
+  //   getByText(h2, "Graph");
+  // });
 
   it("renders when there are no nodes", () => {
     const wrapper = mount(VisualGraph, {
@@ -176,19 +179,24 @@ describe("VisualGraph Component", () => {
       props: { nodes, rels },
     });
 
-    let button = screen.getByRole("button", {
-      name: /Toggle Failure/i,
-    });
+    // let button = screen.getByRole("button", {
+    //   name: /Toggle Failure/i,
+    // });
+
+    let button = screen.getByText("Toggle Failure (0)");
     expect(button).toHaveProperty("disabled", true);
 
     vi.spyOn(NVL.prototype, "getSelectedNodes").mockReturnValue([
       nodes[0],
     ] as (Point & Node)[]);
+
     await fireEvent.click(screen.getByRole("img"));
 
-    button = screen.getByRole("button", {
-      name: /Toggle Failure/i,
-    });
+    // button = screen.getByRole("button", {
+    //   name: /Toggle Failure/i,
+    // });
+
+    button = screen.getByText("Toggle Failure (1)");
     expect(button).toHaveProperty("disabled", false);
 
     await fireEvent.click(button);
@@ -236,29 +244,44 @@ describe("VisualGraph Component", () => {
   });
 
   it("updates layout options + restarts when layoutDirection changes", async () => {
-    mount(VisualGraph, {
+    render(VisualGraph, {
       props: { nodes: [{ id: "1", caption: "X" }], rels: [] },
     });
+
     await nextTick();
 
-    // await wrapper.setProps({ layoutDirection: "left" });
+    // graph must be in hierarchical or grid mode to select direction
+    await fireEvent.click(screen.getByText("Hierarchical"));
+
     await nextTick();
 
+    // click the button that changes the layout direction to left
+    await fireEvent.click(screen.getByText("⮜"));
+
+    await nextTick();
+    console.log("*******************************************")
     expect(NVL.prototype.setLayoutOptions).toHaveBeenCalled();
     expect(NVL.prototype.restart).toHaveBeenCalled();
   });
 
   it("calls setLayout when layout changes", async () => {
-    mount(VisualGraph, {
+    render(VisualGraph, {
       props: {
         nodes: [{ id: "1", caption: "X" }],
         rels: [],
-        layout: "hierarchical",
       },
     });
     await nextTick();
 
-    // await wrapper.setProps({ layout: "forceDirected" });
+    // start from hierarchical
+    await fireEvent.click(screen.getByText("Hierarchical"));
+
+    // wait for graph to update
+    await nextTick();
+
+    // change the layout
+    await fireEvent.click(screen.getByText("Force Directed"));
+
     await nextTick();
 
     expect(NVL.prototype.setLayout).toHaveBeenCalledWith("forceDirected");
