@@ -35,7 +35,7 @@ describe("TC-R1: E2E Test – Import Excel CMDB and render graph", () => {
     // Use Electron API to import the temp Excel file
     await driver.executeScript(
       (filePath: string) => window.electronAPI.importExcel(filePath),
-      tempFile
+      tempFile,
     );
 
     // Wait for the graph container
@@ -46,13 +46,14 @@ describe("TC-R1: E2E Test – Import Excel CMDB and render graph", () => {
     await driver.wait(until.elementsLocated(By.css(".graph-node")), 10000);
 
     // RE-LOCATE the nodes fresh
-    const texts = await driver.findElements(By.css(".graph-node"))
-      .then(nodes => Promise.all(nodes.map(node => node.getText())));
+    const texts = await driver
+      .findElements(By.css(".graph-node"))
+      .then((nodes) => Promise.all(nodes.map((node) => node.getText())));
 
     // Spot-check expected labels
-    expect(texts.some(text => text.includes("Datacenter"))).toBe(true);
-    expect(texts.some(text => text.includes("Server"))).toBe(true);
-    expect(texts.some(text => text.includes("App"))).toBe(true);
-    expect(texts.some(text => text.includes("Function"))).toBe(true);
+    expect(texts.some((text) => text.includes("Datacenter"))).toBe(true);
+    expect(texts.some((text) => text.includes("Server"))).toBe(true);
+    expect(texts.some((text) => text.includes("App"))).toBe(true);
+    expect(texts.some((text) => text.includes("Function"))).toBe(true);
   });
 });
