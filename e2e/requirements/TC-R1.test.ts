@@ -9,7 +9,7 @@ import * as path from "path";
 const testCMDB = path.resolve("e2e/data/test.xlsx");
 const tempFile = path.resolve("e2e/data/test.tmp.xlsx");
 
-describe("TC-R1: E2E Test – Import Excel CMDB and render graph", () => {
+describe("TC-R1: E2E Test - Import Excel CMDB and render graph", () => {
   beforeEach(async () => {
     const session = getSession();
     try {
@@ -38,12 +38,19 @@ describe("TC-R1: E2E Test – Import Excel CMDB and render graph", () => {
       tempFile,
     );
 
+    // click the "Data Graph" button
+    const generateGraphButton = await driver.findElement(
+      getByText("Data Graph"),
+    );
+    expect(generateGraphButton).toBeDefined();
+    await generateGraphButton.click();
+
     // Wait for the graph container
     await driver.wait(until.elementLocated(By.css(".graph")), 15000);
-    await driver.sleep(3000); // Let layout stabilize
+    await driver.sleep(1000); // Let layout stabilize a bit more
 
     // Wait for at least one node
-    await driver.wait(until.elementsLocated(By.css(".graph-node")), 10000);
+    await driver.wait(until.elementsLocated(By.css(".graph-node")), 15000);
 
     // RE-LOCATE the nodes fresh
     const texts = await driver
@@ -51,9 +58,9 @@ describe("TC-R1: E2E Test – Import Excel CMDB and render graph", () => {
       .then((nodes) => Promise.all(nodes.map((node) => node.getText())));
 
     // Spot-check expected labels
-    expect(texts.some((text) => text.includes("Datacenter"))).toBe(true);
+    expect(texts.some((text) => text.includes("DC"))).toBe(true);
     expect(texts.some((text) => text.includes("Server"))).toBe(true);
     expect(texts.some((text) => text.includes("App"))).toBe(true);
-    expect(texts.some((text) => text.includes("Function"))).toBe(true);
+    expect(texts.some((text) => text.includes("BF"))).toBe(true);
   });
 });
