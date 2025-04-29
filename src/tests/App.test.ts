@@ -1,8 +1,30 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "../App.vue";
-import { screen, render, fireEvent } from "@testing-library/vue";
+import { fireEvent, render, screen, waitFor } from "@testing-library/vue";
 import { nextTick } from "vue";
 import { checkConnectionStatus } from "../../electron/neo4j";
+import { generateSchemaTree } from "../graphs/genSchemaTree.ts";
+import NVL from "@neo4j-nvl/base";
+
+vi.mock("../graphs/genSchemaTree.ts", () => ({
+  generateSchemaTree: vi.fn(),
+}));
+
+async function waitForNeo(container: Element) {
+  await waitFor(
+    () =>
+      expect(
+        container.querySelector(".connecting-to-neo")?.classList,
+      ).not.toContain("neo-loading"),
+    {
+      timeout: 10000,
+    },
+  );
+}
+
+vi.spyOn(NVL.prototype, "saveFullGraphToLargeFile").mockImplementation(
+  () => {},
+);
 
 describe("App Component", () => {
   beforeEach(() => {
@@ -24,13 +46,19 @@ describe("App Component", () => {
     };
   });
 
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("calls openFileDialog in VisualGraph on button click", async () => {
     // get a mock version of the method to test if it is called
-    render(App);
+    const { container, unmount } = render(App);
+
+    expect(container.querySelector(".connecting-to-neo")?.classList).toContain(
+      "neo-loading",
+    );
 
     vi.mocked(window.electronAPI.onNeo4jStatus).mock.lastCall?.[0]("CONNECTED");
-
-    console.log(window.electronAPI.onNeo4jStatus);
 
     await nextTick();
 
@@ -38,20 +66,22 @@ describe("App Component", () => {
       filePaths: [],
     });
 
+    await waitForNeo(container);
+
     const importButton = screen.getByText("Import Excel");
     await fireEvent.click(importButton);
 
     expect(window.electronAPI.openFileDialog).toHaveBeenCalled();
+
+    unmount();
   });
 
   it("calls captureGraphImage in VisualGraph on button click", async () => {
-    const captureGraphImageMock = vi.fn();
-
     // get a mock version of the method to test if it is called
-    render(App, {
-      global: {
+    const { container } = render(App, {
+      /*global: {
         stubs: {
-          SchemaTree: {
+          VisualGraph: {
             methods: {
               captureGraphImage: captureGraphImageMock,
             },
@@ -59,7 +89,7 @@ describe("App Component", () => {
             template: "<div />",
           },
         },
-      },
+      },*/
     });
 
     //console.log("methods: " + SchemaTree.methods);
@@ -67,13 +97,57 @@ describe("App Component", () => {
     vi.mocked(window.electronAPI.onNeo4jStatus).mock.lastCall?.[0]("CONNECTED");
     await nextTick();
 
-    await checkConnectionStatus()
-    screen.getByText("Save Graph")
+    await checkConnectionStatus();
+
+    await waitForNeo(container);
+    await nextTick();
+
+    vi.mocked(generateSchemaTree).mockResolvedValue({
+      nodes: [
+        {
+          id: "summary-0",
+          label: "Datacenter (5)",
+          captions: [{ value: "Datacenters: 5" }],
+          size: 17,
+          color: "#f47535",
+          html: document.createElement("div"),
+          type: "node",
+        },
+        {
+          id: "summary-1",
+          label: "Server (10)",
+          captions: [{ value: "Servers: 10" }],
+          size: 17,
+          color: "#b86eac",
+          html: document.createElement("div"),
+          type: "node",
+        },
+      ],
+      edges: [
+        {
+          from: "summary-0",
+          to: "summary-1",
+          id: "summary-bf-app",
+          color: "#f6a565",
+        },
+      ],
+    });
+
+    await fireEvent.click(
+      screen.getByRole("button", { name: /schema graph/i }),
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const saveImageButton = screen.getByRole("button", {
       name: /Save Graph Image to CMDB/i,
     });
     await fireEvent.click(saveImageButton);
 
-    expect(captureGraphImageMock).toHaveBeenCalled();
+    screen.logTestingPlaygroundURL();
+
+    expect(
+      vi.mocked(NVL.prototype.saveFullGraphToLargeFile),
+    ).toHaveBeenCalled();
   });
 });

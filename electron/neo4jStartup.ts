@@ -1,3 +1,6 @@
+/* v8 ignore start */
+/* ^ launches child processes, so it's e2e tested instead*/
+
 import fs from "fs"; //needed for neo4j stuff - ZT
 import { once } from "events"; //needed for avoiding direct promises - ZT
 import { Record } from "neo4j-driver";
@@ -237,3 +240,4 @@ process.on("uncaughtExceptionMonitor", () => {
 });
 
 export { checkAndSetupNeo4j, launchNeo4j, stopNeo4j, neo4jProcess };
+/* v8 ignore stop */

@@ -152,7 +152,7 @@ describe("Neo4j Integration Tests", () => {
         const testError = new Error("Specific connection error");
         //console.log(testError);
         mockSession.run.mockRejectedValueOnce(testError);
-        
+
         const result = await checkConnectionStatus();
 
         expect(result).toBe(false);
@@ -160,7 +160,7 @@ describe("Neo4j Integration Tests", () => {
         //await vi.advanceTimersByTimeAsync(50000);
         //await connectPromise;
 
-        console.log("awjgnakgwa");
+        console.log("awjgnakgwa :3");
 
         // console.log(updateStatus.arguments);
 

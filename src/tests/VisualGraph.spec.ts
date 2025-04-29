@@ -4,7 +4,7 @@ import { nextTick } from "vue";
 import VisualGraph from "../components/graphs/VisualGraph.vue";
 import NVL, { Point } from "@neo4j-nvl/base";
 import { type Node } from "@neo4j-nvl/base";
-import { fireEvent, getByText, render, screen } from "@testing-library/vue";
+import { fireEvent, render, screen } from "@testing-library/vue";
 import { ByRoleOptions } from "@testing-library/dom/types/queries";
 
 describe("VisualGraph Component", () => {
@@ -136,6 +136,8 @@ describe("VisualGraph Component", () => {
       props: { nodes, rels: [] },
     });
     await nextTick();
+    await nextTick();
+    await nextTick();
 
     // get the "Zoom to Fit" button
     const zoomBtn = wrapper
@@ -259,7 +261,7 @@ describe("VisualGraph Component", () => {
     await fireEvent.click(screen.getByText("⮜"));
 
     await nextTick();
-    console.log("*******************************************")
+    console.log("*******************************************");
     expect(NVL.prototype.setLayoutOptions).toHaveBeenCalled();
     expect(NVL.prototype.restart).toHaveBeenCalled();
   });
@@ -285,6 +287,24 @@ describe("VisualGraph Component", () => {
     await nextTick();
 
     expect(NVL.prototype.setLayout).toHaveBeenCalledWith("forceDirected");
+  });
+
+  it("rerenders", async () => {
+    const { rerender } = render(VisualGraph, {
+      props: {
+        nodes: [{ id: "1", caption: "X" }],
+        rels: [],
+      },
+    });
+    await nextTick();
+
+    // wait for graph to update
+    await nextTick();
+
+    await rerender({
+      nodes: [{ id: "1", caption: "X" }],
+      rels: [],
+    });
   });
 
   it("destroys NVL instance when unmounted", async () => {

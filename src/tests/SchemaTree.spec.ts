@@ -1,5 +1,4 @@
 import { mount } from "@vue/test-utils";
-import { fireEvent, getByText, render, screen } from "@testing-library/vue";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import SchemaTree from "../components/graphs/SchemaTree.vue";
 
