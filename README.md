@@ -1,16 +1,40 @@
 # 4485 Project: Disaster Recovery Mapping
 
-- `npm run package` - builds the app
+## Setup
 
-## Running e2e tests
+1. Clone the repository
+2. Install Node.js (>= 23.10.0 validated)
+3. Install packages: `npm install`
+4. Run locally `npm run dev`
+   - This may take a while the first time. Later runs should eb faster
 
-- `npm run test:package` - builds the app binaries required for testing
-- `npm run test:e2e:driver` - runs test chromedriver server
+## Scripts
 
-Then open a new terminal tab (keep the driver running!) and run:
+### Dev
 
-- `npm run test:e2e` - runs e2e / requirements tests
-- `npm run test:e2e:bench` - runs benchmark / NFR tests
+- `npm run dev`: starts the app in development mode (w/ hot reload)
+- `npm run build`: compiles vue & typescript into a build with electron
+- `npm run package`: builds the app and creates a MSI installer (done by CI when a commit to main is tagged with a new version)
+
+### Quality
+
+- `npm run format`: runs prettier to format files as needed
+- `npm run format:ci`: like `npm run format`, but fails if changes are needed instead of writing them (used in CI)
+- `npm run lint`: runs eslint to find code problems (fixing them if possible)
+- `npm run lint:ci`: like `npm run lint`, but will not fix fixable problems
+
+### Unit tests
+
+- `npm run test:unit`: runs unit tests
+- `npm run coverage`: runs unit tests with coverage
+- `npm run coverage:ui`: runs unit tests with coverage & opens the coverage UI tool
+
+### e2e/integration tests
+
+- `npm run test:package`: builds the app binaries required for testing. **do this before running e2e tests!**
+- `npm run test:e2e:driver`: runs the chromedriver server needed for e2e tests. **must be running to run e2e tests!**
+- `npm run test:e2e`: runs e2e / requirements tests
+- `npm run test:e2e:bench`: runs benchmark / NFR tests
 
 ## Activity Diagram
 
