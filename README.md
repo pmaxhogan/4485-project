@@ -1,12 +1,16 @@
 # 4485 Project: Disaster Recovery Mapping
 
-## Setup
+## Installer
+
+- Download the MSI installer from [the latest release](https://github.com/pmaxhogan/4485-project/releases/latest)
+
+## Local Setup
 
 1. Clone the repository
 2. Install Node.js (>= 23.10.0 validated)
 3. Install packages: `npm install`
 4. Run locally `npm run dev`
-   - This may take a while the first time. Later runs should eb faster
+   - This may take a while the first time. Later runs should be faster
 
 ## Scripts
 
