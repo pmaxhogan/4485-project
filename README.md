@@ -1,4 +1,10 @@
-# 4485 Project: Disaster Recovery Mapping
+# SE 4485 Project: Disaster Recovery Mapping App
+
+## [Demo](https://drive.google.com/file/d/1741aa_tguOSqy1Pvi7uL9-o0IflHapt-/view?usp=drive_link)
+
+## [Slides](https://docs.google.com/presentation/d/e/2PACX-1vS_aNyQDyKtzwJlb9gqzwD-AqBPWjtSt2gXDVk_rtCTKwmmSi_5vJ4WhjuNEatZUhHmBgoE0t1eDziT/pubembed?start=true&loop=false&delayms=3000)
+
+[<img src="https://github.com/user-attachments/assets/0345c8f6-580b-4d57-aaa1-27ad769228ac" width=500 alt="Presentation Slides"/>](https://docs.google.com/presentation/d/e/2PACX-1vS_aNyQDyKtzwJlb9gqzwD-AqBPWjtSt2gXDVk_rtCTKwmmSi_5vJ4WhjuNEatZUhHmBgoE0t1eDziT/pubembed?start=true&loop=false&delayms=3000)
 
 ## Installer
 
