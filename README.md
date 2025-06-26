@@ -1,6 +1,13 @@
 # SE 4485 Project: Disaster Recovery Mapping App
 
+Our SE 4485 Project, the Disaster Recovery Mapping App, can help IT analysts and Data Recovery specialists examine interconnected systems and assets within organizations, especially airlines. It allows users to visualize data from a Configuration Management Database (CMDB) through graphical representations.
+The application lets users conduct failure analysis by letting them mark nodes as failed, which dynamically updates related nodes to assess the impact of failures. It scales to large datasets and functions offline for reliability and independence in disaster scenarios.
+
+
 ## [Demo](https://drive.google.com/file/d/1741aa_tguOSqy1Pvi7uL9-o0IflHapt-/view?usp=drive_link)
+
+
+[<img src="https://github.com/user-attachments/assets/4a117650-72bf-4766-a275-a0f672730658" width="500">](https://drive.google.com/file/d/1741aa_tguOSqy1Pvi7uL9-o0IflHapt-/view?usp=drive_link)
 
 ## [Slides](https://docs.google.com/presentation/d/e/2PACX-1vS_aNyQDyKtzwJlb9gqzwD-AqBPWjtSt2gXDVk_rtCTKwmmSi_5vJ4WhjuNEatZUhHmBgoE0t1eDziT/pubembed?start=true&loop=false&delayms=3000)
 
